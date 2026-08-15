@@ -16,14 +16,14 @@ flowchart TD
         A5["Multi-Track Audio & Speech Waves"]
     end
 
-    subgraph UniversalTimeline["2. 🎞️ UNIVERSAL TIMELINE WORKSPACE"]
+    subgraph UniversalTimeline["2. 🎞️ UNIVERSAL TIMELINE & RIGGING WORKSPACE"]
         B0["🎞️ Universal Multi-Track Timeline<br/>(SMPTE Ruler, NLE Ripple/Slip/Roll/Slide, Parenting, Beat Sync)"]
-        B1["🧩 Motion Batch Processor<br/>(100+ Layers, Stagger, Timing, Before/After Previews)"]
-        B2["📈 Dedicated Velocity Lab<br/>(Triple Synchronized Graphs, Normalization, Clamping, Retiming)"]
-        B3["🧬 Advanced Motion Matching<br/>(Find Similar, Match Motion, Reference Optimization 18.4% -> 2.1%)"]
-        B4["🏛️ Living Parametric Presets<br/>(Physical Sliders, Continuous Morphing, Variants, Live Extraction)"]
-        B5["📋 Smart Motion Clipboard<br/>(Selective Masks, Cross-Property Normalization, Linked Master Binding)"]
-        B6["🎛️ Chained Motion Operations<br/>(Select -> Batch -> Preset -> Velocity -> Match -> Stagger -> Apply)"]
+        B1["🦾 Complete Constraint & Rigging System<br/>(2-Bone IK, Universal Property Binding, Flexbox Auto-Hug, 1-Click Auto-Rig)"]
+        B2["🧩 Motion Batch Processor<br/>(100+ Layers, Stagger, Timing, Before/After Previews)"]
+        B3["📈 Dedicated Velocity Lab<br/>(Triple Synchronized Graphs, Normalization, Clamping, Retiming)"]
+        B4["🧬 Advanced Motion Matching<br/>(Find Similar, Match Motion, Reference Optimization 18.4% -> 2.1%)"]
+        B5["🏛️ Living Parametric Presets<br/>(Physical Sliders, Continuous Morphing, Variants, Live Extraction)"]
+        B6["📋 Smart Motion Clipboard<br/>(Selective Masks, Cross-Property Normalization, Linked Master Binding)"]
     end
 
     subgraph ProductionSuites["3. PRODUCTION DESIGN SUITES"]
@@ -64,7 +64,19 @@ flowchart TD
 
 ## 📋 Comprehensive Feature Catalog
 
-### 1. 🎞️ Universal Timeline Workspace & NLE Engine
+### 1. 🦾 Complete Constraint & Rigging System (45+ Features)
+| Category | What It Does |
+| :--- | :--- |
+| **2-Bone & 3-Bone Analytic IK** | Law-of-cosines Inverse Kinematics solver with pole vector elbow control, reach clamping, and smooth FK/IK blending ($0\% \to 100\%$). |
+| **Universal Property Binding** | Reactive drivers linking *ANY* property to *ANY* property (`Button.width ➔ Text.fontSize`, `Audio.bass ➔ Scale`, `Slider ➔ Camera.zoom`). |
+| **Responsive Layout & Flexbox** | Row/Column stacks with dynamic gaps, padding, and container content-hug auto-resizing. |
+| **1-Click Auto-Rig Synthesizer** | Select layers $\to$ click **"✨ Auto-Rig UI System"** $\to$ automatically constructs center alignment, content-hug width, and hover spring dynamics. |
+| **Circular Dependency Debugger** | Real-time topological sort cycle detection ensuring zero infinite property loops. |
+| **Rig Presets Catalog** | Pre-built templates: *Responsive Button, 2-Bone Arm IK, Eye Look-At Target, Social Caption Rig*. |
+
+---
+
+### 2. 🎞️ Universal Timeline Workspace & NLE Engine
 | Category | What It Does |
 | :--- | :--- |
 | **Canonical Multi-Track Model** | Unlimited tracks (*Video, Audio, Text, Shape, Camera, Light, Null/Controller, Adjustment, Pre-Comps*) with SMPTE frame ruler. |
@@ -76,7 +88,7 @@ flowchart TD
 
 ---
 
-### 2. 🧩 Motion Batch Processor (25+ Features)
+### 3. 🧩 Motion Batch Processor (25+ Features)
 | Category | What It Does |
 | :--- | :--- |
 | **Multi-Layer Selection & Filtering** | Select 10, 100, or 1,000+ layers simultaneously. Filter by layer type (*Text, Shape, Image, Caption, Video*) and property (*Position, Scale, Rotation, Opacity*). |
@@ -87,7 +99,7 @@ flowchart TD
 
 ---
 
-### 3. 📈 Dedicated Velocity Lab (30+ Features)
+### 4. 📈 Dedicated Velocity Lab (30+ Features)
 | Category | What It Does |
 | :--- | :--- |
 | **Triple Synchronized Graphs** | Real-time synchronized inspection: **Position-Time ($x$)**, **Velocity-Time ($v = \frac{\Delta x}{\Delta t}$)**, **Acceleration-Time ($a = \frac{\Delta v}{\Delta t}$)**, and Jerk ($\frac{da}{dt}$). |
@@ -97,7 +109,7 @@ flowchart TD
 
 ---
 
-### 4. 🧬 Flagship Motion Matching Engine (30+ Features)
+### 5. 🧬 Flagship Motion Matching Engine (30+ Features)
 | Category | What It Does |
 | :--- | :--- |
 | **Mode A: Find Similar Preset** | 5D Euclidean distance matching against the preset library (Energy, Smoothness, Elasticity, Aggression, Rhythm) with % similarity readouts. |
@@ -107,7 +119,7 @@ flowchart TD
 
 ---
 
-### 5. 🏛️ Living Parametric Presets (30+ Features)
+### 6. 🏛️ Living Parametric Presets (30+ Features)
 | Category | What It Does |
 | :--- | :--- |
 | **Parametric Living Presets** | Presets expose live physical sliders: Duration, Speed, Intensity, Elasticity, Smoothness, Overshoot, Damping, Stiffness, Direction, and Stagger. |
@@ -117,7 +129,7 @@ flowchart TD
 
 ---
 
-### 6. 📋 Smart Motion Clipboard (25+ Features)
+### 7. 📋 Smart Motion Clipboard (25+ Features)
 | Category | What It Does |
 | :--- | :--- |
 | **Selective Copy Mask** | Granular checkboxes to copy specific components: Values, Timing, Easing, Tangents, Velocity, Modifiers, Spring Parameters, or Styles. |
@@ -132,7 +144,7 @@ flowchart TD
 The application features a comprehensive suite switcher located directly in the top navigation bar:
 
 ```
-[🎬 Motion Graph] [🎞️ Universal Timeline] [🧩 Batch Processor] [📈 Velocity Lab] [🧬 Motion Match] [🏛️ Parametric Presets] [📋 Motion Clipboard] ... [⚡ Export ▾]
+[🎬 Motion Graph] [🎞️ Universal Timeline] [🦾 Constraints & Rigging] [🧩 Batch Processor] [📈 Velocity Lab] [🧬 Motion Match] [🏛️ Parametric Presets] ... [⚡ Export ▾]
 ```
 
 All subsystems operate locally with zero mandatory cloud accounts, zero subscription fees, and complete cross-application interchangeability.

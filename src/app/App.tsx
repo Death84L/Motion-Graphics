@@ -85,6 +85,7 @@ import { MotionMatchingStudioView } from '../features/motion-matching/components
 import { ParametricPresetStudioView } from '../features/parametric-presets/components/ParametricPresetStudioView';
 import { MotionClipboardDrawer } from '../features/clipboard/components/MotionClipboardDrawer';
 import { UniversalTimelineStudioView } from '../features/universal-timeline/components/UniversalTimelineStudioView';
+import { ConstraintRiggingStudioView } from '../features/constraints-rigging/components/ConstraintRiggingStudioView';
 import {
   CompositionLayer,
   DEFAULT_VFX_CONFIG,
@@ -122,6 +123,7 @@ import { BeatMarker, generateBeatGrid } from '../core/bookmarks/beatDetector';
 export type MotionStudioSuiteView =
   | 'editor'
   | 'universal-timeline'
+  | 'constraints-rigging'
   | 'velocity-lab'
   | 'motion-matching'
   | 'batch-processor'
@@ -789,6 +791,7 @@ export default function App() {
           {[
             { id: 'editor', label: '🎬 Motion Graph' },
             { id: 'universal-timeline', label: '🎞️ Universal Timeline' },
+            { id: 'constraints-rigging', label: '🦾 Constraints & Rigging' },
             { id: 'batch-processor', label: '🧩 Batch Processor' },
             { id: 'velocity-lab', label: '📈 Velocity Lab' },
             { id: 'motion-matching', label: '🧬 Motion Match' },
@@ -1632,6 +1635,11 @@ export default function App() {
             setSuiteView('editor');
           }}
         />
+      )}
+
+      {/* 02.5: COMPLETE CONSTRAINT & RIGGING SYSTEM */}
+      {suiteView === 'constraints-rigging' && (
+        <ConstraintRiggingStudioView />
       )}
 
       {/* 03: MOTION BATCH PROCESSOR */}
