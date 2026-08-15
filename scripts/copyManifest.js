@@ -12,6 +12,10 @@ if (fs.existsSync(rootManifestPath)) {
   const distContent = {
     ...content,
     main: 'index.html',
+    host: {
+      app: 'premierepro',
+      minVersion: '25.6.0',
+    },
     entrypoints: content.entrypoints?.map((ep) => ({
       ...ep,
       main: 'index.html',

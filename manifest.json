@@ -4,12 +4,10 @@
   "version": "1.0.0",
   "main": "dist/index.html",
   "manifestVersion": 5,
-  "host": [
-    {
-      "app": "PPRO",
-      "minVersion": "22.0.0"
-    }
-  ],
+  "host": {
+    "app": "premierepro",
+    "minVersion": "25.6.0"
+  },
   "entrypoints": [
     {
       "type": "panel",
