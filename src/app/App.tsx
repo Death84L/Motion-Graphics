@@ -306,8 +306,7 @@ export default function App() {
   const [audioConfig, setAudioConfig] = useState<AudioWaveformConfig>(DEFAULT_AUDIO_CONFIG);
   const [workspaceProfile, setWorkspaceProfile] = useState<WorkspaceProfile>('motion-design');
 
-  // Kinematic Derivatives & Reference Motion State
-  const [derivativeMode, setDerivativeMode] = useState<DerivativeGraphType>('value');
+  // Reference Motion Modal State
   const [isRefMotionOpen, setIsRefMotionOpen] = useState<boolean>(false);
 
   // Sidebar Sub-Tabs (Left Suite: Production & Primitives)
@@ -844,29 +843,6 @@ export default function App() {
 
         {/* Global Action Bar */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12 }}>
-          {/* Kinematic Derivative Mode Selector (Value / Velocity / Accel / Jerk) */}
-          <div style={{ display: 'flex', background: '#11182c', border: '1px solid #1e293b', borderRadius: 6, padding: 2, gap: 2 }}>
-            {(['value', 'velocity', 'acceleration', 'jerk'] as const).map((dm) => (
-              <button
-                key={dm}
-                onClick={() => setDerivativeMode(dm)}
-                style={{
-                  padding: '3px 6px',
-                  fontSize: 9,
-                  fontWeight: derivativeMode === dm ? 800 : 500,
-                  background: derivativeMode === dm ? (dm === 'velocity' ? '#38bdf8' : dm === 'acceleration' ? '#f59e0b' : dm === 'jerk' ? '#ec4899' : '#1e3a8a') : 'transparent',
-                  color: derivativeMode === dm ? (dm === 'value' ? '#38bdf8' : '#080d1a') : '#64748b',
-                  border: 'none',
-                  borderRadius: 4,
-                  cursor: 'pointer',
-                  textTransform: 'uppercase',
-                }}
-              >
-                {dm}
-              </button>
-            ))}
-          </div>
-
           <button
             onClick={() => setIsRefMotionOpen(true)}
             style={{
@@ -1378,7 +1354,10 @@ export default function App() {
               onApplySegmentEase={handleApplySegmentEase}
             />
             {/* Kinematic Derivative Curve Overlay (Velocity, Acceleration, Jerk) */}
-            <DerivativesCurveViewer keyframes={keyframes} graphType={derivativeMode} />
+            <DerivativesCurveViewer
+              keyframes={keyframes}
+              graphType={graphMode === 'speed' ? 'velocity' : (graphMode as DerivativeGraphType)}
+            />
           </div>
 
           {/* Bottom Timeline Scrubber (Feature 38: Deep 2-Way Sync) */}
