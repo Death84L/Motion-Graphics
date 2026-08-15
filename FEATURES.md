@@ -19,25 +19,26 @@ flowchart TD
 
     subgraph CoreEngines["2. 🧬 CORE MATHEMATICAL, KINEMATIC & DSP ENGINES (20 DOMAINS)"]
         B0["📈 Blender-Style Curve Engine (Auto-Clamped, Vector, Aligned, Free, Flip X/Y, Quantize, RDP Simplify)"]
-        B1["🎙️ Speech-to-Motion Captions (SRT/VTT/JSON Parser, 47 Trendy Presets, Semantic Auto-Emojis 💰🔥🚀)"]
-        B2["🎬 Universal B-Roll Engine (Media Browser, Ken Burns Motion, 128 BPM Beat Sequencer, Keyframe Baker)"]
-        B3["📊 Data-Driven Infographics (Racing Bar Charts, Dynamic Line Graphs, Odometer Counters)"]
-        B4["🎨 3-Way Color Grading & Film LUTs (Lift/Gamma/Gain Wheels, Kodak 2383/Fuji 3513, 3D .cube LUT Generator)"]
-        B5["🌌 GPU Particle Storm & Vortex Engine (Sparks, Falling Snow, Confetti, Smoke Plumes, 60 FPS Canvas)"]
-        B6["🪄 Smart Auto-Roto & Local Matte (Point-and-Click Vector Masks, Optical Flow Bounding Box Tracker)"]
-        B7["🗺️ 3D Spatial Matchmove & Corner-Pin (4-Point Planar Homography Matrix, Screen Replacement)"]
-        B8["📱 Viral Social Auto-Reframe (16:9 to 9:16 Crop Box Math, Subject Auto-Centering Pan Tracker)"]
-        B9["⚡ Preset Marketplace & Local Vault (.motionpkg Bundle Serializer/Deserializer, 1-Click Installer)"]
-        B10["🔤 Extended Kinetic Typography & UI (Liquid Chrome, Hormozi Captions, MrBeast Comic, Dynamic Island, Neumorphism)"]
-        B11["🎥 3D Camera & Parallax Engine (18-200mm Perspective, Vertigo Dolly Zoom, DoF Bokeh, 2.5D Parallax)"]
-        B12["🔀 Universal Transitions & Wipes (Directional Wipe, Radial Clock, Iris Circle, Despill, Light Wrap)"]
-        B13["📐 Advanced Calculus & Splines (RK4 Integrator, TCB Splines, Curvature Profile, Poisson Disc)"]
-        B14["🧬 Motion DNA Intelligence (10D Similarity, Continuous Morphing, Git-Diff, Auto-Optimizer)"]
-        B15["🧪 Universal Physics World (Symplectic Euler, Multi-Body Collisions, Springs, Wind, Materials)"]
-        B16["🧠 Procedural Animation Graph (46+ Nodes, Math, Trig, Vectors, 2nd-Order Spring, Perlin Noise)"]
-        B17["🎞️ Universal Multi-Track Timeline (SMPTE Ruler, NLE Ripple/Slip/Roll/Slide, Parenting, Beat Sync)"]
-        B18["🦾 Complete Constraint & Rigging (2-Bone IK, Universal Property Binding, Flexbox Auto-Hug)"]
-        B19["🎵 Audio-Reactive & Foley Synthesizer (8-Band FFT, BPM Tracker, Whoosh/Pop/808 Foley Engine)"]
+        B1["✨ VFX Shaders & Optics (Anamorphic Lens Flares, Glitch Displace, Lightning Arcs, Curl Noise)"]
+        B2["🎙️ Speech-to-Motion Captions (SRT/VTT/JSON Parser, 47 Trendy Presets, Semantic Auto-Emojis 💰🔥🚀)"]
+        B3["🎬 Universal B-Roll Engine (Media Browser, Ken Burns Motion, 128 BPM Beat Sequencer, Keyframe Baker)"]
+        B4["📊 Data-Driven Infographics (Racing Bar Charts, Dynamic Line Graphs, Odometer Counters)"]
+        B5["🎨 3-Way Color Grading & Film LUTs (Lift/Gamma/Gain Wheels, Kodak 2383/Fuji 3513, 3D .cube LUT Generator)"]
+        B6["🌌 GPU Particle Storm & Vortex Engine (Sparks, Falling Snow, Confetti, Smoke Plumes, 60 FPS Canvas)"]
+        B7["🪄 Smart Auto-Roto & Local Matte (Point-and-Click Vector Masks, Optical Flow Bounding Box Tracker)"]
+        B8["🗺️ 3D Spatial Matchmove & Corner-Pin (4-Point Planar Homography Matrix, Screen Replacement)"]
+        B9["📱 Viral Social Auto-Reframe (16:9 to 9:16 Crop Box Math, Subject Auto-Centering Pan Tracker)"]
+        B10["⚡ Preset Marketplace & Local Vault (.motionpkg Bundle Serializer/Deserializer, 1-Click Installer)"]
+        B11["🔤 Extended Kinetic Typography & UI (Liquid Chrome, Hormozi Captions, MrBeast Comic, Dynamic Island, Neumorphism)"]
+        B12["🎥 3D Camera & Parallax Engine (18-200mm Perspective, Vertigo Dolly Zoom, DoF Bokeh, 2.5D Parallax)"]
+        B13["🔀 Universal Transitions & Wipes (Directional Wipe, Radial Clock, Iris Circle, Despill, Light Wrap)"]
+        B14["📐 Advanced Calculus & Splines (RK4 Integrator, TCB Splines, Curvature Profile, Poisson Disc)"]
+        B15["🧬 Motion DNA Intelligence (10D Similarity, Continuous Morphing, Git-Diff, Auto-Optimizer)"]
+        B16["🧪 Universal Physics World (Symplectic Euler, Multi-Body Collisions, Springs, Wind, Materials)"]
+        B17["🧠 Procedural Animation Graph (46+ Nodes, Math, Trig, Vectors, 2nd-Order Spring, Perlin Noise)"]
+        B18["🎞️ Universal Multi-Track Timeline (SMPTE Ruler, NLE Ripple/Slip/Roll/Slide, Parenting, Beat Sync)"]
+        B19["🦾 Complete Constraint & Rigging (2-Bone IK, Universal Property Binding, Flexbox Auto-Hug)"]
+        B20["🎵 Audio-Reactive & Foley Synthesizer (8-Band FFT, BPM Tracker, Whoosh/Pop/808 Foley Engine)"]
     end
 
     subgraph ProductionSuites["3. PRODUCTION DESIGN SUITES"]
@@ -83,7 +84,7 @@ flowchart TD
 | **03. 🔤 Kinetic Typography** | Liquid Molten Chrome, Alex Hormozi captions, MrBeast comic text, Split-flap flip board, Cyberpunk neon, fluid `clamp()` math. |
 | **04. 🦾 Rigging, IK & Characters** | 2-Bone analytic IK with pole vectors, FABRIK multi-joint IK, spline IK, jiggle bone physics, rubber-hose stretch, pose library. |
 | **05. 🧪 Physics & Continuum Dynamics** | Symplectic Euler solver, Verlet cloth/rope, soft-body jelly, 60 FPS canvas particle engine (Sparks, Snow, Confetti, Smoke). |
-| **06. ✨ VFX Shaders & Stylization** | Divergence-free curl noise, chromatic aberration RGB split, CRT scanlines, anamorphic lens flares, frosted glassmorphism, neumorphism. |
+| **06. ✨ VFX Shaders & Stylization** | Multi-element anamorphic lens flares, chromatic aberration RGB split, CRT scanlines, lightning electrical arcs, frosted glassmorphism, heat wave shimmer. |
 | **07. 🎥 3D Camera & Parallax** | $18\text{mm} \to 200\text{mm}$ perspective camera, DoF bokeh, 2.5D multi-plane parallax, Vertigo dolly zoom, handheld shake generator. |
 | **08. 🎨 Color Science & Film LUTs** | 3-Way color wheels (Lift/Gamma/Gain), Kodak 2383/Fuji 3513 film stock emulation, false color exposure maps, 3D `.cube` LUT exporter. |
 | **09. 🎵 Audio DSP & Foley Synth** | 8-Band spectral FFT, zero-cost Foley synthesizers (Whoosh, Pop, 808 Sub-Bass, Braam Horn), auto-ducking, beat transient snapping. |
@@ -101,23 +102,10 @@ flowchart TD
 
 ---
 
-## 🎙️ Speech Captions & 47 Trendy Presets Catalog
-
-| Category | Presets Included |
-| :--- | :--- |
-| **Creator Viral** | **Alex Hormozi Yellow Pop**, **MrBeast Comic Tilt**, **TikTok Bouncy Karaoke**, **Ali Abdaal Clean Sans**, **Ryan Trahan Caps**, **Graham Stephan Finance Cash**, **Devon Rodriguez Marker**. |
-| **Cinematic & Luxury** | **Iman Gadzhi Luxury Serif**, **Golden Trophy Foil**, **Velvet Purple Sheen**, **Sunset Gradient Ribbon**. |
-| **Cyberpunk & Tech** | **Matrix Terminal Rain**, **Synthwave Neon Arc**, **RGB Chromatic Glitch**, **Sci-Fi HUD Reticle**, **Laser Engrave Burn**, **Split-Flap Airport Flip**, **Electric Arc Surge**, **Cosmic Starlight**. |
-| **3D & Shaders** | **Liquid Molten Chrome**, **Origami 3D Paper Fold**, **Glassmorphic Frosted Capsule**, **Neumorphic Soft Emboss**, **Claymorphic 3D Pastel Pill**, **Burning Ember Fire**, **3D Isometric Extrusion**, **Sine Wave Undulation**, **Sub-Glyph Bouncing Dots**. |
-| **Minimalist & Doc** | **Documentary Subtitle Rule**, **Classic Typewriter with Blink**, **Chalkboard Slate Sketch**, **Swiss International Typographic**, **Blur-to-Focus Snap**, **Topographic Elevation Contour**, **Word Stagger Cascade**, **Highlighter Pen Swatch**, **Staccato Rhythm Jitter**, **Heavy Impact Thud**. |
-| **Retro & Arcade** | **Retro 8-Bit Pixel Arcade**, **Vaporwave Pastel Sunset**, **Neo-Brutalist Solid Shadow**, **Comic Book POW Bubble**, **Y2K Glossy Chrome Bubble**, **Rotational Card Swivel**, **Floating Zero-G Drift**. |
-
----
-
 ## 🚀 Universal Host Bridge & Interchange Workflow
 
 ```
-[🎬 Motion Graph] [🎞️ Universal Timeline] [🦾 Constraints] [🎬 B-Roll] [📊 Infographics] [🎨 Color & LUTs] [🌌 Particle Storm] [🪄 Smart Roto] [🗺️ 3D Matchmove] [🎙️ Speech Captions] [📱 Social Reframe] [⚡ Marketplace] ... [⚡ Export ▾]
+[🎬 Motion Graph] [🎞️ Universal Timeline] [🦾 Constraints] [🎬 B-Roll] [📊 Infographics] [🎨 Color & LUTs] [🌌 Particle Storm] [🪄 Smart Roto] [🗺️ 3D Matchmove] [🎙️ Speech Captions] [📱 Social Reframe] [⚡ Marketplace] [✨ VFX Shaders] ... [⚡ Export ▾]
 ```
 
 All 500+ capabilities operate **100% locally with zero cloud subscriptions, zero third-party API fees**, and complete cross-application interchangeability.

@@ -98,6 +98,7 @@ import { MatchmoveStudioView } from '../features/matchmove/components/MatchmoveS
 import { SpeechCaptionsStudioView } from '../features/speech-captions/components/SpeechCaptionsStudioView';
 import { SocialReframeStudioView } from '../features/social-reframe/components/SocialReframeStudioView';
 import { PresetMarketplaceView } from '../features/preset-marketplace/components/PresetMarketplaceView';
+import { VfxStudioView } from '../features/vfx-studio/components/VfxStudioView';
 import {
   CompositionLayer,
   DEFAULT_VFX_CONFIG,
@@ -145,6 +146,7 @@ export type MotionStudioSuiteView =
   | 'speech-captions'
   | 'social-reframe'
   | 'marketplace'
+  | 'vfx-studio'
   | 'shapes-typography'
   | 'audio-reactive'
   | 'velocity-lab'
@@ -823,6 +825,7 @@ export default function App() {
             { id: 'speech-captions', label: '🎙️ Speech Captions' },
             { id: 'social-reframe', label: '📱 Social Reframe' },
             { id: 'marketplace', label: '⚡ Marketplace' },
+            { id: 'vfx-studio', label: '✨ VFX Shaders' },
             { id: 'shapes-typography', label: '🎨 Vector & Typography' },
             { id: 'audio-reactive', label: '🎵 Audio Reactive' },
             { id: 'batch-processor', label: '🧩 Batch Processor' },
@@ -1745,6 +1748,16 @@ export default function App() {
       {/* 02.60: PRESET MARKETPLACE (.motionpkg) */}
       {suiteView === 'marketplace' && (
         <PresetMarketplaceView />
+      )}
+
+      {/* 02.605: VFX SHADERS & OPTICS STUDIO */}
+      {suiteView === 'vfx-studio' && (
+        <VfxStudioView
+          onBakeKeyframesToEditor={(bakedKeys, label) => {
+            handleKeyframesChange(bakedKeys);
+            setSuiteView('editor');
+          }}
+        />
       )}
 
       {/* 02.61: ADVANCED VECTOR SHAPES & KINETIC TYPOGRAPHY */}
