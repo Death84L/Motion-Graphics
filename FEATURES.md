@@ -9,8 +9,8 @@
 ```mermaid
 flowchart TD
     subgraph Inputs["1. LOCAL INPUTS & ASSETS (100% Free & Local)"]
-        A1["Raw Text & Scripts"]
-        A2["SRT / VTT / ASS Transcripts"]
+        A1["Raw Text & Voice Scripts"]
+        A2["SRT / VTT / ASS / JSON Subtitles"]
         A3[".motionstudio & .motionpkg Files"]
         A4["CSV / JSON Datasets"]
         A5["Multi-Track Audio & Speech Waves"]
@@ -19,13 +19,13 @@ flowchart TD
 
     subgraph CoreEngines["2. 🧬 CORE MATHEMATICAL, KINEMATIC & DSP ENGINES (20 DOMAINS)"]
         B0["📈 Blender-Style Curve Engine (Auto-Clamped, Vector, Aligned, Free, Flip X/Y, Quantize, RDP Simplify)"]
-        B1["🎬 Universal B-Roll Engine (Media Browser, Ken Burns Motion, 128 BPM Beat Sequencer, Keyframe Baker)"]
-        B2["📊 Data-Driven Infographics (Racing Bar Charts, Dynamic Line Graphs, Odometer Counters)"]
-        B3["🎨 3-Way Color Grading & Film LUTs (Lift/Gamma/Gain Wheels, Kodak 2383/Fuji 3513, 3D .cube LUT Generator)"]
-        B4["🌌 GPU Particle Storm & Vortex Engine (Sparks, Falling Snow, Confetti, Smoke Plumes, 60 FPS Canvas)"]
-        B5["🪄 Smart Auto-Roto & Local Matte (Point-and-Click Vector Masks, Optical Flow Bounding Box Tracker)"]
-        B6["🗺️ 3D Spatial Matchmove & Corner-Pin (4-Point Planar Homography Matrix, Screen Replacement)"]
-        B7["🎙️ Speech-to-Motion Captions (Word-Level Timing Sequence, Karaoke Highlights, Pop Keyframes)"]
+        B1["🎙️ Speech-to-Motion Captions (SRT/VTT/JSON Parser, 47 Trendy Presets, Semantic Auto-Emojis 💰🔥🚀)"]
+        B2["🎬 Universal B-Roll Engine (Media Browser, Ken Burns Motion, 128 BPM Beat Sequencer, Keyframe Baker)"]
+        B3["📊 Data-Driven Infographics (Racing Bar Charts, Dynamic Line Graphs, Odometer Counters)"]
+        B4["🎨 3-Way Color Grading & Film LUTs (Lift/Gamma/Gain Wheels, Kodak 2383/Fuji 3513, 3D .cube LUT Generator)"]
+        B5["🌌 GPU Particle Storm & Vortex Engine (Sparks, Falling Snow, Confetti, Smoke Plumes, 60 FPS Canvas)"]
+        B6["🪄 Smart Auto-Roto & Local Matte (Point-and-Click Vector Masks, Optical Flow Bounding Box Tracker)"]
+        B7["🗺️ 3D Spatial Matchmove & Corner-Pin (4-Point Planar Homography Matrix, Screen Replacement)"]
         B8["📱 Viral Social Auto-Reframe (16:9 to 9:16 Crop Box Math, Subject Auto-Centering Pan Tracker)"]
         B9["⚡ Preset Marketplace & Local Vault (.motionpkg Bundle Serializer/Deserializer, 1-Click Installer)"]
         B10["🔤 Extended Kinetic Typography & UI (Liquid Chrome, Hormozi Captions, MrBeast Comic, Dynamic Island, Neumorphism)"]
@@ -101,10 +101,23 @@ flowchart TD
 
 ---
 
+## 🎙️ Speech Captions & 47 Trendy Presets Catalog
+
+| Category | Presets Included |
+| :--- | :--- |
+| **Creator Viral** | **Alex Hormozi Yellow Pop**, **MrBeast Comic Tilt**, **TikTok Bouncy Karaoke**, **Ali Abdaal Clean Sans**, **Ryan Trahan Caps**, **Graham Stephan Finance Cash**, **Devon Rodriguez Marker**. |
+| **Cinematic & Luxury** | **Iman Gadzhi Luxury Serif**, **Golden Trophy Foil**, **Velvet Purple Sheen**, **Sunset Gradient Ribbon**. |
+| **Cyberpunk & Tech** | **Matrix Terminal Rain**, **Synthwave Neon Arc**, **RGB Chromatic Glitch**, **Sci-Fi HUD Reticle**, **Laser Engrave Burn**, **Split-Flap Airport Flip**, **Electric Arc Surge**, **Cosmic Starlight**. |
+| **3D & Shaders** | **Liquid Molten Chrome**, **Origami 3D Paper Fold**, **Glassmorphic Frosted Capsule**, **Neumorphic Soft Emboss**, **Claymorphic 3D Pastel Pill**, **Burning Ember Fire**, **3D Isometric Extrusion**, **Sine Wave Undulation**, **Sub-Glyph Bouncing Dots**. |
+| **Minimalist & Doc** | **Documentary Subtitle Rule**, **Classic Typewriter with Blink**, **Chalkboard Slate Sketch**, **Swiss International Typographic**, **Blur-to-Focus Snap**, **Topographic Elevation Contour**, **Word Stagger Cascade**, **Highlighter Pen Swatch**, **Staccato Rhythm Jitter**, **Heavy Impact Thud**. |
+| **Retro & Arcade** | **Retro 8-Bit Pixel Arcade**, **Vaporwave Pastel Sunset**, **Neo-Brutalist Solid Shadow**, **Comic Book POW Bubble**, **Y2K Glossy Chrome Bubble**, **Rotational Card Swivel**, **Floating Zero-G Drift**. |
+
+---
+
 ## 🚀 Universal Host Bridge & Interchange Workflow
 
 ```
 [🎬 Motion Graph] [🎞️ Universal Timeline] [🦾 Constraints] [🎬 B-Roll] [📊 Infographics] [🎨 Color & LUTs] [🌌 Particle Storm] [🪄 Smart Roto] [🗺️ 3D Matchmove] [🎙️ Speech Captions] [📱 Social Reframe] [⚡ Marketplace] ... [⚡ Export ▾]
 ```
 
-All 500 capabilities operate **100% locally with zero cloud subscriptions, zero third-party API fees**, and complete cross-application interchangeability.
+All 500+ capabilities operate **100% locally with zero cloud subscriptions, zero third-party API fees**, and complete cross-application interchangeability.
