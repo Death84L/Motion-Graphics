@@ -1,15 +1,33 @@
 import fs from 'fs';
 import path from 'path';
 
-const src = path.resolve('manifest.json');
-const dest = path.resolve('dist', 'manifest.json');
+// 1. Format and copy manifest.json into dist/
+const rootManifestPath = path.resolve('manifest.json');
+const distManifestPath = path.resolve('dist', 'manifest.json');
 
-if (fs.existsSync(src)) {
-  const content = JSON.parse(fs.readFileSync(src, 'utf-8'));
-  content.main = 'index.html';
-  if (content.entrypoints && content.entrypoints[0]) {
-    content.entrypoints[0].main = 'index.html';
-  }
-  fs.writeFileSync(dest, JSON.stringify(content, null, 2), 'utf-8');
-  console.log('✓ Successfully copied and formatted dist/manifest.json for Adobe Premiere Pro UXP!');
+if (fs.existsSync(rootManifestPath)) {
+  const content = JSON.parse(fs.readFileSync(rootManifestPath, 'utf-8'));
+  
+  // In dist/, main is index.html directly
+  const distContent = {
+    ...content,
+    main: 'index.html',
+    entrypoints: content.entrypoints?.map((ep) => ({
+      ...ep,
+      main: 'index.html',
+    })) || [{ type: 'panel', id: 'motionStudioPanel', name: 'Motion Studio', main: 'index.html' }],
+  };
+
+  fs.writeFileSync(distManifestPath, JSON.stringify(distContent, null, 2), 'utf-8');
+  console.log('✓ Successfully generated dist/manifest.json for Adobe Premiere Pro UXP!');
+}
+
+// 2. Post-process dist/index.html to remove 'crossorigin' attribute for UXP compatibility
+const distHtmlPath = path.resolve('dist', 'index.html');
+if (fs.existsSync(distHtmlPath)) {
+  let html = fs.readFileSync(distHtmlPath, 'utf-8');
+  // Remove crossorigin attribute which can cause local file CORS blocks in UXP WebView
+  html = html.replace(/\scrossorigin(="[^"]*")?/g, '');
+  fs.writeFileSync(distHtmlPath, html, 'utf-8');
+  console.log('✓ Cleaned crossorigin attributes in dist/index.html for UXP WebView compatibility!');
 }

@@ -11,37 +11,67 @@ export interface RecoveryJournalEntry {
 const RECOVERY_STORAGE_KEY = 'motion_studio_crash_journal_v1';
 const CRASH_SENTINEL_KEY = 'motion_studio_active_session_flag';
 
+function safeGetStorage(type: 'local' | 'session'): Storage | null {
+  try {
+    if (typeof window === 'undefined') return null;
+    if (type === 'session' && typeof window.sessionStorage !== 'undefined') {
+      return window.sessionStorage;
+    }
+    if (type === 'local' && typeof window.localStorage !== 'undefined') {
+      return window.localStorage;
+    }
+  } catch (e) {
+    // Storage access restricted in UXP or sandbox
+  }
+  return null;
+}
+
 export class CrashRecoveryEngine {
   /**
    * Initializes the session watchdog to detect unplanned terminations.
    */
   static initWatchdog(): void {
-    if (typeof window === 'undefined') return;
-    // Set sentinel flag indicating an active running session
-    sessionStorage.setItem(CRASH_SENTINEL_KEY, 'active');
+    try {
+      const session = safeGetStorage('session');
+      if (session) {
+        session.setItem(CRASH_SENTINEL_KEY, 'active');
+      }
 
-    window.addEventListener('beforeunload', () => {
-      // Clean intentional shutdown
-      sessionStorage.removeItem(CRASH_SENTINEL_KEY);
-    });
+      if (typeof window !== 'undefined' && window.addEventListener) {
+        window.addEventListener('beforeunload', () => {
+          try {
+            const s = safeGetStorage('session');
+            if (s) s.removeItem(CRASH_SENTINEL_KEY);
+          } catch (e) {}
+        });
+      }
+    } catch (err) {
+      // UXP resilience
+    }
   }
 
   /**
-   * Checks if the previous session terminated abnormally (e.g. browser crash or force quit).
+   * Checks if the previous session terminated abnormally.
    */
   static hasRecoverableCrash(): boolean {
-    if (typeof window === 'undefined') return false;
-    const previousActive = localStorage.getItem(CRASH_SENTINEL_KEY);
-    const hasJournal = localStorage.getItem(RECOVERY_STORAGE_KEY) !== null;
-    return Boolean(previousActive && hasJournal);
+    try {
+      const local = safeGetStorage('local');
+      if (!local) return false;
+      const previousActive = local.getItem(CRASH_SENTINEL_KEY);
+      const hasJournal = local.getItem(RECOVERY_STORAGE_KEY) !== null;
+      return Boolean(previousActive && hasJournal);
+    } catch (e) {
+      return false;
+    }
   }
 
   /**
    * Records an atomic journaled recovery snapshot.
    */
   static recordJournalSnapshot(project: MotionStudioProjectFile): void {
-    if (typeof window === 'undefined') return;
     try {
+      const local = safeGetStorage('local');
+      if (!local) return;
       const serialized = ProjectEngine.serialize(project);
       const entry: RecoveryJournalEntry = {
         timestamp: Date.now(),
@@ -49,8 +79,8 @@ export class CrashRecoveryEngine {
         checksum: `chk_${serialized.length}_${Date.now()}`,
         isCrashFlag: true,
       };
-      localStorage.setItem(RECOVERY_STORAGE_KEY, JSON.stringify(entry));
-      localStorage.setItem(CRASH_SENTINEL_KEY, 'running');
+      local.setItem(RECOVERY_STORAGE_KEY, JSON.stringify(entry));
+      local.setItem(CRASH_SENTINEL_KEY, 'running');
     } catch (err) {
       // Storage quota resilience
     }
@@ -60,22 +90,27 @@ export class CrashRecoveryEngine {
    * Retrieves the last valid recovery snapshot.
    */
   static getLastRecoverySnapshot(): RecoveryJournalEntry | null {
-    if (typeof window === 'undefined') return null;
     try {
-      const raw = localStorage.getItem(RECOVERY_STORAGE_KEY);
+      const local = safeGetStorage('local');
+      if (!local) return null;
+      const raw = local.getItem(RECOVERY_STORAGE_KEY);
       if (!raw) return null;
-      return JSON.parse(raw);
+      return JSON.parse(raw) as RecoveryJournalEntry;
     } catch (e) {
       return null;
     }
   }
 
   /**
-   * Clears the recovery journal after successful project restoration.
+   * Clears the recovery journal after clean restoration or dismissal.
    */
   static clearRecoveryJournal(): void {
-    if (typeof window === 'undefined') return;
-    localStorage.removeItem(RECOVERY_STORAGE_KEY);
-    localStorage.removeItem(CRASH_SENTINEL_KEY);
+    try {
+      const local = safeGetStorage('local');
+      if (local) {
+        local.removeItem(RECOVERY_STORAGE_KEY);
+        local.removeItem(CRASH_SENTINEL_KEY);
+      }
+    } catch (e) {}
   }
 }
