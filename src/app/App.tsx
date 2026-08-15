@@ -1762,10 +1762,10 @@ export default function App() {
         />
       )}
 
-      {/* 07: INTERACTIVE PHYSICS SANDBOX */}
+      {/* 07: INTERACTIVE PHYSICS WORLD & SIMULATION SANDBOX */}
       {suiteView === 'physics-sandbox' && (
         <PhysicsSandboxView
-          onApplyPhysicsKeyframes={(physicsKeys) => {
+          onBakeKeyframesToEditor={(physicsKeys) => {
             handleKeyframesChange(physicsKeys);
             setSuiteView('editor');
           }}
