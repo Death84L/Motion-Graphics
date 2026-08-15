@@ -15,6 +15,7 @@ import {
   AudioMotionPreset,
 } from '../../../core/audio/audioModulationGraph';
 import { AudioKeyframeBaker } from '../../../core/audio/audioKeyframeBaker';
+import { webAudioPlayer } from '../../../core/audio/webAudioPlayer';
 import { KeyframePoint } from '../../graph-editor/types';
 
 interface AudioReactiveStudioViewProps {
@@ -23,10 +24,16 @@ interface AudioReactiveStudioViewProps {
 
 export function AudioReactiveStudioView({ onBakeKeyframesToEditor }: AudioReactiveStudioViewProps) {
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
+  const [isSoundMuted, setIsSoundMuted] = useState<boolean>(false);
+  const [volume, setVolume] = useState<number>(0.4);
   const [currentFrameIndex, setCurrentFrameIndex] = useState<number>(0);
   const [selectedPreset, setSelectedPreset] = useState<AudioMotionPreset>(SAMPLE_AUDIO_MOTION_PRESETS[0]);
   const [bindings, setBindings] = useState<AudioModulationBinding[]>(SAMPLE_AUDIO_MOTION_PRESETS[0].bindings);
   const [isBaked, setIsBaked] = useState<boolean>(false);
+  const [audioSource, setAudioSource] = useState<'synth-edm' | 'custom-file' | 'mic'>('synth-edm');
+  const [customFileName, setCustomFileName] = useState<string>('');
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Generate 4-second audio simulation frames (240 frames at 60fps)
   const spectralFrames: SpectralAnalysisFrame[] = useMemo(() => {
@@ -37,14 +44,31 @@ export function AudioReactiveStudioView({ onBakeKeyframesToEditor }: AudioReacti
     return MusicIntelligenceEngine.analyzeMusicStructure(spectralFrames, 60);
   }, [spectralFrames]);
 
+  // Audio Sound Playback Synchronization
+  useEffect(() => {
+    webAudioPlayer.setSoundEnabled(!isSoundMuted);
+    webAudioPlayer.setVolume(volume);
+  }, [isSoundMuted, volume]);
+
   // Real-time Playback Loop
   useEffect(() => {
     if (!isPlaying) return;
     const interval = setInterval(() => {
-      setCurrentFrameIndex((prev) => (prev + 1) % spectralFrames.length);
+      setCurrentFrameIndex((prev) => {
+        const next = (prev + 1) % spectralFrames.length;
+        const frame = spectralFrames[next];
+
+        // Trigger real WebAudio Sound on beats
+        if (frame?.isBeat && !isSoundMuted && audioSource === 'synth-edm') {
+          const isDownbeat = (next % Math.round((60 / 128) * 60 * 4)) < 2;
+          webAudioPlayer.playBeatPulse(isDownbeat);
+        }
+
+        return next;
+      });
     }, 1000 / 60);
     return () => clearInterval(interval);
-  }, [isPlaying, spectralFrames]);
+  }, [isPlaying, isSoundMuted, audioSource, spectralFrames]);
 
   const activeFrame = spectralFrames[currentFrameIndex] || spectralFrames[0];
 
@@ -52,6 +76,31 @@ export function AudioReactiveStudioView({ onBakeKeyframesToEditor }: AudioReacti
   const motionOutputs = useMemo(() => {
     return AudioModulationGraphEngine.evaluateModulation(activeFrame, bindings);
   }, [activeFrame, bindings]);
+
+  // Handle Custom File Upload
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setCustomFileName(file.name);
+    setAudioSource('custom-file');
+    const success = await webAudioPlayer.loadCustomAudioFile(file);
+    if (success && !isSoundMuted) {
+      webAudioPlayer.playCustomAudio();
+    }
+  };
+
+  // Handle Microphone Toggle
+  const handleToggleMic = async () => {
+    if (audioSource === 'mic') {
+      webAudioPlayer.stopMicrophone();
+      setAudioSource('synth-edm');
+    } else {
+      const success = await webAudioPlayer.startMicrophone();
+      if (success) {
+        setAudioSource('mic');
+      }
+    }
+  };
 
   // Handle Bake Keyframes to Graph Editor
   const handleBakeKeyframes = () => {
@@ -78,7 +127,7 @@ export function AudioReactiveStudioView({ onBakeKeyframesToEditor }: AudioReacti
         color: '#f8fafc',
       }}
     >
-      {/* 1. LEFT COLUMN: 8-BAND EQUALIZER & MUSIC INTELLIGENCE */}
+      {/* 1. LEFT COLUMN: 8-BAND EQUALIZER & AUDIO SOURCE */}
       <div
         style={{
           background: '#090e1a',
@@ -101,26 +150,120 @@ export function AudioReactiveStudioView({ onBakeKeyframesToEditor }: AudioReacti
           {/* Beat Beacon Indicator */}
           <div
             style={{
-              width: 10,
-              height: 10,
+              width: 12,
+              height: 12,
               borderRadius: '50%',
               background: isBeatActive ? '#ec4899' : '#1e293b',
-              boxShadow: isBeatActive ? '0 0 12px #ec4899' : 'none',
+              boxShadow: isBeatActive ? '0 0 14px #ec4899' : 'none',
               transition: 'background 0.05s ease',
             }}
-            title="Downbeat Trigger Indicator"
+            title="Beat Trigger Indicator"
           />
         </div>
 
-        {/* Music Intelligence Badges */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
-          <div style={{ background: '#11182c', padding: '6px 8px', borderRadius: 6 }}>
-            <div style={{ fontSize: 8, color: '#64748b', fontWeight: 700 }}>TEMPO / BPM</div>
-            <div style={{ fontSize: 12, fontWeight: 800, color: '#38bdf8' }}>{musicInfo.bpm} BPM</div>
+        {/* Sound Enable & Volume Control */}
+        <div style={{ background: '#11182c', border: '1px solid #1e293b', borderRadius: 8, padding: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <button
+              onClick={() => {
+                const nextMute = !isSoundMuted;
+                setIsSoundMuted(nextMute);
+                webAudioPlayer.setSoundEnabled(!nextMute);
+              }}
+              style={{
+                background: !isSoundMuted ? '#10b981' : '#334155',
+                color: '#ffffff',
+                border: 'none',
+                padding: '4px 10px',
+                borderRadius: 4,
+                fontSize: 10,
+                fontWeight: 800,
+                cursor: 'pointer',
+              }}
+            >
+              {!isSoundMuted ? '🔊 Sound: ON' : '🔇 Sound: MUTED'}
+            </button>
+            <span style={{ fontSize: 10, color: '#94a3b8' }}>Vol: {Math.round(volume * 100)}%</span>
           </div>
-          <div style={{ background: '#11182c', padding: '6px 8px', borderRadius: 6 }}>
-            <div style={{ fontSize: 8, color: '#64748b', fontWeight: 700 }}>CONFIDENCE</div>
-            <div style={{ fontSize: 12, fontWeight: 800, color: '#10b981' }}>{(musicInfo.confidence * 100).toFixed(0)}%</div>
+
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.05"
+            value={volume}
+            onChange={(e) => setVolume(parseFloat(e.target.value))}
+            style={{ width: '100%', accentColor: '#10b981' }}
+          />
+        </div>
+
+        {/* Audio Source Options */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <span style={{ fontSize: 9, fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>
+            Audio Source
+          </span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <button
+              onClick={() => {
+                webAudioPlayer.stopCustomAudio();
+                webAudioPlayer.stopMicrophone();
+                setAudioSource('synth-edm');
+              }}
+              style={{
+                background: audioSource === 'synth-edm' ? 'rgba(56, 189, 248, 0.15)' : '#11182c',
+                border: `1px solid ${audioSource === 'synth-edm' ? '#38bdf8' : '#1e293b'}`,
+                color: audioSource === 'synth-edm' ? '#38bdf8' : '#cbd5e1',
+                borderRadius: 6,
+                padding: '6px 8px',
+                fontSize: 10,
+                fontWeight: 700,
+                textAlign: 'left',
+                cursor: 'pointer',
+              }}
+            >
+              🎹 128 BPM Synth Beat (Built-in Audio)
+            </button>
+
+            <input
+              type="file"
+              ref={fileInputRef}
+              accept="audio/mp3,audio/wav,audio/aac,audio/flac,audio/ogg"
+              onChange={handleFileUpload}
+              style={{ display: 'none' }}
+            />
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              style={{
+                background: audioSource === 'custom-file' ? 'rgba(236, 72, 153, 0.15)' : '#11182c',
+                border: `1px solid ${audioSource === 'custom-file' ? '#ec4899' : '#1e293b'}`,
+                color: audioSource === 'custom-file' ? '#ec4899' : '#cbd5e1',
+                borderRadius: 6,
+                padding: '6px 8px',
+                fontSize: 10,
+                fontWeight: 700,
+                textAlign: 'left',
+                cursor: 'pointer',
+              }}
+            >
+              📁 {customFileName ? `File: ${customFileName.slice(0, 18)}...` : 'Upload MP3 / WAV File'}
+            </button>
+
+            <button
+              onClick={handleToggleMic}
+              style={{
+                background: audioSource === 'mic' ? 'rgba(245, 158, 11, 0.15)' : '#11182c',
+                border: `1px solid ${audioSource === 'mic' ? '#f59e0b' : '#1e293b'}`,
+                color: audioSource === 'mic' ? '#f59e0b' : '#cbd5e1',
+                borderRadius: 6,
+                padding: '6px 8px',
+                fontSize: 10,
+                fontWeight: 700,
+                textAlign: 'left',
+                cursor: 'pointer',
+              }}
+            >
+              🎤 {audioSource === 'mic' ? 'Microphone Active (Listening)' : 'Live Microphone Input'}
+            </button>
           </div>
         </div>
 
@@ -164,37 +307,6 @@ export function AudioReactiveStudioView({ onBakeKeyframesToEditor }: AudioReacti
             );
           })}
         </div>
-
-        {/* Preset Cards */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginTop: 4 }}>
-          <span style={{ fontSize: 9, fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>
-            Audio Motion Presets
-          </span>
-          {SAMPLE_AUDIO_MOTION_PRESETS.map((preset) => {
-            const isSelected = selectedPreset.id === preset.id;
-            return (
-              <div
-                key={preset.id}
-                onClick={() => {
-                  setSelectedPreset(preset);
-                  setBindings(preset.bindings);
-                }}
-                style={{
-                  background: isSelected ? 'rgba(56, 189, 248, 0.15)' : '#11182c',
-                  border: `1px solid ${isSelected ? '#38bdf8' : '#1e293b'}`,
-                  borderRadius: 6,
-                  padding: 8,
-                  cursor: 'pointer',
-                }}
-              >
-                <div style={{ fontSize: 10, fontWeight: 700, color: isSelected ? '#38bdf8' : '#f8fafc' }}>
-                  {preset.name}
-                </div>
-                <div style={{ fontSize: 8, color: '#94a3b8', marginTop: 2 }}>{preset.description}</div>
-              </div>
-            );
-          })}
-        </div>
       </div>
 
       {/* 2. CENTER COLUMN: LIVE AUDIO-REACTIVE VIEWPORT STAGE */}
@@ -227,7 +339,7 @@ export function AudioReactiveStudioView({ onBakeKeyframesToEditor }: AudioReacti
               {isPlaying ? '⏸ Pause' : '▶ Play Audio'}
             </button>
             <span style={{ fontSize: 10, color: '#94a3b8', fontFamily: 'monospace' }}>
-              F: {currentFrameIndex} / {spectralFrames.length} ({(currentFrameIndex / 60).toFixed(2)}s)
+              {musicInfo.bpm} BPM • F: {currentFrameIndex} / {spectralFrames.length}
             </span>
           </div>
 
@@ -256,7 +368,7 @@ export function AudioReactiveStudioView({ onBakeKeyframesToEditor }: AudioReacti
             background: '#040711',
             border: '1px solid #1e293b',
             borderRadius: 12,
-            minHeight: '380px',
+            minHeight: '360px',
             position: 'relative',
             display: 'flex',
             alignItems: 'center',
@@ -308,9 +420,18 @@ export function AudioReactiveStudioView({ onBakeKeyframesToEditor }: AudioReacti
             </div>
           </div>
         </div>
+
+        {/* Quick Instructions Step-by-Step Box */}
+        <div style={{ background: '#090e1a', border: '1px solid #1e293b', borderRadius: 8, padding: 10, fontSize: 10, color: '#94a3b8', display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <div style={{ fontWeight: 800, color: '#f8fafc' }}>💡 How to Use Audio-Reactive Motion:</div>
+          <div>1. Click <b>"🔊 Sound: ON"</b> in the left panel (browsers require user click to play sound).</div>
+          <div>2. Use the built-in <b>128 BPM Synth Beat</b>, or upload your own <b>MP3/WAV</b> song file.</div>
+          <div>3. Watch the visualizer pulse to the bass, kick, and snare in real time.</div>
+          <div>4. Click <b>"🔥 Bake to Graph Editor & Timeline"</b> to export real keyframes to Premiere Pro / After Effects / Resolve!</div>
+        </div>
       </div>
 
-      {/* 3. RIGHT COLUMN: MODULATION GRAPH BINDINGS & DRIVERS */}
+      {/* 3. RIGHT COLUMN: MODULATION GRAPH BINDINGS & PRESETS */}
       <div
         style={{
           background: '#090e1a',
@@ -324,26 +445,6 @@ export function AudioReactiveStudioView({ onBakeKeyframesToEditor }: AudioReacti
       >
         <div style={{ fontSize: 12, fontWeight: 800, color: '#f8fafc' }}>
           Audio ➔ Motion Modulation Graph
-        </div>
-
-        {/* Live Output Signal Inspector */}
-        <div style={{ background: '#11182c', padding: 10, borderRadius: 8, display: 'flex', flexDirection: 'column', gap: 6 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10 }}>
-            <span style={{ color: '#94a3b8' }}>Scale Output:</span>
-            <span style={{ color: '#ec4899', fontWeight: 800 }}>{motionOutputs['scale']}%</span>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10 }}>
-            <span style={{ color: '#94a3b8' }}>Camera Shake:</span>
-            <span style={{ color: '#38bdf8', fontWeight: 800 }}>{motionOutputs['camera-shake']}px</span>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10 }}>
-            <span style={{ color: '#94a3b8' }}>Glow Aura:</span>
-            <span style={{ color: '#10b981', fontWeight: 800 }}>{motionOutputs['glow-intensity']}px</span>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10 }}>
-            <span style={{ color: '#94a3b8' }}>Rotation:</span>
-            <span style={{ color: '#f59e0b', fontWeight: 800 }}>{motionOutputs['rotation']}°</span>
-          </div>
         </div>
 
         {/* Active Bindings List */}
@@ -373,6 +474,37 @@ export function AudioReactiveStudioView({ onBakeKeyframesToEditor }: AudioReacti
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Preset Cards */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginTop: 4 }}>
+          <span style={{ fontSize: 9, fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>
+            Audio Motion Presets
+          </span>
+          {SAMPLE_AUDIO_MOTION_PRESETS.map((preset) => {
+            const isSelected = selectedPreset.id === preset.id;
+            return (
+              <div
+                key={preset.id}
+                onClick={() => {
+                  setSelectedPreset(preset);
+                  setBindings(preset.bindings);
+                }}
+                style={{
+                  background: isSelected ? 'rgba(56, 189, 248, 0.15)' : '#11182c',
+                  border: `1px solid ${isSelected ? '#38bdf8' : '#1e293b'}`,
+                  borderRadius: 6,
+                  padding: 8,
+                  cursor: 'pointer',
+                }}
+              >
+                <div style={{ fontSize: 10, fontWeight: 700, color: isSelected ? '#38bdf8' : '#f8fafc' }}>
+                  {preset.name}
+                </div>
+                <div style={{ fontSize: 8, color: '#94a3b8', marginTop: 2 }}>{preset.description}</div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
