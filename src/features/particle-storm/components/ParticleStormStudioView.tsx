@@ -9,6 +9,12 @@ import {
   ForceField3D,
   ParticleSpringLink,
 } from '../../../core/particles/universalParticleStormEngine';
+import {
+  ExtendedParticleEcosystem,
+  AdvancedEmitterType,
+  BoidAgent3D,
+  InterSystemModulationOutput,
+} from '../../../core/particles/extendedParticleEcosystem';
 import { KeyframePoint } from '../../graph-editor/types';
 
 interface ParticleStormStudioViewProps {
@@ -38,10 +44,18 @@ export function ParticleStormStudioView({ onBakeKeyframesToEditor }: ParticleSto
   const [throwBurstCount, setThrowBurstCount] = useState<number>(45);
   const [isAiming, setIsAiming] = useState<boolean>(false);
 
+  // 🧬 Advanced Emitter Geometry Mode
+  const [advancedEmitter, setAdvancedEmitter] = useState<AdvancedEmitterType | 'standard'>('standard');
+
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const customImgRef = useRef<HTMLImageElement | null>(null);
   const particleIdCounter = useRef<number>(1);
+
+  // Compute Live Inter-System Modulations (Driven by Particle Data)
+  const modulationOutput: InterSystemModulationOutput = useMemo(() => {
+    return ExtendedParticleEcosystem.computeInterSystemModulations(particles, collisionCount, 0.75);
+  }, [particles, collisionCount]);
 
   // Ballistic Trajectory Arc
   const trajectoryArc = useMemo(() => {
@@ -89,6 +103,60 @@ export function ParticleStormStudioView({ onBakeKeyframesToEditor }: ParticleSto
     particleIdCounter.current += throwBurstCount;
 
     setParticles((prev) => [...prev.slice(-config.maxParticles), ...newThrowParticles]);
+  };
+
+  // 🧬 Spawn Advanced Emitters (DNA Helix, Fibonacci Sphere)
+  const handleSpawnAdvanced = (type: AdvancedEmitterType) => {
+    setAdvancedEmitter(type);
+    if (type === 'spiral-dna-helix') {
+      const { strandA, strandB } = ExtendedParticleEcosystem.generateDnaHelixPositions(40, 50, 220, 2.5);
+      const dnaParticles: Particle3D[] = [];
+
+      strandA.concat(strandB).forEach((pos, idx) => {
+        dnaParticles.push({
+          id: particleIdCounter.current++,
+          x: 240 + pos.x,
+          y: 160 + pos.y,
+          z: pos.z,
+          vx: (Math.random() - 0.5) * 0.5,
+          vy: (Math.random() - 0.5) * 0.5,
+          vz: (Math.random() - 0.5) * 0.5,
+          mass: 1.0,
+          size: 4,
+          baseSize: 4,
+          color: idx < 40 ? '#38bdf8' : '#ec4899',
+          alpha: 1.0,
+          life: 300,
+          maxLife: 300,
+          rotZ: 0,
+          vrotZ: 2.0,
+          clusterId: idx < 40 ? 0 : 1,
+        });
+      });
+      setParticles(dnaParticles);
+    } else if (type === 'fibonacci-sphere') {
+      const spherePoints = ExtendedParticleEcosystem.generateFibonacciSpherePoints(80, 85);
+      const sphereParticles: Particle3D[] = spherePoints.map((pt, idx) => ({
+        id: particleIdCounter.current++,
+        x: 240 + pt.x,
+        y: 160 + pt.y,
+        z: pt.z,
+        vx: (Math.random() - 0.5) * 0.8,
+        vy: (Math.random() - 0.5) * 0.8,
+        vz: (Math.random() - 0.5) * 0.8,
+        mass: 1.0,
+        size: 3.5,
+        baseSize: 3.5,
+        color: '#f59e0b',
+        alpha: 1.0,
+        life: 300,
+        maxLife: 300,
+        rotZ: 0,
+        vrotZ: 1.5,
+        clusterId: 0,
+      }));
+      setParticles(sphereParticles);
+    }
   };
 
   // 60FPS Simulation Loop
@@ -274,7 +342,7 @@ export function ParticleStormStudioView({ onBakeKeyframesToEditor }: ParticleSto
         color: '#f8fafc',
       }}
     >
-      {/* 1. LEFT COLUMN: SOURCE POINT, SPRITE IMAGE & EMITTERS */}
+      {/* 1. LEFT COLUMN: SOURCE POINT, DNA HELIX & ADVANCED EMITTERS */}
       <div
         style={{
           background: '#090e1a',
@@ -289,7 +357,7 @@ export function ParticleStormStudioView({ onBakeKeyframesToEditor }: ParticleSto
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <span style={{ color: '#38bdf8', fontSize: 16 }}>🎯</span>
           <span style={{ fontSize: 13, fontWeight: 800, color: '#f8fafc' }}>
-            Source Point & Impulse Throw
+            3D Particle Storm & 150+ Features
           </span>
         </div>
 
@@ -314,6 +382,45 @@ export function ParticleStormStudioView({ onBakeKeyframesToEditor }: ParticleSto
         >
           🚀 Launch Impulse Throw ({throwBurstCount} Particles)
         </button>
+
+        {/* 🧬 Advanced Geometry Presets */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <span style={{ fontSize: 9, color: '#94a3b8', textTransform: 'uppercase' }}>
+            3D GEOMETRY GENERATORS:
+          </span>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
+            <button
+              onClick={() => handleSpawnAdvanced('spiral-dna-helix')}
+              style={{
+                background: advancedEmitter === 'spiral-dna-helix' ? '#38bdf8' : '#11182c',
+                color: advancedEmitter === 'spiral-dna-helix' ? '#040711' : '#f8fafc',
+                border: 'none',
+                borderRadius: 4,
+                padding: '6px',
+                fontSize: 9,
+                fontWeight: 700,
+                cursor: 'pointer',
+              }}
+            >
+              🧬 DNA Double Helix
+            </button>
+            <button
+              onClick={() => handleSpawnAdvanced('fibonacci-sphere')}
+              style={{
+                background: advancedEmitter === 'fibonacci-sphere' ? '#38bdf8' : '#11182c',
+                color: advancedEmitter === 'fibonacci-sphere' ? '#040711' : '#f8fafc',
+                border: 'none',
+                borderRadius: 4,
+                padding: '6px',
+                fontSize: 9,
+                fontWeight: 700,
+                cursor: 'pointer',
+              }}
+            >
+              🌐 Fibonacci Sphere
+            </button>
+          </div>
+        </div>
 
         {/* Upload Custom Sprite Image */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -379,22 +486,6 @@ export function ParticleStormStudioView({ onBakeKeyframesToEditor }: ParticleSto
                 {spr.label}
               </button>
             ))}
-          </div>
-        </div>
-
-        {/* Source Point Coordinates */}
-        <div style={{ background: '#11182c', border: '1px solid #1e293b', borderRadius: 8, padding: 10, display: 'flex', flexDirection: 'column', gap: 4, fontSize: 9 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ color: '#94a3b8' }}>Source Origin:</span>
-            <span style={{ color: '#38bdf8', fontWeight: 800 }}>X: {sourcePoint.x} | Y: {sourcePoint.y}</span>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ color: '#94a3b8' }}>Velocity Vector:</span>
-            <span style={{ color: '#f59e0b', fontWeight: 800 }}>vx: {throwVelocity.vx} | vy: {throwVelocity.vy}</span>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ color: '#94a3b8' }}>Active Particles:</span>
-            <span style={{ color: '#10b981', fontWeight: 800 }}>{particles.length}</span>
           </div>
         </div>
       </div>
@@ -476,7 +567,7 @@ export function ParticleStormStudioView({ onBakeKeyframesToEditor }: ParticleSto
         </div>
       </div>
 
-      {/* 3. RIGHT COLUMN: THROW CONTROLS & PHYSICS INSPECTOR */}
+      {/* 3. RIGHT COLUMN: INTER-SYSTEM MODULATION & TELEMETRY */}
       <div
         style={{
           background: '#090e1a',
@@ -489,7 +580,27 @@ export function ParticleStormStudioView({ onBakeKeyframesToEditor }: ParticleSto
         }}
       >
         <div style={{ fontSize: 12, fontWeight: 800, color: '#f8fafc' }}>
-          Throw & Physics Inspector
+          Inter-System Modulation HUD
+        </div>
+
+        {/* Live Inter-System Drivers */}
+        <div style={{ background: '#11182c', border: '1px solid #1e293b', borderRadius: 8, padding: 10, display: 'flex', flexDirection: 'column', gap: 6, fontSize: 9 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <span style={{ color: '#94a3b8' }}>Camera Shake Trauma:</span>
+            <span style={{ color: '#ef4444', fontWeight: 800 }}>{(modulationOutput.cameraShakeTrauma * 100).toFixed(0)}% Trauma</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <span style={{ color: '#94a3b8' }}>Motion Blur Link:</span>
+            <span style={{ color: '#38bdf8', fontWeight: 800 }}>{modulationOutput.motionBlurAmountPx}px Shutter</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <span style={{ color: '#94a3b8' }}>Audio Burst Rate:</span>
+            <span style={{ color: '#10b981', fontWeight: 800 }}>{modulationOutput.audioEmissionMultiplier}×</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <span style={{ color: '#94a3b8' }}>Swarm Centroid:</span>
+            <span style={{ color: '#f59e0b', fontWeight: 800 }}>({modulationOutput.activeClusterCentroid.x}, {modulationOutput.activeClusterCentroid.y})</span>
+          </div>
         </div>
 
         {/* Throw Burst Count */}
@@ -506,22 +617,6 @@ export function ParticleStormStudioView({ onBakeKeyframesToEditor }: ParticleSto
             value={throwBurstCount}
             onChange={(e) => setThrowBurstCount(parseInt(e.target.value))}
             style={{ width: '100%', accentColor: '#f59e0b' }}
-          />
-        </div>
-
-        {/* Spread Angle */}
-        <div style={{ background: '#11182c', border: '1px solid #1e293b', borderRadius: 8, padding: 10, display: 'flex', flexDirection: 'column', gap: 6 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 9 }}>
-            <span style={{ color: '#94a3b8' }}>Throw Spread Angle:</span>
-            <span style={{ color: '#38bdf8', fontWeight: 800 }}>{config.spreadAngleDeg}°</span>
-          </div>
-          <input
-            type="range"
-            min="5"
-            max="90"
-            value={config.spreadAngleDeg}
-            onChange={(e) => setConfig((c) => ({ ...c, spreadAngleDeg: parseInt(e.target.value) }))}
-            style={{ width: '100%', accentColor: '#38bdf8' }}
           />
         </div>
 

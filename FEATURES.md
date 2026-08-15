@@ -19,7 +19,7 @@ flowchart TD
 
     subgraph CoreEngines["2. 🧬 CORE MATHEMATICAL, KINEMATIC & DSP ENGINES (20 DOMAINS)"]
         B0["📈 Blender-Style Curve Engine (Auto-Clamped, Vector, Aligned, Free, Flip X/Y, Quantize, RDP Simplify)"]
-        B1["🌌 3D Particle Storm Engine (250+ Features: 3D Multi-Emitters, Force Fields, Boids, Spring Links)"]
+        B1["🌌 3D Particle Storm Ecosystem (150+ Next-Gen Features: DNA Helix, Fibonacci Spheres, 3D Boids, Dipole Fields)"]
         B2["✨ VFX Shaders & Optics (Anamorphic Lens Flares, Glitch Displace, Lightning Arcs, Curl Noise)"]
         B3["🎙️ Speech-to-Motion Captions (SRT/VTT/JSON Parser, 47 Trendy Presets, Semantic Auto-Emojis 💰🔥🚀)"]
         B4["🎬 Universal B-Roll Engine (Media Browser, Ken Burns Motion, 128 BPM Beat Sequencer, Keyframe Baker)"]
@@ -83,7 +83,7 @@ flowchart TD
 | **02. 🎨 Vector Shapes & Booleans** | Parametric Star/Polygon/Capsule/Heart, path morphing ($0\% \to 100\%$), trim paths, radial/grid repeaters, Greiner-Hormann booleans. |
 | **03. 🔤 Kinetic Typography** | Liquid Molten Chrome, Alex Hormozi captions, MrBeast comic text, Split-flap flip board, Cyberpunk neon, fluid `clamp()` math. |
 | **04. 🦾 Rigging, IK & Characters** | 2-Bone analytic IK with pole vectors, FABRIK multi-joint IK, spline IK, jiggle bone physics, rubber-hose stretch, pose library. |
-| **05. 🧪 Physics & Particle Storm (250+ Features)** | Symplectic Euler solver, 3D point/sphere/box/vortex emitters, force fields (attractors, vortex, curl noise), flocking boids, constellation mesh spring links, floor bounce restitution, particle keyframe baker. |
+| **05. 🧪 Physics & Particle Storm (250+ Features)** | DNA Double-Helix 3D, Fibonacci spherical lattice, Craig Reynolds 3D Boids flocking, Magnetic Dipole vector fields, Slingshot ballistic throws, Proximity constellation springs, Custom PNG sprite rendering, Inter-system modulations (Collision $\to$ Camera Shake, Velocity $\to$ Motion Blur). |
 | **06. ✨ VFX Shaders & Stylization** | Multi-element anamorphic lens flares, chromatic aberration RGB split, CRT scanlines, lightning electrical arcs, frosted glassmorphism, heat wave shimmer. |
 | **07. 🎥 3D Camera & Parallax** | $18\text{mm} \to 200\text{mm}$ perspective camera, DoF bokeh, 2.5D multi-plane parallax, Vertigo dolly zoom, handheld shake generator. |
 | **08. 🎨 Color Science & Film LUTs** | 3-Way color wheels (Lift/Gamma/Gain), Kodak 2383/Fuji 3513 film stock emulation, false color exposure maps, 3D `.cube` LUT exporter. |
