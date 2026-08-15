@@ -109,7 +109,8 @@ npm run build
 
 ---
 
-## 📖 Further Documentation
+## 📖 Complete Documentation & Technical Specifications
 
-- **[FEATURES.md](./FEATURES.md)** — Complete catalog of all features and capabilities.
+- **[MASTER_DOCUMENTATION.md](./MASTER_DOCUMENTATION.md)** — Comprehensive Master Architectural Specification & Feature Reference across all 21 production domains.
+- **[FEATURES.md](./FEATURES.md)** — Master feature matrix and capabilities catalog.
 - **[ARCHITECTURE.md](./ARCHITECTURE.md)** — System topology, sequence diagrams, and directory ownership.
