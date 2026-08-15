@@ -126,7 +126,7 @@ export function SpeechCaptionsStudioView({ onBakeKeyframesToEditor }: SpeechCapt
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <span style={{ color: '#38bdf8', fontSize: 16 }}>🎙️</span>
           <span style={{ fontSize: 13, fontWeight: 800, color: '#f8fafc' }}>
-            Speech Captions & 45+ Styles
+            Speech Captions Studio
           </span>
         </div>
 
@@ -163,7 +163,7 @@ export function SpeechCaptionsStudioView({ onBakeKeyframesToEditor }: SpeechCapt
         {/* Search Presets */}
         <input
           type="text"
-          placeholder="Search 45+ caption styles..."
+          placeholder="Search caption styles..."
           value={searchFilter}
           onChange={(e) => setSearchFilter(e.target.value)}
           style={{
@@ -201,7 +201,7 @@ export function SpeechCaptionsStudioView({ onBakeKeyframesToEditor }: SpeechCapt
         {/* Presets List */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 4 }}>
           <span style={{ fontSize: 8, fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>
-            Trending Styles ({filteredPresets.length} Presets)
+            Trending Styles
           </span>
           {filteredPresets.map((preset) => {
             const isSel = activePreset.id === preset.id;

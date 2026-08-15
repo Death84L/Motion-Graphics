@@ -357,7 +357,7 @@ export function ParticleStormStudioView({ onBakeKeyframesToEditor }: ParticleSto
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <span style={{ color: '#38bdf8', fontSize: 16 }}>🎯</span>
           <span style={{ fontSize: 13, fontWeight: 800, color: '#f8fafc' }}>
-            3D Particle Storm & 150+ Features
+            3D Particle Storm Studio
           </span>
         </div>
 
