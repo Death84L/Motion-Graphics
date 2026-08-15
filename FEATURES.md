@@ -20,18 +20,19 @@ flowchart TD
     subgraph CoreEngines["2. 🧬 CORE MATHEMATICAL, KINEMATIC & DSP ENGINES"]
         B0["📈 Blender-Style Curve Engine (Auto-Clamped, Vector, Aligned, Free, Flip X/Y, Quantize, RDP Simplify)"]
         B1["🎬 Universal B-Roll Engine (Media Browser, Ken Burns Motion, 128 BPM Beat Sequencer, Keyframe Baker)"]
-        B2["📐 Advanced Calculus & Splines (RK4 Integrator, TCB Splines, Curvature Profile, Poisson Disc)"]
-        B3["🧬 Motion DNA Intelligence (10D Similarity, Continuous Morphing, Git-Diff, Auto-Optimizer)"]
-        B4["🎨 Advanced Vector & Typography (Parametric Morphing, Trim Path Write-On, Scramble Cipher, Kinetic Wave)"]
-        B5["🧪 Universal Physics World (Symplectic Euler, Multi-Body Collisions, Springs, Wind, Materials)"]
-        B6["🧠 Procedural Animation Graph (46+ Nodes, Math, Trig, Vectors, 2nd-Order Spring, Perlin Noise)"]
-        B7["🎞️ Universal Multi-Track Timeline (SMPTE Ruler, NLE Ripple/Slip/Roll/Slide, Parenting, Beat Sync)"]
-        B8["🦾 Complete Constraint & Rigging (2-Bone IK, Universal Property Binding, Flexbox Auto-Hug)"]
-        B9["🎵 Audio-Reactive & Foley Synthesizer (8-Band FFT, BPM Tracker, Whoosh/Pop/808 Foley Engine)"]
-        B10["🎯 Responsive Motion Lab (5-Level Adaptive Motion, Safe-Area Protection, CSS/Framer Exporters)"]
-        B11["🎨 Color Science & LUT Studio (ACEScc, 3-Way Wheels, Kodak/Fuji Emulation, 3D .cube Generator)"]
-        B12["✨ Procedural VFX & Shaders (Curl Noise, Chromatic Aberration, CRT Scanlines, Lens Flares)"]
-        B13["🤖 Local AI Procedural Assistant (1-Click Polish, Jitter Cleaner, Contrast Styler, Cohesion Scorer)"]
+        B2["🔤 Extended Kinetic Typography & UI (Liquid Chrome, Hormozi Captions, MrBeast Comic, Dynamic Island, Neumorphism)"]
+        B3["📐 Advanced Calculus & Splines (RK4 Integrator, TCB Splines, Curvature Profile, Poisson Disc)"]
+        B4["🧬 Motion DNA Intelligence (10D Similarity, Continuous Morphing, Git-Diff, Auto-Optimizer)"]
+        B5["🎨 Advanced Vector & Typography (Parametric Morphing, Trim Path Write-On, Scramble Cipher, Kinetic Wave)"]
+        B6["🧪 Universal Physics World (Symplectic Euler, Multi-Body Collisions, Springs, Wind, Materials)"]
+        B7["🧠 Procedural Animation Graph (46+ Nodes, Math, Trig, Vectors, 2nd-Order Spring, Perlin Noise)"]
+        B8["🎞️ Universal Multi-Track Timeline (SMPTE Ruler, NLE Ripple/Slip/Roll/Slide, Parenting, Beat Sync)"]
+        B9["🦾 Complete Constraint & Rigging (2-Bone IK, Universal Property Binding, Flexbox Auto-Hug)"]
+        B10["🎵 Audio-Reactive & Foley Synthesizer (8-Band FFT, BPM Tracker, Whoosh/Pop/808 Foley Engine)"]
+        B11["🎯 Responsive Motion Lab (5-Level Adaptive Motion, Safe-Area Protection, CSS/Framer Exporters)"]
+        B12["🎨 Color Science & LUT Studio (ACEScc, 3-Way Wheels, Kodak/Fuji Emulation, 3D .cube Generator)"]
+        B13["✨ Procedural VFX & Shaders (Curl Noise, Chromatic Aberration, CRT Scanlines, Lens Flares)"]
+        B14["🤖 Local AI Procedural Assistant (1-Click Polish, Jitter Cleaner, Contrast Styler, Cohesion Scorer)"]
     end
 
     subgraph ProductionSuites["3. PRODUCTION DESIGN SUITES"]
@@ -70,14 +71,14 @@ flowchart TD
 
 ## 📋 Comprehensive Feature Catalog & Subsystems
 
-### 🎬 Universal B-Roll Engine & Smart Media Sequencer
+### 🔤 Extended Kinetic Typography & UI Style System (150 Suggestions)
 | Category | What It Does |
 | :--- | :--- |
-| **Media Library & Indexer** | Multi-format browser (Videos, Images, GIFs, Overlays) with categories (*Cinematic, Tech, UI, Nature, Abstract*), tags, ratings, and color labels. |
-| **Ken Burns Dynamic Motion** | Directional pan & zoom (*Zoom In, Zoom Out, Pan Left/Right, Diagonal*) with smooth velocity easing. |
-| **Music Beat-Sync Sequencer** | Auto-sequences B-roll clips synchronized to audio BPM (e.g. cuts every 4 beats = $1.875\text{s}$ at $128\text{ BPM}$). |
-| **Transitions & Speed Ramping** | Dissolves, Whip Pans, Glitch Transitions, Light Leaks, and $0.25\times \to 3.0\times$ speed multipliers. |
-| **1-Click Keyframe Baker** | Bakes Ken Burns trajectories directly into Bézier keyframes for Premiere Pro, After Effects, and DaVinci Resolve! |
+| **Kinetic Typography Physics** | **Liquid Molten Chrome**, **Alex Hormozi Captions**, **MrBeast Comic Stroke**, **Split-Flap Airport Flip**, **Cyberpunk Neon**, **Origami 3D Paper Fold**, **ASCII Terminal**, **Chalkboard**. |
+| **UI Micro-Interactions** | **Dynamic Island Squircle**, **Skeleton Shimmer Waves**, **Elastic Toggle Switch Thumb Stretch**, **3D Card Flip**, **Odometer Slot Roll**, **Magnetic Tabs**. |
+| **Modern UI Shaders** | **Glassmorphism Frosted Glass**, **Neumorphic Soft Extrusion**, **Claymorphism 3D**, **Cyberpunk HUD Reticles**, **Bento Grid Cards**. |
+| **Responsive Tokens & Math** | Fluid `clamp()` typography formula calculator and standardized **8px Grid Spacing Scale tokens**. |
+| **1-Click Keyframe Baker** | Bakes kinetic text and UI interaction trajectories into standard Bézier keyframes for Premiere Pro, AE, and DaVinci Resolve! |
 
 ---
 
