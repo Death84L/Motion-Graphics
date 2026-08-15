@@ -87,6 +87,7 @@ import { MotionClipboardDrawer } from '../features/clipboard/components/MotionCl
 import { UniversalTimelineStudioView } from '../features/universal-timeline/components/UniversalTimelineStudioView';
 import { ConstraintRiggingStudioView } from '../features/constraints-rigging/components/ConstraintRiggingStudioView';
 import { AudioReactiveStudioView } from '../features/audio-reactive/components/AudioReactiveStudioView';
+import { ShapeTypographyStudioView } from '../features/shapes-typography/components/ShapeTypographyStudioView';
 import {
   CompositionLayer,
   DEFAULT_VFX_CONFIG,
@@ -125,6 +126,7 @@ export type MotionStudioSuiteView =
   | 'editor'
   | 'universal-timeline'
   | 'constraints-rigging'
+  | 'shapes-typography'
   | 'audio-reactive'
   | 'velocity-lab'
   | 'motion-matching'
@@ -794,6 +796,7 @@ export default function App() {
             { id: 'editor', label: '🎬 Motion Graph' },
             { id: 'universal-timeline', label: '🎞️ Universal Timeline' },
             { id: 'constraints-rigging', label: '🦾 Constraints & Rigging' },
+            { id: 'shapes-typography', label: '🎨 Vector & Typography' },
             { id: 'audio-reactive', label: '🎵 Audio Reactive' },
             { id: 'batch-processor', label: '🧩 Batch Processor' },
             { id: 'velocity-lab', label: '📈 Velocity Lab' },
@@ -1643,6 +1646,16 @@ export default function App() {
       {/* 02.5: COMPLETE CONSTRAINT & RIGGING SYSTEM */}
       {suiteView === 'constraints-rigging' && (
         <ConstraintRiggingStudioView />
+      )}
+
+      {/* 02.55: ADVANCED VECTOR SHAPES & KINETIC TYPOGRAPHY */}
+      {suiteView === 'shapes-typography' && (
+        <ShapeTypographyStudioView
+          onBakeKeyframesToEditor={(bakedKeys, label) => {
+            handleKeyframesChange(bakedKeys);
+            setSuiteView('editor');
+          }}
+        />
       )}
 
       {/* 02.6: AUDIO-REACTIVE MOTION ENGINE */}
