@@ -68,6 +68,7 @@ import { PhysicsSandboxView } from '../features/physics-sandbox/components/Physi
 import { AnimationStateMachineView } from '../features/state-machine/components/AnimationStateMachineView';
 import { AnimationGitView } from '../features/git/components/AnimationGitView';
 import { DerivativesCurveViewer } from '../features/graph-editor/components/derivatives/DerivativesCurveViewer';
+import { BlenderCurveToolbar } from '../features/graph-editor/components/toolbar/BlenderCurveToolbar';
 import { ReferenceMotionModal } from '../features/graph-editor/components/reference/ReferenceMotionModal';
 import { VisualMotionLibraryPanel } from '../features/library/components/VisualMotionLibraryPanel';
 import { ActionableDiagnosticsPanel } from '../features/analysis/components/ActionableDiagnosticsPanel';
@@ -1329,6 +1330,18 @@ export default function App() {
             onHeatmapMetricChange={setHeatmapMetric}
             onToggleAudio={() => setShowAudioWaveform((s) => !s)}
             onToggleGhost={() => handleToggleGhost(activeLayerId)}
+          />
+
+          {/* Blender-Style Curve & Handle Operations Toolbar */}
+          <BlenderCurveToolbar
+            keyframes={keyframes}
+            selectedKeyframeIds={selectedKeyframeIds}
+            onUpdateKeyframes={handleKeyframesChange}
+            onSelectAll={() => setSelectedKeyframeIds(keyframes.map((k) => k.id))}
+            onInvertSelection={() => {
+              const inv = keyframes.filter((k) => !selectedKeyframeIds.includes(k.id)).map((k) => k.id);
+              setSelectedKeyframeIds(inv);
+            }}
           />
 
           {/* Interactive Graph Canvas */}
