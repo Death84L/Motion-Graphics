@@ -55,7 +55,7 @@ import { TextAnimatorView } from '../features/text-animator/components/TextAnima
 import { ExportHubView } from '../features/export-hub/components/ExportHubView';
 import { AnimationStackPanel } from '../features/stack/components/AnimationStackPanel';
 import { PresetMorphPanel } from '../features/preset-studio/components/PresetMorphPanel';
-import { MotionDnaHealthPanel } from '../features/analysis/components/MotionDnaHealthPanel';
+import { MotionDnaStudioView } from '../features/dna-analyzer/components/MotionDnaStudioView';
 import { ResponsiveMotionLabView } from '../features/responsive/components/ResponsiveMotionLabView';
 import { InteractionStatePanel } from '../features/states/components/InteractionStatePanel';
 import { CaptionStudioView } from '../features/caption-studio/components/CaptionStudioView';
@@ -1802,16 +1802,15 @@ export default function App() {
         <VersionReviewComparisonView />
       )}
 
-      {/* 10: MOTION DNA & HEALTH DIAGNOSTICS */}
+      {/* 10: MOTION DNA INTELLIGENCE & QUALITY STUDIO */}
       {suiteView === 'dna-analyzer' && (
-        <div style={{ flex: 1, padding: 24, overflowY: 'auto', background: '#060913', display: 'flex', justifyContent: 'center' }}>
-          <div style={{ width: '100%', maxWidth: 640 }}>
-            <MotionDnaHealthPanel
-              keyframes={keyframes}
-              onUpdateKeyframes={handleKeyframesChange}
-            />
-          </div>
-        </div>
+        <MotionDnaStudioView
+          currentKeyframes={keyframes}
+          onApplyKeyframesToEditor={(optKeys) => {
+            handleKeyframesChange(optKeys);
+            setSuiteView('editor');
+          }}
+        />
       )}
 
       {/* 06: RESPONSIVE MOTION LAB */}
