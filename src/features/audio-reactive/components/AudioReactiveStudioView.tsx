@@ -13,6 +13,7 @@ import {
   AudioModulationGraphEngine,
   SAMPLE_AUDIO_MOTION_PRESETS,
   AudioMotionPreset,
+  TargetMotionPropertyId,
 } from '../../../core/audio/audioModulationGraph';
 import { AudioKeyframeBaker } from '../../../core/audio/audioKeyframeBaker';
 import { webAudioPlayer } from '../../../core/audio/webAudioPlayer';
@@ -102,6 +103,37 @@ export function AudioReactiveStudioView({ onBakeKeyframesToEditor }: AudioReacti
     }
   };
 
+  // Update specific binding parameter
+  const updateBinding = (id: string, updates: Partial<AudioModulationBinding>) => {
+    setBindings((prev) =>
+      prev.map((b) => (b.id === id ? { ...b, ...updates } : b))
+    );
+  };
+
+  // Add new binding driver
+  const handleAddBinding = () => {
+    const newBinding: AudioModulationBinding = {
+      id: `b-custom-${Date.now()}`,
+      name: 'Custom Driver',
+      sourceBand: 'bass',
+      targetProperty: 'scale',
+      multiplier: 1.5,
+      threshold: 0.15,
+      minOutput: 100,
+      maxOutput: 150,
+      smoothingAttack: 0.8,
+      smoothingRelease: 0.2,
+      invert: false,
+      enabled: true,
+    };
+    setBindings((prev) => [...prev, newBinding]);
+  };
+
+  // Remove binding driver
+  const handleRemoveBinding = (id: string) => {
+    setBindings((prev) => prev.filter((b) => b.id !== id));
+  };
+
   // Handle Bake Keyframes to Graph Editor
   const handleBakeKeyframes = () => {
     const primaryBinding = bindings[0];
@@ -120,7 +152,7 @@ export function AudioReactiveStudioView({ onBakeKeyframesToEditor }: AudioReacti
     <div
       style={{
         display: 'grid',
-        gridTemplateColumns: '280px 1fr 340px',
+        gridTemplateColumns: '280px 1fr 360px',
         height: '100%',
         background: '#040711',
         overflow: 'hidden',
@@ -421,66 +453,8 @@ export function AudioReactiveStudioView({ onBakeKeyframesToEditor }: AudioReacti
           </div>
         </div>
 
-        {/* Quick Instructions Step-by-Step Box */}
-        <div style={{ background: '#090e1a', border: '1px solid #1e293b', borderRadius: 8, padding: 10, fontSize: 10, color: '#94a3b8', display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <div style={{ fontWeight: 800, color: '#f8fafc' }}>💡 How to Use Audio-Reactive Motion:</div>
-          <div>1. Click <b>"🔊 Sound: ON"</b> in the left panel (browsers require user click to play sound).</div>
-          <div>2. Use the built-in <b>128 BPM Synth Beat</b>, or upload your own <b>MP3/WAV</b> song file.</div>
-          <div>3. Watch the visualizer pulse to the bass, kick, and snare in real time.</div>
-          <div>4. Click <b>"🔥 Bake to Graph Editor & Timeline"</b> to export real keyframes to Premiere Pro / After Effects / Resolve!</div>
-        </div>
-      </div>
-
-      {/* 3. RIGHT COLUMN: MODULATION GRAPH BINDINGS & PRESETS */}
-      <div
-        style={{
-          background: '#090e1a',
-          borderLeft: '1px solid #1e293b',
-          display: 'flex',
-          flexDirection: 'column',
-          padding: 14,
-          gap: 12,
-          overflowY: 'auto',
-        }}
-      >
-        <div style={{ fontSize: 12, fontWeight: 800, color: '#f8fafc' }}>
-          Audio ➔ Motion Modulation Graph
-        </div>
-
-        {/* Active Bindings List */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-          <span style={{ fontSize: 9, fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>
-            Active Modulation Drivers ({bindings.length})
-          </span>
-          {bindings.map((b) => (
-            <div
-              key={b.id}
-              style={{
-                background: '#11182c',
-                border: '1px solid #1e293b',
-                borderRadius: 6,
-                padding: 8,
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 4,
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: 10, fontWeight: 700, color: '#38bdf8' }}>{b.name}</span>
-                <span style={{ fontSize: 9, color: '#ec4899', fontWeight: 800 }}>{b.multiplier}×</span>
-              </div>
-              <div style={{ fontSize: 8, color: '#94a3b8' }}>
-                Threshold: {(b.threshold * 100).toFixed(0)}% • Range: [{b.minOutput}, {b.maxOutput}]
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Preset Cards */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginTop: 4 }}>
-          <span style={{ fontSize: 9, fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>
-            Audio Motion Presets
-          </span>
+        {/* Preset Cards Selector */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
           {SAMPLE_AUDIO_MOTION_PRESETS.map((preset) => {
             const isSelected = selectedPreset.id === preset.id;
             return (
@@ -491,7 +465,7 @@ export function AudioReactiveStudioView({ onBakeKeyframesToEditor }: AudioReacti
                   setBindings(preset.bindings);
                 }}
                 style={{
-                  background: isSelected ? 'rgba(56, 189, 248, 0.15)' : '#11182c',
+                  background: isSelected ? 'rgba(56, 189, 248, 0.15)' : '#090e1a',
                   border: `1px solid ${isSelected ? '#38bdf8' : '#1e293b'}`,
                   borderRadius: 6,
                   padding: 8,
@@ -505,6 +479,172 @@ export function AudioReactiveStudioView({ onBakeKeyframesToEditor }: AudioReacti
               </div>
             );
           })}
+        </div>
+      </div>
+
+      {/* 3. RIGHT COLUMN: INTERACTIVE MODULATION GRAPH & BINDING SLIDERS */}
+      <div
+        style={{
+          background: '#090e1a',
+          borderLeft: '1px solid #1e293b',
+          display: 'flex',
+          flexDirection: 'column',
+          padding: 14,
+          gap: 12,
+          overflowY: 'auto',
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ fontSize: 12, fontWeight: 800, color: '#f8fafc' }}>
+            Modulation Graph Drivers
+          </span>
+          <button
+            onClick={handleAddBinding}
+            style={{
+              background: '#38bdf8',
+              color: '#080d1a',
+              border: 'none',
+              borderRadius: 4,
+              padding: '2px 8px',
+              fontSize: 9,
+              fontWeight: 800,
+              cursor: 'pointer',
+            }}
+          >
+            + Add Driver
+          </button>
+        </div>
+
+        {/* Live Output Signal Inspector */}
+        <div style={{ background: '#11182c', padding: 8, borderRadius: 6, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
+          <div style={{ fontSize: 9 }}>Scale: <b style={{ color: '#ec4899' }}>{motionOutputs['scale']}%</b></div>
+          <div style={{ fontSize: 9 }}>Shake: <b style={{ color: '#38bdf8' }}>{motionOutputs['camera-shake']}px</b></div>
+          <div style={{ fontSize: 9 }}>Glow: <b style={{ color: '#10b981' }}>{motionOutputs['glow-intensity']}px</b></div>
+          <div style={{ fontSize: 9 }}>Rot: <b style={{ color: '#f59e0b' }}>{motionOutputs['rotation']}°</b></div>
+        </div>
+
+        {/* Interactive Modulation Drivers List */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {bindings.map((b) => (
+            <div
+              key={b.id}
+              style={{
+                background: '#11182c',
+                border: '1px solid #1e293b',
+                borderRadius: 8,
+                padding: 10,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 6,
+              }}
+            >
+              {/* Header: Name and Remove */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: 11, fontWeight: 800, color: '#38bdf8' }}>{b.name}</span>
+                <button
+                  onClick={() => handleRemoveBinding(b.id)}
+                  style={{ background: 'transparent', border: 'none', color: '#ef4444', fontSize: 12, cursor: 'pointer' }}
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Source Band Dropdown */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: 9, color: '#94a3b8' }}>SOURCE FREQ:</span>
+                <select
+                  value={b.sourceBand}
+                  onChange={(e) => updateBinding(b.id, { sourceBand: e.target.value as any })}
+                  style={{ background: '#090e1a', border: '1px solid #334155', color: '#38bdf8', fontSize: 9, borderRadius: 4, padding: '2px 4px' }}
+                >
+                  <option value="bass">Bass (60-250Hz)</option>
+                  <option value="sub-bass">Sub-Bass (20-60Hz)</option>
+                  <option value="low-mid">Low-Mid (250-500Hz)</option>
+                  <option value="mid">Mid (500-2kHz)</option>
+                  <option value="treble">Treble (4k-8kHz)</option>
+                  <option value="rms-volume">RMS Loudness</option>
+                  <option value="kick-transient">Kick Transient</option>
+                  <option value="snare-transient">Snare Transient</option>
+                  <option value="beat-pulse">Beat Pulse</option>
+                </select>
+              </div>
+
+              {/* Target Property Dropdown */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: 9, color: '#94a3b8' }}>TARGET MOTION:</span>
+                <select
+                  value={b.targetProperty}
+                  onChange={(e) => updateBinding(b.id, { targetProperty: e.target.value as TargetMotionPropertyId })}
+                  style={{ background: '#090e1a', border: '1px solid #334155', color: '#ec4899', fontSize: 9, borderRadius: 4, padding: '2px 4px' }}
+                >
+                  <option value="scale">Scale (%)</option>
+                  <option value="camera-shake">Camera Shake (px)</option>
+                  <option value="glow-intensity">Glow Aura (px)</option>
+                  <option value="position-y">Position Y (px)</option>
+                  <option value="position-x">Position X (px)</option>
+                  <option value="rotation">Rotation (°)</option>
+                  <option value="letter-spacing">Letter Spacing (px)</option>
+                  <option value="opacity">Opacity (0-1)</option>
+                </select>
+              </div>
+
+              {/* Multiplier Slider (Power) */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 9, color: '#cbd5e1' }}>
+                  <span>Intensity / Multiplier:</span>
+                  <span style={{ color: '#38bdf8', fontWeight: 800 }}>{b.multiplier.toFixed(1)}×</span>
+                </div>
+                <input
+                  type="range"
+                  min="0.1"
+                  max="3.0"
+                  step="0.1"
+                  value={b.multiplier}
+                  onChange={(e) => updateBinding(b.id, { multiplier: parseFloat(e.target.value) })}
+                  style={{ width: '100%', accentColor: '#38bdf8' }}
+                />
+              </div>
+
+              {/* Threshold Slider (Sensitivity Gate) */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 9, color: '#cbd5e1' }}>
+                  <span>Sensitivity Threshold:</span>
+                  <span style={{ color: '#f59e0b', fontWeight: 800 }}>{Math.round(b.threshold * 100)}%</span>
+                </div>
+                <input
+                  type="range"
+                  min="0.0"
+                  max="0.8"
+                  step="0.05"
+                  value={b.threshold}
+                  onChange={(e) => updateBinding(b.id, { threshold: parseFloat(e.target.value) })}
+                  style={{ width: '100%', accentColor: '#f59e0b' }}
+                />
+              </div>
+
+              {/* Min / Max Output Range Inputs */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+                <div>
+                  <span style={{ fontSize: 8, color: '#64748b' }}>MIN OUTPUT</span>
+                  <input
+                    type="number"
+                    value={b.minOutput}
+                    onChange={(e) => updateBinding(b.id, { minOutput: parseFloat(e.target.value) || 0 })}
+                    style={{ width: '100%', background: '#090e1a', border: '1px solid #1e293b', borderRadius: 4, color: '#f8fafc', padding: '2px 4px', fontSize: 9 }}
+                  />
+                </div>
+                <div>
+                  <span style={{ fontSize: 8, color: '#64748b' }}>MAX OUTPUT</span>
+                  <input
+                    type="number"
+                    value={b.maxOutput}
+                    onChange={(e) => updateBinding(b.id, { maxOutput: parseFloat(e.target.value) || 100 })}
+                    style={{ width: '100%', background: '#090e1a', border: '1px solid #1e293b', borderRadius: 4, color: '#ec4899', padding: '2px 4px', fontSize: 9 }}
+                  />
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
