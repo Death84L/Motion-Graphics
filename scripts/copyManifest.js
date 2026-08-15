@@ -35,3 +35,18 @@ if (fs.existsSync(distHtmlPath)) {
   fs.writeFileSync(distHtmlPath, html, 'utf-8');
   console.log('✓ Cleaned crossorigin attributes in dist/index.html for UXP WebView compatibility!');
 }
+
+// 3. Mirror dist/assets to ./assets so loading either root manifest.json or dist/manifest.json works 100%
+const distAssetsDir = path.resolve('dist', 'assets');
+const rootAssetsDir = path.resolve('assets');
+if (fs.existsSync(distAssetsDir)) {
+  if (!fs.existsSync(rootAssetsDir)) {
+    fs.mkdirSync(rootAssetsDir, { recursive: true });
+  }
+  const files = fs.readdirSync(distAssetsDir);
+  for (const file of files) {
+    fs.copyFileSync(path.join(distAssetsDir, file), path.join(rootAssetsDir, file));
+  }
+  console.log('✓ Mirrored dist/assets to ./assets for root manifest compatibility!');
+}
+
