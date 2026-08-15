@@ -1,6 +1,6 @@
 # 🎬 Motion Studio — Complete Feature Catalog & Architecture
 
-> **Motion Studio** is a standalone, local-first, zero-cloud-cost motion design system, animation graph editor, and caption motion engine for video creators, animators, and web developers.
+> **Motion Studio** is a standalone, local-first, zero-cloud-cost motion design system, animation graph editor, universal timeline workspace, and caption motion engine for video creators, animators, and web developers.
 
 ---
 
@@ -13,10 +13,11 @@ flowchart TD
         A2["SRT / VTT / ASS Transcripts"]
         A3[".motionstudio Project Files"]
         A4["Reference Motion Curves (JSON/CSV)"]
-        A5["Audio & Speech Waves"]
+        A5["Multi-Track Audio & Speech Waves"]
     end
 
-    subgraph CoreStudios["2. THE 5 FLAGSHIP POWER PILLARS"]
+    subgraph UniversalTimeline["2. 🎞️ UNIVERSAL TIMELINE WORKSPACE"]
+        B0["🎞️ Universal Multi-Track Timeline<br/>(SMPTE Ruler, NLE Ripple/Slip/Roll/Slide, Parenting, Beat Sync)"]
         B1["🧩 Motion Batch Processor<br/>(100+ Layers, Stagger, Timing, Before/After Previews)"]
         B2["📈 Dedicated Velocity Lab<br/>(Triple Synchronized Graphs, Normalization, Clamping, Retiming)"]
         B3["🧬 Advanced Motion Matching<br/>(Find Similar, Match Motion, Reference Optimization 18.4% -> 2.1%)"]
@@ -53,39 +54,50 @@ flowchart TD
         E4["🔌 Motion Studio Extension SDK (Custom Modifiers, Presets, Nodes)"]
     end
 
-    Inputs --> CoreStudios
-    CoreStudios --> ProductionSuites
+    Inputs --> UniversalTimeline
+    UniversalTimeline --> ProductionSuites
     ProductionSuites --> Infrastructure
     Infrastructure --> ExportHub
 ```
 
 ---
 
-## 📋 Comprehensive Deep Feature Sets (The 5 Power Pillars)
+## 📋 Comprehensive Feature Catalog
 
-### 1. 🧩 Motion Batch Processor (25+ Features)
+### 1. 🎞️ Universal Timeline Workspace & NLE Engine
 | Category | What It Does |
 | :--- | :--- |
-| **Multi-Layer Selection & Filtering** | Select 10, 100, or 1,000+ layers simultaneously. Filter by layer type (Text, Shape, Image, Caption, Video) and property (Position, Scale, Rotation, Opacity). |
+| **Canonical Multi-Track Model** | Unlimited tracks (*Video, Audio, Text, Shape, Camera, Light, Null/Controller, Adjustment, Pre-Comps*) with SMPTE frame ruler. |
+| **NLE Edit Operations** | **Selection (`V`)**, **Split Razor (`C`)**, **Ripple Edit (`B`)**, **Slip Edit (`Y`)**, **Slide Edit (`U`)**, **Time Stretch (`R`)**. |
+| **Hierarchical Parenting** | Child layers inherit parent Position, Scale, Rotation, and Opacity via concatenated transform matrices. |
+| **Audio Beat Grid & Sync** | Amplitude waveform visualizer, BPM transient detector, and 1-click **Sync to 120 BPM** keyframe quantization. |
+| **Central Snapping Engine** | Magnetic snapping across *Frames, Keyframes, Markers, Work Area In/Out, Playhead, and Adjacent Clips*. |
+| **Seamless Graph & Host Sync** | Clicking any property lane or keyframe diamond in the timeline immediately links into the Graph Editor, Velocity Lab, or dispatches to Premiere / AE / Resolve. |
+
+---
+
+### 2. 🧩 Motion Batch Processor (25+ Features)
+| Category | What It Does |
+| :--- | :--- |
+| **Multi-Layer Selection & Filtering** | Select 10, 100, or 1,000+ layers simultaneously. Filter by layer type (*Text, Shape, Image, Caption, Video*) and property (*Position, Scale, Rotation, Opacity*). |
 | **Timing Batch Transformations** | Batch Duration scaling ($0.2\times \to 3.0\times$), Delay offset, Stagger spacing, Reverse timing sequence, and Loop/Ping-Pong repeat. |
 | **Motion & Intensity Multipliers** | Scale motion strength ($10\% \to 200\%$), re-orient directional angles ($0^\circ \to 360^\circ$), and apply global speed ramps. |
-| **Batch Curve & Tangent Modifiers** | Apply or replace easing, inject harmonic springs, add/remove overshoot, smooth tangents, and reduce redundant keyframe density. |
+| **Batch Curve & Tangent Modifiers** | Injects harmonic spring overshoot, smooths tangents for jerk reduction, and scales motion intensity. |
 | **Batch Preview & Comparison Matrix** | Side-by-side Before/After velocity sparklines and duration comparisons across all selected layers before applying. |
 
 ---
 
-### 2. 📈 Dedicated Velocity Lab (30+ Features)
+### 3. 📈 Dedicated Velocity Lab (30+ Features)
 | Category | What It Does |
 | :--- | :--- |
 | **Triple Synchronized Graphs** | Real-time synchronized inspection: **Position-Time ($x$)**, **Velocity-Time ($v = \frac{\Delta x}{\Delta t}$)**, **Acceleration-Time ($a = \frac{\Delta v}{\Delta t}$)**, and Jerk ($\frac{da}{dt}$). |
 | **Peak Velocity Normalization** | Rescales peak velocity from original values (e.g. $3.42\text{ units/s} \to 2.00\text{ units/s}$) while preserving easing geometry. |
 | **Velocity Clamping & Limiting** | Caps maximum velocity spikes to prevent jarring, harsh transitions. |
 | **Velocity-Preserving Retiming** | Changes animation duration (e.g. $400\text{ms} \to 800\text{ms}$) while mathematically preserving perceived physical weight and kinetic character. |
-| **Velocity-Driven Visual Properties** | Maps live velocity into GPU Motion Blur, Glow Bloom intensity, and Squash-and-Stretch scale compression. |
 
 ---
 
-### 3. 🧬 Flagship Motion Matching Engine (30+ Features)
+### 4. 🧬 Flagship Motion Matching Engine (30+ Features)
 | Category | What It Does |
 | :--- | :--- |
 | **Mode A: Find Similar Preset** | 5D Euclidean distance matching against the preset library (Energy, Smoothness, Elasticity, Aggression, Rhythm) with % similarity readouts. |
@@ -95,7 +107,7 @@ flowchart TD
 
 ---
 
-### 4. 🏛️ Living Parametric Presets (30+ Features)
+### 5. 🏛️ Living Parametric Presets (30+ Features)
 | Category | What It Does |
 | :--- | :--- |
 | **Parametric Living Presets** | Presets expose live physical sliders: Duration, Speed, Intensity, Elasticity, Smoothness, Overshoot, Damping, Stiffness, Direction, and Stagger. |
@@ -105,7 +117,7 @@ flowchart TD
 
 ---
 
-### 5. 📋 Smart Motion Clipboard (25+ Features)
+### 6. 📋 Smart Motion Clipboard (25+ Features)
 | Category | What It Does |
 | :--- | :--- |
 | **Selective Copy Mask** | Granular checkboxes to copy specific components: Values, Timing, Easing, Tangents, Velocity, Modifiers, Spring Parameters, or Styles. |
@@ -115,20 +127,12 @@ flowchart TD
 
 ---
 
-### 6. 🎛️ Unified Chained Motion Operations
-| Category | What It Does |
-| :--- | :--- |
-| **Chained Execution Pipeline** | Chain complex operations in a single atomic action: Select 50 layers $\to$ Batch Edit $\to$ Apply Elastic Preset $\to$ Normalize Velocity $\to$ Match Reference Motion $\to$ Add 20ms Stagger $\to$ Preview $\to$ Apply. |
-| **Non-Destructive & Undo-Safe** | Every step in the pipeline remains atomic, non-destructive, and fully reversible via the Universal Command Pattern. |
-
----
-
 ## 🚀 Navigation & Usage
 
 The application features a comprehensive suite switcher located directly in the top navigation bar:
 
 ```
-[🎬 Motion Graph] [🧩 Batch Processor] [📈 Velocity Lab] [🧬 Motion Match] [🏛️ Parametric Presets] [📋 Motion Clipboard] [🎥 Live Canvas & Timeline] [🧱 Stack & Builder] [📝 Text & UI States] [💬 Caption Studio] [🧠 Explain & Rebuild] [🧪 Physics Sandbox] [🎭 State Machine] [🔀 Motion Git] [🎨 Design Tokens] [🧠 Logic Graph] [🌌 3D Scene] [👥 A/B Review] [🧬 Motion DNA] [🎯 Responsive Lab] [🏛️ Preset Morph] [📦 Export Hub]
+[🎬 Motion Graph] [🎞️ Universal Timeline] [🧩 Batch Processor] [📈 Velocity Lab] [🧬 Motion Match] [🏛️ Parametric Presets] [📋 Motion Clipboard] ... [⚡ Export ▾]
 ```
 
 All subsystems operate locally with zero mandatory cloud accounts, zero subscription fees, and complete cross-application interchangeability.

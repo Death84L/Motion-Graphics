@@ -84,6 +84,7 @@ import { VelocityLabView } from '../features/velocity-lab/components/VelocityLab
 import { MotionMatchingStudioView } from '../features/motion-matching/components/MotionMatchingStudioView';
 import { ParametricPresetStudioView } from '../features/parametric-presets/components/ParametricPresetStudioView';
 import { MotionClipboardDrawer } from '../features/clipboard/components/MotionClipboardDrawer';
+import { UniversalTimelineStudioView } from '../features/universal-timeline/components/UniversalTimelineStudioView';
 import {
   CompositionLayer,
   DEFAULT_VFX_CONFIG,
@@ -120,6 +121,7 @@ import { BeatMarker, generateBeatGrid } from '../core/bookmarks/beatDetector';
 
 export type MotionStudioSuiteView =
   | 'editor'
+  | 'universal-timeline'
   | 'velocity-lab'
   | 'motion-matching'
   | 'batch-processor'
@@ -786,6 +788,7 @@ export default function App() {
         <div style={{ display: 'flex', background: '#090e1a', padding: '3px', borderRadius: 8, border: '1px solid #1e293b', gap: 2, overflowX: 'auto' }}>
           {[
             { id: 'editor', label: '🎬 Motion Graph' },
+            { id: 'universal-timeline', label: '🎞️ Universal Timeline' },
             { id: 'batch-processor', label: '🧩 Batch Processor' },
             { id: 'velocity-lab', label: '📈 Velocity Lab' },
             { id: 'motion-matching', label: '🧬 Motion Match' },
@@ -1619,6 +1622,16 @@ export default function App() {
             onSelectKeyframe={(selectionId) => setSelectedTimelineKeyIds([selectionId])}
           />
         </div>
+      )}
+
+      {/* 02: UNIVERSAL TIMELINE STUDIO */}
+      {suiteView === 'universal-timeline' && (
+        <UniversalTimelineStudioView
+          onSyncWithGraphEditor={(graphKeys, label) => {
+            handleKeyframesChange(graphKeys);
+            setSuiteView('editor');
+          }}
+        />
       )}
 
       {/* 03: MOTION BATCH PROCESSOR */}
