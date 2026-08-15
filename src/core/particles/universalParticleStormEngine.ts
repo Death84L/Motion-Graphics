@@ -111,6 +111,82 @@ export const DEFAULT_PARTICLE_CONFIG: ParticleSimulationConfig = {
 
 export class UniversalParticleStormEngine {
   /**
+   * Computes a ballistic trajectory arc preview given launch velocity and gravity.
+   */
+  static computeBallisticTrajectory(
+    origin: { x: number; y: number },
+    velocity: { vx: number; vy: number },
+    gravityY = 0.12,
+    steps = 30
+  ): { x: number; y: number }[] {
+    const trajectory: { x: number; y: number }[] = [];
+    let curX = origin.x;
+    let curY = origin.y;
+    let curVx = velocity.vx;
+    let curVy = velocity.vy;
+
+    for (let s = 0; s < steps; s++) {
+      trajectory.push({ x: Math.round(curX), y: Math.round(curY) });
+      curX += curVx;
+      curY += curVy;
+      curVy += gravityY;
+      if (curY > 310) break; // Floor reached
+    }
+
+    return trajectory;
+  }
+
+  /**
+   * Launches an impulse throw burst from a custom source point with directional velocity vector.
+   */
+  static launchThrowBurst(
+    startId: number,
+    origin: { x: number; y: number; z: number },
+    baseVelocity: { vx: number; vy: number; vz: number },
+    count: number,
+    spreadDeg: number,
+    config: ParticleSimulationConfig
+  ): Particle3D[] {
+    const burstParticles: Particle3D[] = [];
+
+    for (let i = 0; i < count; i++) {
+      const spreadRad = ((Math.random() - 0.5) * spreadDeg * Math.PI) / 180;
+      const speedVariation = 0.85 + Math.random() * 0.3;
+
+      // Rotate velocity vector by spread angle
+      const cosA = Math.cos(spreadRad);
+      const sinA = Math.sin(spreadRad);
+      const vx = (baseVelocity.vx * cosA - baseVelocity.vy * sinA) * speedVariation;
+      const vy = (baseVelocity.vx * sinA + baseVelocity.vy * cosA) * speedVariation;
+      const vz = baseVelocity.vz + (Math.random() - 0.5) * 2;
+
+      const baseSize = Math.random() * 4 + 3;
+
+      burstParticles.push({
+        id: startId + i,
+        x: origin.x + (Math.random() - 0.5) * 8,
+        y: origin.y + (Math.random() - 0.5) * 8,
+        z: origin.z,
+        vx,
+        vy,
+        vz,
+        mass: 0.8 + Math.random() * 0.4,
+        size: baseSize,
+        baseSize,
+        color: config.colorGradient.birth,
+        alpha: 1.0,
+        life: config.lifetimeFrames * 1.5,
+        maxLife: config.lifetimeFrames * 1.5,
+        rotZ: Math.random() * 360,
+        vrotZ: (Math.random() - 0.5) * 16,
+        clusterId: i % 4,
+      });
+    }
+
+    return burstParticles;
+  }
+
+  /**
    * Spawns a single 3D particle initialized from the chosen emitter geometry.
    */
   static spawnParticle(

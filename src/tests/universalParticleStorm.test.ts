@@ -69,6 +69,35 @@ describe('Universal 3D Particle Storm Engine (250+ Features) Test Suite', () => 
     expect(customConfig.spriteType).toBe('coin');
   });
 
+  it('launches an impulse throw burst from a custom source coordinate', () => {
+    const burst = UniversalParticleStormEngine.launchThrowBurst(
+      100,
+      { x: 50, y: 200, z: 0 },
+      { vx: 8.0, vy: -6.0, vz: 0 },
+      30,
+      25,
+      DEFAULT_PARTICLE_CONFIG
+    );
+
+    expect(burst.length).toBe(30);
+    expect(burst[0].x).toBeGreaterThan(44);
+    expect(burst[0].x).toBeLessThan(56);
+    expect(burst[0].vx).toBeGreaterThan(4.0);
+    expect(burst[0].vy).toBeLessThan(0); // Upward launch
+  });
+
+  it('computes ballistic trajectory arc coordinates', () => {
+    const trajectory = UniversalParticleStormEngine.computeBallisticTrajectory(
+      { x: 50, y: 200 },
+      { vx: 5.0, vy: -5.0 },
+      0.12,
+      20
+    );
+
+    expect(trajectory.length).toBeGreaterThan(10);
+    expect(trajectory[0]).toEqual({ x: 50, y: 200 });
+  });
+
   it('bakes 3D particle simulation centroid motion into standard Bézier keyframes', () => {
     const p1 = UniversalParticleStormEngine.spawnParticle(1, 100, 100, 0, DEFAULT_PARTICLE_CONFIG);
     const keyframes = UniversalParticleStormEngine.bakeParticleSimulationToKeyframes([p1], 2.0);
