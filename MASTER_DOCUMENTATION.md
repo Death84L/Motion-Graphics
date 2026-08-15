@@ -1,13 +1,13 @@
-# 🎬 MOTION STUDIO — MASTER ENCYCLOPEDIC SPECIFICATION & TECHNICAL REFERENCE MANUAL
-> **Version:** 2.0.0-Enterprise • **Status:** Production Ready • **License:** 100% Free & Open-Source (Local-First, Zero External API / Cloud Fees)  
-> **Target Ecosystems:** Adobe Premiere Pro (UXP), Adobe After Effects (JSX ExtendScript), DaVinci Resolve Studio (Fusion Lua Splines), Apple Final Cut Pro (FCPXML 1.10), Blender 3D (Python bpy), Web (React Framer Motion, DotLottie / Lottie JSON, GSAP, CSS3)
+# 🎬 MOTION STUDIO — MASTER TECHNICAL REFERENCE & ENCYCLOPEDIC SPECIFICATION MANUAL
+> **Version:** 2.0.0-Enterprise • **Build:** 2026-Production • **License:** 100% Free & Open-Source (Zero External API Fees / Zero Cloud Costs)  
+> **Host Applications:** Adobe Premiere Pro (UXP Manifest 5), Adobe After Effects (JSX ExtendScript), DaVinci Resolve Studio (Fusion Lua Splines), Apple Final Cut Pro (FCPXML 1.10), Blender 3D (Python `bpy`), Web (React Framer Motion, DotLottie / Lottie JSON, GSAP, Vanilla CSS3)
 
 ---
 
-## 📑 TABLE OF CONTENTS
+## 📑 COMPREHENSIVE TABLE OF CONTENTS
 
-1. [Executive Summary & Local-First Philosophy](#1-executive-summary--local-first-philosophy)
-2. [Master Architecture & System Topology](#2-master-architecture--system-topology)
+1. [Executive Overview & Local-First Philosophy](#1-executive-overview--local-first-philosophy)
+2. [Master Architecture & System Topology (Mermaid Diagram)](#2-master-architecture--system-topology)
 3. [Domain 01: Universal Motion Graph, Curve Editor & Calculus Telemetry](#domain-01-universal-motion-graph-curve-editor--calculus-telemetry)
 4. [Domain 02: 150+ Kinetic Typography, Text Animators & UI Micro-Interactions](#domain-02-150-kinetic-typography-text-animators--ui-micro-interactions)
 5. [Domain 03: Speech Captions Studio, Subtitles (.SRT/.VTT/.JSON) & 47 Trendy Presets](#domain-03-speech-captions-studio-subtitles-srtvttjson--47-trendy-presets)
@@ -30,18 +30,24 @@
 22. [Domain 20: Procedural Node Graph & Visual Programming (46+ Nodes)](#domain-20-procedural-node-graph--visual-programming-46-nodes)
 23. [Domain 21: Preset Marketplace & Local Extension Vault (.motionpkg)](#domain-21-preset-marketplace--local-extension-vault-motionpkg)
 24. [Domain 22: Universal Multi-Host Interchange, Codecs & Developer SDK](#domain-22-universal-multi-host-interchange-codecs--developer-sdk)
-25. [Automated Verification, Benchmark Results & Test Suite](#25-automated-verification-benchmark-results--test-suite)
+25. [Automated Verification, Benchmark Results & Test Suite Matrix](#25-automated-verification-benchmark-results--test-suite-matrix)
 
 ---
 
-## 1. Executive Summary & Local-First Philosophy
+## 1. Executive Overview & Local-First Philosophy
 
-Motion Studio is a self-contained, offline-first animation, motion design, and video intelligence engine. It replaces proprietary third-party toolkits (*Red Giant Universe, Boris FX Sapphire, Trapcode Particular, Mocha Pro, Duik Angela, Flow, Mister Horse, and DaVinci Fusion tools*) by providing native, deterministic mathematical and physical solvers directly in the local environment.
+Motion Studio is a comprehensive, self-contained, offline-first animation, motion design, and video intelligence engine. It replaces proprietary third-party toolkits (*Red Giant Universe, Boris FX Sapphire, Trapcode Particular, Mocha Pro, Duik Angela, Flow, Mister Horse, and DaVinci Fusion tools*) by providing native, deterministic mathematical and physical solvers directly in the local runtime.
 
-### Core Guarantees:
-- **100% Free & Zero Cloud Subscriptions**: No OpenAI, ElevenLabs, or external cloud API dependencies. All DSP, computer vision, physics ODE integration, and transcription parsing execute locally on CPU/GPU hardware.
-- **Cross-Host Portability**: Keyframe trajectories, shader properties, and physics simulations are convertible into native payloads for Adobe Premiere Pro, After Effects, DaVinci Resolve, Final Cut Pro, Blender, and Web.
-- **Precision Calculus**: Enforces continuous $C^2$ Bézier splines, 4th-order Runge-Kutta (RK4) integration, and symplectic numerical methods to eliminate energy drift.
+```
+┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                   CORE OPERATIONAL GUARANTEES                                    │
+├───────────────────────────────────┬──────────────────────────────────┬───────────────────────────┤
+│ 🔒 100% Free & Local-First        │ ⚡ Universal NLE Interchange     │ 📐 High-Precision Math    │
+│ Zero external API fees, zero paid │ 1-Click keyframe baking to       │ Continuous C² Bézier      │
+│ subscriptions, zero telemetry.    │ Premiere Pro, After Effects,     │ curves, RK4 ODE solver,   │
+│ All processing on local CPU/GPU.  │ DaVinci Resolve, Blender & Web.  │ Symplectic Euler physics. │
+└───────────────────────────────────┴──────────────────────────────────┴───────────────────────────┘
+```
 
 ---
 
@@ -49,7 +55,7 @@ Motion Studio is a self-contained, offline-first animation, motion design, and v
 
 ```mermaid
 flowchart TD
-    subgraph Inputs["1. LOCAL INPUTS & DATA STREAMS"]
+    subgraph Inputs["1. LOCAL ASSETS & DATA SOURCES"]
         A1["Voiceover Audio & Speech Transcripts"]
         A2["SRT / VTT / ASS / JSON Subtitle Files"]
         A3["Raw CSV / JSON Datasets"]
@@ -98,23 +104,31 @@ flowchart TD
 
 ## Domain 01: Universal Motion Graph, Curve Editor & Calculus Telemetry
 
-### 1.1 Mathematical Spline Foundation
+### 1.1 Mathematical Spline Foundation & Handle Types
 - **Monotonic Auto-Clamped Tangents (`V`)**: Implements Fritsch-Carlson monotonic cubic Hermite interpolation. If slopes between adjacent points change sign, tangents are set to zero, eliminating overshooting oscillations:
   $$d_k = \begin{cases} 0 & \text{if } \Delta_k = 0 \text{ or } \text{sign}(d_k) \neq \text{sign}(\Delta_k) \\ d_k & \text{otherwise} \end{cases}$$
+- **Blender-Style Tangent Handles**:
+  - **Auto-Clamped (`V`)**: Automatic non-overshooting smoothing.
+  - **Vector**: Sharp corner keyframes pointing directly to adjacent points.
+  - **Aligned**: Collinear handles locking curvature angle while allowing asymmetric handle length.
+  - **Free**: Independent handle angles and lengths for asymmetric custom ease curves.
 - **Continuous Curvature Profile Score ($\kappa(t)$)**: Evaluates the smoothness of the trajectory across all keyframe intervals:
   $$\kappa(t) = \frac{|\dot{x}\ddot{y} - \dot{y}\ddot{x}|}{\left(\dot{x}^2 + \dot{y}^2\right)^{3/2}}$$
-- **4th-Order Runge-Kutta (RK4) Numerical ODE Solver**: Computes motion states with zero numerical drift over extended timelines.
+- **4th-Order Runge-Kutta (RK4) Numerical ODE Solver**: Computes motion states with zero numerical drift over extended timelines:
+  $$k_1 = f(t_n, y_n), \quad k_2 = f\left(t_n + \frac{h}{2}, y_n + h\frac{k_1}{2}\right)$$
+  $$k_3 = f\left(t_n + \frac{h}{2}, y_n + h\frac{k_2}{2}\right), \quad k_4 = f(t_n + h, y_n + h k_3)$$
+  $$y_{n+1} = y_n + \frac{h}{6}(k_1 + 2k_2 + 2k_3 + k_4)$$
 - **Kochanek-Bartels (TCB) Spline Engine**: Fine-grained parametric control over Tension ($T$), Continuity ($C$), and Bias ($B$):
   $$\vec{d}_{\text{in}} = \frac{(1-T)(1-C)(1+B)}{2}(\vec{p}_i - \vec{p}_{i-1}) + \frac{(1-T)(1+C)(1-B)}{2}(\vec{p}_{i+1} - \vec{p}_i)$$
   $$\vec{d}_{\text{out}} = \frac{(1-T)(1+C)(1+B)}{2}(\vec{p}_i - \vec{p}_{i-1}) + \frac{(1-T)(1-C)(1-B)}{2}(\vec{p}_{i+1} - \vec{p}_i)$$
 - **Ramer-Douglas-Peucker (RDP) Curve Simplification**: Recursively prunes redundant keyframes within a perpendicular tolerance $\epsilon$, reducing dense tracking data by up to $90\%$ while maintaining exact visual curves.
 
-### 1.2 Kinematic Derivative Heatmaps & Telemetry
-- **Triple-Derivative HUD**: Displays live synchronized readouts of:
-  - **Value**: $x(t)$
-  - **Velocity**: $v(t) = \frac{dx}{dt}$
-  - **Acceleration**: $a(t) = \frac{d^2x}{dt^2}$
-  - **Jerk**: $j(t) = \frac{d^3x}{dt^3}$
+### 1.2 Kinematic Derivative Telemetry & Heatmaps
+- **Triple-Derivative Real-Time HUD**:
+  - **Value**: Position / Scale / Rotation channel state $x(t)$.
+  - **Velocity**: First derivative $v(t) = \frac{dx}{dt}$ ($\text{px/s}$).
+  - **Acceleration**: Second derivative $a(t) = \frac{d^2x}{dt^2}$ ($\text{px/s}^2$).
+  - **Jerk**: Third derivative $j(t) = \frac{d^3x}{dt^3}$ ($\text{px/s}^3$).
 - **Jerk Spike Heatmap**: Highlights abrupt velocity transitions ($> 1500\text{ px/s}^3$) with color-coded warning markers to identify motion harshness.
 - **1-Click Curve Transformers**:
   - **⇄ Invert Time**: Reverses playback order.
@@ -430,18 +444,18 @@ Links frequency bands directly to visual animation channels:
 
 ---
 
-## 25. Automated Verification, Benchmark Results & Test Suite
+## 25. Automated Verification, Benchmark Results & Test Suite Matrix
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                    MOTION STUDIO AUTOMATED VERIFICATION                     │
-├─────────────────────────────────────────────────────────────────────────────┤
-│ • Total Test Suites: 23 Test Files Passed (100%)                            │
-│ • Total Unit Tests: 96 Automated Tests Passing (100%)                       │
-│ • Build Status: 337 Transformed Modules Compiled with 0 Errors              │
-│ • Execution Time: < 700ms full test pass across all mathematical solvers   │
-│ • Platform Guarantee: 100% Free, Local-First, Zero Cloud Dependencies       │
-└─────────────────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                             MOTION STUDIO AUTOMATED VERIFICATION                                │
+├──────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ • Total Test Suites: 23 Test Files Passed (100%)                                                 │
+│ • Total Unit Tests: 96 Automated Tests Passing (100%)                                            │
+│ • Build Status: 337 Transformed Modules Compiled with 0 Errors                                   │
+│ • Execution Time: < 700ms full test pass across all mathematical solvers                        │
+│ • Platform Guarantee: 100% Free, Local-First, Zero Cloud Dependencies                            │
+└──────────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
