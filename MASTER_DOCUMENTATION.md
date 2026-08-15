@@ -7,8 +7,8 @@
 ## 📑 COMPREHENSIVE TABLE OF CONTENTS
 
 1. [Executive Overview & Local-First Philosophy](#1-executive-overview--local-first-philosophy)
-2. [Master Architecture & System Topology (Mermaid Diagram)](#2-master-architecture--system-topology)
-3. [Domain 01: Universal Motion Graph, Curve Editor & Calculus Telemetry](#domain-01-universal-motion-graph-curve-editor--calculus-telemetry)
+2. [Master Architecture & System Topology](#2-master-architecture--system-topology)
+3. [Domain 01: Universal Motion Graph, Curve Editor & Complete Easing Catalog (35+ Eases)](#domain-01-universal-motion-graph-curve-editor--complete-easing-catalog-35-eases)
 4. [Domain 02: 150+ Kinetic Typography, Text Animators & UI Micro-Interactions](#domain-02-150-kinetic-typography-text-animators--ui-micro-interactions)
 5. [Domain 03: Speech Captions Studio, Subtitles (.SRT/.VTT/.JSON) & 47 Trendy Presets](#domain-03-speech-captions-studio-subtitles-srtvttjson--47-trendy-presets)
 6. [Domain 04: Motion DNA Intelligence, 10D Kinematic Signatures & Vector Matcher](#domain-04-motion-dna-intelligence-10d-kinematic-signatures--vector-matcher)
@@ -36,7 +36,7 @@
 
 ## 1. Executive Overview & Local-First Philosophy
 
-Motion Studio is a comprehensive, self-contained, offline-first animation, motion design, and video intelligence engine. It replaces proprietary third-party toolkits (*Red Giant Universe, Boris FX Sapphire, Trapcode Particular, Mocha Pro, Duik Angela, Flow, Mister Horse, and DaVinci Fusion tools*) by providing native, deterministic mathematical and physical solvers directly in the local runtime.
+Motion Studio is an offline-first motion design operating system, animation graph editor, and video intelligence engine. It replaces proprietary third-party toolkits (*Red Giant Universe, Boris FX Sapphire, Trapcode Particular, Mocha Pro, Duik Angela, Flow, Mister Horse, and DaVinci Fusion tools*) by providing native, deterministic mathematical and physical solvers directly in the local runtime.
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
@@ -55,7 +55,7 @@ Motion Studio is a comprehensive, self-contained, offline-first animation, motio
 
 ```mermaid
 flowchart TD
-    subgraph Inputs["1. LOCAL ASSETS & DATA SOURCES"]
+    subgraph Inputs["1. LOCAL ASSETS & DATA STREAMS"]
         A1["Voiceover Audio & Speech Transcripts"]
         A2["SRT / VTT / ASS / JSON Subtitle Files"]
         A3["Raw CSV / JSON Datasets"]
@@ -64,7 +64,7 @@ flowchart TD
     end
 
     subgraph CoreEngines["2. 🧬 DETERMINISTIC PRODUCTION ENGINES (22 DOMAINS)"]
-        B1["📈 Motion Graph & Calculus (Auto-Clamped, RK4, Curvature Kappa, RDP)"]
+        B1["📈 Motion Graph & Complete Easing Catalog (35+ Eases, RK4, Curvature Kappa)"]
         B2["🔤 Kinetic Typography & UI (Liquid Chrome, Hormozi, Neon, Fluid clamp)"]
         B3["🎙️ Speech Captions (Word Parser, 47 Trendy Presets, Semantic Auto-Emojis)"]
         B4["🧬 Motion DNA (10D Fingerprint, Euclidean Matcher, Curve Morphing)"]
@@ -102,72 +102,106 @@ flowchart TD
 
 ---
 
-## Domain 01: Universal Motion Graph, Curve Editor & Calculus Telemetry
+## Domain 01: Universal Motion Graph, Curve Editor & Complete Easing Catalog (35+ Eases)
 
-### 1.1 Mathematical Spline Foundation & Handle Types
-- **Monotonic Auto-Clamped Tangents (`V`)**: Implements Fritsch-Carlson monotonic cubic Hermite interpolation. If slopes between adjacent points change sign, tangents are set to zero, eliminating overshooting oscillations:
+### 1.1 Complete Itemized Easing Curves & Mathematical Equations Catalog
+
+| # | Easing Preset Name | Exact Mathematical Equation $f(t)$ for $t \in [0, 1]$ | Primary Industrial Use Case |
+| :--- | :--- | :--- | :--- |
+| **01** | **Linear** | $f(t) = t$ | Constant velocity moves, rotations, marquee loops |
+| **02** | **Ease-In (Quad)** | $f(t) = t^2$ | Gravitational falls, initial drops |
+| **03** | **Ease-Out (Quad)** | $f(t) = 1 - (1 - t)^2$ | Natural friction deceleration, smooth stops |
+| **04** | **Ease-In-Out (Quad)**| $f(t) = \begin{cases} 2t^2 & t < 0.5 \\ 1 - 2(1-t)^2 & t \ge 0.5 \end{cases}$ | General UI slide transitions, subtle camera glides |
+| **05** | **Ease-In (Cubic)** | $f(t) = t^3$ | Heavier mass acceleration |
+| **06** | **Ease-Out (Cubic)**| $f(t) = 1 - (1 - t)^3$ | Crisp UI element entry |
+| **07** | **Ease-In-Out (Cubic)**| $f(t) = \begin{cases} 4t^3 & t < 0.5 \\ 1 - 4(1-t)^3 & t \ge 0.5 \end{cases}$ | Standard cinematic easing, logo intros |
+| **08** | **Ease-In (Quart)** | $f(t) = t^4$ | Dramatic rocket launch acceleration |
+| **09** | **Ease-Out (Quart)**| $f(t) = 1 - (1 - t)^4$ | High-speed snappiness settling |
+| **10** | **Ease-In-Out (Quart)**| $f(t) = \begin{cases} 8t^4 & t < 0.5 \\ 1 - 8(1-t)^4 & t \ge 0.5 \end{cases}$ | Luxury commercial product reveals |
+| **11** | **Ease-In (Quint)** | $f(t) = t^5$ | Aggressive hyper-speed launch |
+| **12** | **Ease-Out (Quint)**| $f(t) = 1 - (1 - t)^5$ | Instant stop with micro-settle |
+| **13** | **Ease-In-Out (Quint)**| $f(t) = \begin{cases} 16t^5 & t < 0.5 \\ 1 - 16(1-t)^5 & t \ge 0.5 \end{cases}$ | High-energy sports & tech transitions |
+| **14** | **Ease-In (Sine)** | $f(t) = 1 - \cos\left(\frac{t\pi}{2}\right)$ | Gentle organic start (camera breathing) |
+| **15** | **Ease-Out (Sine)** | $f(t) = \sin\left(\frac{t\pi}{2}\right)$ | Gentle organic settle |
+| **16** | **Ease-In-Out (Sine)**| $f(t) = -\frac{1}{2}(\cos(\pi t) - 1)$ | Continuous sinusoidal floating, loops |
+| **17** | **Ease-In (Expo)** | $f(t) = \begin{cases} 0 & t = 0 \\ 2^{10(t-1)} & t > 0 \end{cases}$ | Hyperspace / warp jump initial push |
+| **18** | **Ease-Out (Expo)** | $f(t) = \begin{cases} 1 & t = 1 \\ 1 - 2^{-10t} & t < 1 \end{cases}$ | Ultra-snappy Apple-style UI pop |
+| **19** | **Ease-In-Out (Expo)**| $f(t) = \begin{cases} 0.5 \cdot 2^{10(2t-1)} & t < 0.5 \\ 1 - 0.5 \cdot 2^{-10(2t-1)} & t \ge 0.5 \end{cases}$ | Fast-paced viral social video cuts |
+| **20** | **Ease-In (Circ)** | $f(t) = 1 - \sqrt{1 - t^2}$ | Sudden heavy drop |
+| **21** | **Ease-Out (Circ)** | $f(t) = \sqrt{1 - (t - 1)^2}$ | Hard circular wall brake |
+| **22** | **Ease-In-Out (Circ)**| $f(t) = \begin{cases} 0.5(1 - \sqrt{1-4t^2}) & t < 0.5 \\ 0.5(\sqrt{1-4(t-1)^2} + 1) & t \ge 0.5 \end{cases}$ | Mechanical robot joint actuation |
+| **23** | **Back-In (Anticipate)**| $f(t) = c_3 t^3 - c_1 t^2 \quad (c_1 = 1.70158, c_3 = c_1 + 1)$ | Organic wind-up prior to high-speed movement |
+| **24** | **Back-Out (Overshoot)**| $f(t) = 1 + c_3(t-1)^3 + c_1(t-1)^2$ | Bouncy UI card pop with $+8\%$ overshoot |
+| **25** | **Back-InOut** | Combines wind-up and overshoot on endpoints | Cartoon and comic character jumps |
+| **26** | **Elastic-In** | $f(t) = -2^{10(t-1)} \sin\left(\frac{(t-1-p/4)2\pi}{p}\right)$ | Slingshot stretching wind-up |
+| **27** | **Elastic-Out** | $f(t) = 2^{-10t} \sin\left(\frac{(t-p/4)2\pi}{p}\right) + 1$ | Rubber band snap with wobbling vibration |
+| **28** | **Elastic-InOut** | Symmetric dual elastic oscillations | Jelly blob impacts, wobbly badges |
+| **29** | **Bounce-In** | $f(t) = 1 - \text{BounceOut}(1 - t)$ | Reverse multi-bounce build up |
+| **30** | **Bounce-Out** | Piecewise parabolic decay: $f(t) = 7.5625(t-t_0)^2 + c_0$ | Dropping ball, settling notifications |
+| **31** | **Bounce-InOut** | Piecewise bounce-in followed by bounce-out | Energetic game physics UI |
+| **32** | **Step / Hold (Start)** | $f(t) = \lfloor t \cdot N \rfloor / N$ | 8-Bit retro gaming, stepped frame rates |
+| **33** | **2nd-Order Spring** | Harmonic ODE: $F = -k x - c v$ | Physically simulated living UI elements |
+| **34** | **Monotonic Auto-Clamped** | Fritsch-Carlson Hermite tangent clamping | Smooth non-overshooting keyframing |
+| **35** | **TCB Spline** | Tension ($T$), Continuity ($C$), Bias ($B$) | 3D character path and camera tracking |
+
+### 1.2 Spline Mathematics & Handle Types
+- **Monotonic Auto-Clamped Tangents (`V`)**:
   $$d_k = \begin{cases} 0 & \text{if } \Delta_k = 0 \text{ or } \text{sign}(d_k) \neq \text{sign}(\Delta_k) \\ d_k & \text{otherwise} \end{cases}$$
-- **Blender-Style Tangent Handles**:
-  - **Auto-Clamped (`V`)**: Automatic non-overshooting smoothing.
-  - **Vector**: Sharp corner keyframes pointing directly to adjacent points.
-  - **Aligned**: Collinear handles locking curvature angle while allowing asymmetric handle length.
-  - **Free**: Independent handle angles and lengths for asymmetric custom ease curves.
-- **Continuous Curvature Profile Score ($\kappa(t)$)**: Evaluates the smoothness of the trajectory across all keyframe intervals:
+- **Curvature Profile Formula ($\kappa(t)$)**:
   $$\kappa(t) = \frac{|\dot{x}\ddot{y} - \dot{y}\ddot{x}|}{\left(\dot{x}^2 + \dot{y}^2\right)^{3/2}}$$
-- **4th-Order Runge-Kutta (RK4) Numerical ODE Solver**: Computes motion states with zero numerical drift over extended timelines:
-  $$k_1 = f(t_n, y_n), \quad k_2 = f\left(t_n + \frac{h}{2}, y_n + h\frac{k_1}{2}\right)$$
-  $$k_3 = f\left(t_n + \frac{h}{2}, y_n + h\frac{k_2}{2}\right), \quad k_4 = f(t_n + h, y_n + h k_3)$$
-  $$y_{n+1} = y_n + \frac{h}{6}(k_1 + 2k_2 + 2k_3 + k_4)$$
-- **Kochanek-Bartels (TCB) Spline Engine**: Fine-grained parametric control over Tension ($T$), Continuity ($C$), and Bias ($B$):
-  $$\vec{d}_{\text{in}} = \frac{(1-T)(1-C)(1+B)}{2}(\vec{p}_i - \vec{p}_{i-1}) + \frac{(1-T)(1+C)(1-B)}{2}(\vec{p}_{i+1} - \vec{p}_i)$$
-  $$\vec{d}_{\text{out}} = \frac{(1-T)(1+C)(1+B)}{2}(\vec{p}_i - \vec{p}_{i-1}) + \frac{(1-T)(1-C)(1-B)}{2}(\vec{p}_{i+1} - \vec{p}_i)$$
-- **Ramer-Douglas-Peucker (RDP) Curve Simplification**: Recursively prunes redundant keyframes within a perpendicular tolerance $\epsilon$, reducing dense tracking data by up to $90\%$ while maintaining exact visual curves.
+- **4th-Order Runge-Kutta (RK4) Numerical Solver**: Zero numerical drift ODE integration.
+- **RDP Simplification Algorithm**: Recursively reduces dense curve points within tolerance $\epsilon$.
 
-### 1.2 Kinematic Derivative Telemetry & Heatmaps
-- **Triple-Derivative Real-Time HUD**:
-  - **Value**: Position / Scale / Rotation channel state $x(t)$.
-  - **Velocity**: First derivative $v(t) = \frac{dx}{dt}$ ($\text{px/s}$).
-  - **Acceleration**: Second derivative $a(t) = \frac{d^2x}{dt^2}$ ($\text{px/s}^2$).
-  - **Jerk**: Third derivative $j(t) = \frac{d^3x}{dt^3}$ ($\text{px/s}^3$).
-- **Jerk Spike Heatmap**: Highlights abrupt velocity transitions ($> 1500\text{ px/s}^3$) with color-coded warning markers to identify motion harshness.
-- **1-Click Curve Transformers**:
-  - **⇄ Invert Time**: Reverses playback order.
-  - **⇅ Invert Values**: Flips animation polarity.
-  - **2× Scale / 0.5× Compress**: Stretches or compresses timing while preserving Bézier tangent geometry.
-  - **Frame Quantization**: Snaps keyframes to exact NLE frame boundaries (23.976, 24, 25, 29.97, 30, 59.94, 60 FPS).
+### 1.3 Kinematic Derivative Telemetry & Heatmaps
+- **Value Channel**: Position, scale, rotation, opacity over time $x(t)$.
+- **Velocity Channel ($v(t)$)**: $\frac{dx}{dt}$ in $\text{px/s}$.
+- **Acceleration Channel ($a(t)$)**: $\frac{d^2x}{dt^2}$ in $\text{px/s}^2$.
+- **Jerk Channel ($j(t)$)**: $\frac{d^3x}{dt^3}$ in $\text{px/s}^3$.
+- **Jerk Spike Heatmap**: Flags abrupt velocity transitions ($> 1500\text{ px/s}^3$) with red hotspot markers.
+- **1-Click Transforms**: ⇄ Invert Time, ⇅ Invert Values, 2× Stretch, 0.5× Compress, Quantize.
 
 ---
 
 ## Domain 02: 150+ Kinetic Typography, Text Animators & UI Micro-Interactions
 
-### 2.1 Kinetic Typography Styles & Shaders
-1. **Liquid Molten Chrome**: Specular chrome reflection shader with undulating surface waves and metallic highlights.
-2. **Alex Hormozi Captions**: High-contrast black highlight bounding box with vibrant yellow pop keyword accents.
+### 2.1 Complete Kinetic Typography Styles Catalog
+1. **Liquid Molten Chrome**: Specular chrome reflection shader with undulating surface ripples.
+2. **Alex Hormozi Captions**: High-contrast black highlight box with vibrant yellow pop keyword accents.
 3. **MrBeast Comic Stroke**: Heavy 4px black outer stroke, 6° rotational tilt, and crisp pop shadows.
 4. **TikTok Bouncy Karaoke**: Word-by-word active glow with scaling spring pops ($1.22\times$).
 5. **Split-Flap Airport Board**: Mechanical cascading flap cards with animated flip transitions.
 6. **Cyberpunk Matrix Rain**: Vertical monospace alphanumeric cipher stream with glowing lead characters.
 7. **Origami 3D Paper Fold**: Letters fold and unfold from 3D geometric facets with realistic lighting.
-8. **Chalkboard Slate Sketch**: Textured dry-erase stroke reveals simulating classroom blackboard writing.
-9. **Variable Font Weight-to-Bass**: Modulates font weight ($100 \to 900$) dynamically driven by low-frequency audio transients.
-10. **Sinusoidal Kerning Wave**: Continuous traveling sine wave modulating character tracking and letter spacing.
+8. **Chalkboard Slate Sketch**: Textured dry-erase stroke reveals simulating blackboard writing.
+9. **Variable Font Weight-to-Bass**: Modulates font weight ($100 \to 900$) driven by audio bass transients.
+10. **Sinusoidal Kerning Wave**: Continuous traveling sine wave modulating character tracking.
+11. **Anamorphic Vertical Text Stretch**: Stretches text vertically during high-speed moves.
+12. **Sub-Glyph Segmentation**: Animates individual character parts (dot of "i", crossbar of "t").
+13. **Neon Glass Tube Arc Ignition**: Electrical arc buzz with realistic gas warm-up glow.
+14. **Burning Ember Text Reveal**: Edge burn transition with glowing fire fronts and floating ash.
+15. **RGB Chromatic Glitch Bands**: Horizontal displacement glitch bands splitting color channels.
+16. **Perlin Baseline Wave Distortion**: Deforms text baselines into flowing organic waves.
+17. **Minimalist Documentary Lower-Third**: Sliding line with name, title, and location fade.
+18. **Breaking News Ticker Tape**: Smooth horizontal scrolling text banner with category badges.
+19. **YouTube Chapter Title Cards**: Title cards with animated progress indicator lines.
+20. **Podcast Speaker Equalizer Badge**: Name badge with live animated audio equalizer bars.
 
 ### 2.2 UI Micro-Interactions & Fluid Design Tokens
-- **Apple Dynamic Island Fluid Squircle Math**: Superellipse curvature formula generating smooth morphing notifications:
+- **Dynamic Island Superellipse Math**:
   $$\left|\frac{x}{a}\right|^r + \left|\frac{y}{b}\right|^r = 1 \quad (r = 4.0)$$
 - **Neumorphic Dual Soft Shadows**: Directional lighting model calculating paired light and dark soft shadows:
   $$\text{BoxShadow} = 4\text{px } 4\text{px } 8\text{px } \#03050a, \quad -4\text{px } -4\text{px } 8\text{px } \#162038$$
-- **Fluid `clamp()` Math Calculator**: Computes responsive viewport-scaled font sizes:
+- **Fluid `clamp()` Typography Math**:
   $$\text{font-size} = \text{clamp}(1.5\text{rem}, 1.2\text{rem} + 1.5\text{vw}, 3.0\text{rem})$$
-- **Elastic Toggle Switch Physics**: Sub-element squashing and stretching with settle bounce upon release.
+- **Elastic Toggle Switch**: Sub-element squashing and stretching with settle bounce upon release.
 
 ---
 
 ## Domain 03: Speech Captions Studio, Subtitles (.SRT/.VTT/.JSON) & 47 Trendy Presets
 
-### 3.1 Subtitle Ingestion Engine
-- **Universal Format Parser**: Ingests SubRip (`.srt`), WebVTT (`.vtt`), Whisper / Descript word-level JSON, and Advanced SubStation Alpha (`.ass`).
-- **Semantic Auto-Emoji Mapping**: Analyzes transcript keywords and automatically injects animated emojis:
+### 3.1 Subtitle Ingestion & Auto-Emoji Mapping
+- **Formats Supported**: SubRip (`.srt`), WebVTT (`.vtt`), Whisper / Descript word JSON, and SSA (`.ass`).
+- **Semantic Auto-Emoji Mapping**: Automatically injects animated emojis:
   - `money`, `cash`, `profit` $\to$ 💰 / 💵
   - `rocket`, `launch` $\to$ 🚀
   - `fire`, `hot` $\to$ 🔥
@@ -188,70 +222,60 @@ flowchart TD
 | **Retro & Arcade (7)** | Retro 8-Bit Pixel Arcade, Vaporwave Pastel Sunset, Neo-Brutalist Solid Shadow, Comic Book POW Bubble, Y2K Glossy Chrome Bubble, Rotational 3D Card Swivel, Floating Zero-G Drift. |
 
 ### 3.3 Multi-Mode Word Chunking
-- **1-Word Pop Mode**: Rapid-fire single word reveals optimized for high-retention YouTube Shorts and Instagram Reels.
-- **2–3 Word Phrase Mode**: Balanced reading cadence for conversational talking-head content.
-- **Full Sentence Lower-Third Mode**: Traditional documentary subtitle presentation.
+- **1-Word Pop Mode**: Rapid single word pops for high-energy Shorts/Reels.
+- **2–3 Word Phrase Mode**: Balanced reading flow for talking-head videos.
+- **Full Sentence Lower-Third Mode**: Traditional documentary subtitle layout.
 
 ---
 
 ## Domain 04: Motion DNA Intelligence, 10D Kinematic Signatures & Vector Matcher
 
 ### 4.1 10D Kinetic DNA Vector Space
-Extracts a normalized 10-dimensional kinetic fingerprint from any animation trajectory:
 $$\vec{\text{DNA}} = \left[ v_{\text{peak}}, a_{\text{max}}, j_{\text{rms}}, \text{Overshoot}, \text{Damping}, \text{Duration}, \text{Curvature}, \text{Energy}, \text{Asymmetry}, \text{Roughness} \right]$$
 
 ### 4.2 Euclidean Similarity Vector Matching
-Calculates the kinetic compatibility percentage between target curves and reference library presets:
 $$\text{Similarity}(\vec{A}, \vec{B}) = \max\left(0, 100 \times \left(1 - \frac{\|\vec{A} - \vec{B}\|_2}{\sqrt{10}}\right)\right)$$
 
 ### 4.3 Continuous Motion DNA Morphing
-Interpolates between two distinct animation personalities (e.g., *Cinematic Ease $0\%$* $\to$ *Snappy Tech Pop $100\%$*) by blending high-dimensional tangent vectors in real time.
+Interpolates between two distinct animation curves by blending high-dimensional tangent vectors in real time ($0\% \to 100\%$).
 
 ---
 
 ## Domain 05: Audio DSP, 8-Band Spectral FFT & Procedural Foley Synthesizer
 
 ### 5.1 8-Band Spectral FFT Analyzer
-Divides audio tracks into 8 discrete frequency bands via WebAudio Fast Fourier Transform:
 1. **Sub-Bass**: $20\text{Hz} \to 60\text{Hz}$ (Sub-impacts & rumble)
 2. **Bass**: $60\text{Hz} \to 250\text{Hz}$ (Kicks & basslines)
 3. **Low-Mid**: $250\text{Hz} \to 500\text{Hz}$ (Vocal warmth)
 4. **Mid**: $500\text{Hz} \to 2\text{kHz}$ (Dialogue presence)
-5. **High-Mid**: $2\text{kHz} \to 4\text{kHz}$ (Snare cracks & attack)
+5. **High-Mid**: $2\text{kHz} \to 4\text{kHz}$ (Snare attack)
 6. **Presence**: $4\text{kHz} \to 6\text{kHz}$ (Vocal clarity)
-7. **Brilliance**: $6\text{kHz} \to 16\text{kHz}$ (Cymbals & air)
+7. **Brilliance**: $6\text{kHz} \to 16\text{kHz}$ (Cymbals & sparkle)
 8. **Air**: $16\text{kHz} \to 20\text{kHz}$ (Top-end sheen)
 
-### 5.2 Universal Audio Modulation Matrix
-Links frequency bands directly to visual animation channels:
-- `Bass ➔ Scale / Punch`
-- `Kick Drum ➔ Camera Shake Trauma`
-- `Vocal Presence ➔ Caption Glow Intensity`
-- `Audio Volume ➔ Auto-Ducking Background Music (-15dB)`
-
-### 5.3 Procedural WebAudio Foley Synthesizers ($0 Cost)
-- **Whoosh / Swish Generator**: White noise burst filtered through a swept bandpass filter linked to layer velocity.
-- **UI Pop / Click Generator**: Pure sine wave pulse with rapid exponential pitch envelope ($880\text{Hz} \to 220\text{Hz}$).
+### 5.2 Procedural WebAudio Foley Synthesizers
+- **Whoosh / Swish Generator**: White noise burst filtered through swept bandpass filter linked to velocity.
+- **UI Pop / Click Generator**: Pure sine wave pulse with rapid pitch drop ($880\text{Hz} \to 220\text{Hz}$).
 - **808 Sub-Bass Impact Generator**: Heavy sine drop starting at $150\text{Hz}$ decaying to $35\text{Hz}$ with soft overdrive.
-- **Cinematic Braam Horn Generator**: Dual detuned sawtooth oscillators with lowpass filter sweeps.
+- **Cinematic Braam Horn Generator**: Dual detuned sawtooth oscillators with lowpass sweeps.
 
 ---
 
 ## Domain 06: 3D Particle Storm, Slingshot Cannon & Continuum Dynamics (250+ Features)
 
-### 6.1 Emitter Geometries & 3D Spatial Layout
-- **3D Emitters**: Point, Line, Circle, Volumetric Sphere, Cone, Cylinder, Box, Spiral DNA Double-Helix, and Fibonacci Spherical Lattice.
-- **Slingshot Impulse Throw**: Interactive click-and-drag aiming on the canvas with real-time parabolic trajectory arc preview ($y(t) = y_0 + v_y t + \frac{1}{2} g t^2$).
+### 6.1 Emitter Geometries & Slingshot Impulse Cannon
+- **3D Emitter Shapes**: Point, Line, Circle, Volumetric Sphere, Cone, Cylinder, Box, Spiral DNA Double-Helix, and Fibonacci Spherical Lattice.
+- **Slingshot Impulse Throw**: Interactive click-and-drag aiming with real-time parabolic trajectory arc preview ($y(t) = y_0 + v_y t + \frac{1}{2} g t^2$).
 - **Custom Image Sprites**: Upload PNG, SVG, JPG, or WebP graphics with 3D tumble rotations, depth scaling, and lifetime alpha fade. Built-in presets for **🪙 Coins**, **⭐ Stars**, **❤️ Hearts**, **🔥 Flame Embers**, and **🍃 Autumn Leaves**.
 
-### 6.2 3D Force Fields & Continuum Dynamics
-- **Vortex / Tornado Spiral Fields**: Tangential angular acceleration orbiting the force origin.
+### 6.2 3D Force Fields & Continuum Turbulence
+- **Tornado Vortex Fields**: Helical tangential acceleration orbiting the force origin.
 - **Point Attractors & Repulsors**: Gravitational fields with inverse-distance falloff ($F \propto \frac{1}{r}$).
 - **Magnetic Dipole Fields**: Simulates paired North (+) and South (-) magnetic poles.
 - **Divergence-Free Curl Noise**: $\nabla \times \psi$ fluid vortex fields for atmospheric turbulence.
 
-### 6.3 Swarm Intelligence & Proximity Mesh Constellations
-- **Craig Reynolds 3D Boids**: Autonomous swarm behavior based on Separation, Alignment, Cohesion, and Target Seeking.
+### 6.3 Swarm Intelligence & Constellation Springs
+- **Craig Reynolds 3D Boids**: Separation, Alignment, Cohesion, and Target Seeking.
 - **Proximity Constellation Springs**: Dynamically generates connecting neon spring lines between particles within a distance threshold.
 - **Inter-System Modulations**:
   - Particle Collisions $\to$ Camera Shake Trauma Impulse
@@ -263,9 +287,9 @@ Links frequency bands directly to visual animation channels:
 ## Domain 07: 3-Way Color Grading, Film Science, False-Color IRE & 3D .cube LUTs
 
 ### 7.1 Interactive 3-Way Color Wheels
-- **Lift (Shadows)**: Color balance in the $0\text{--}30\%$ luminance range.
-- **Gamma (Midtones)**: Color balance in the $30\text{--}70\%$ luminance range.
-- **Gain (Highlights)**: Color balance in the $70\text{--}100\%$ luminance range.
+- **Lift (Shadows)**: Color balance in $0\text{--}30\%$ luminance range.
+- **Gamma (Midtones)**: Color balance in $30\text{--}70\%$ luminance range.
+- **Gain (Highlights)**: Color balance in $70\text{--}100\%$ luminance range.
 
 ### 7.2 Film Stock Emulation & False Color Scopes
 - **Kodak 2383 Film Stock**: Dense blacks, golden highlights, and classic film S-curve roll-off.
