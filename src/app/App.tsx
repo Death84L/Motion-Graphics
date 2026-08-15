@@ -56,7 +56,7 @@ import { ExportHubView } from '../features/export-hub/components/ExportHubView';
 import { AnimationStackPanel } from '../features/stack/components/AnimationStackPanel';
 import { PresetMorphPanel } from '../features/preset-studio/components/PresetMorphPanel';
 import { MotionDnaHealthPanel } from '../features/analysis/components/MotionDnaHealthPanel';
-import { ResponsiveMotionPanel } from '../features/responsive/components/ResponsiveMotionPanel';
+import { ResponsiveMotionLabView } from '../features/responsive/components/ResponsiveMotionLabView';
 import { InteractionStatePanel } from '../features/states/components/InteractionStatePanel';
 import { CaptionStudioView } from '../features/caption-studio/components/CaptionStudioView';
 import { DesignSystemStudioView } from '../features/design-system/components/DesignSystemStudioView';
@@ -1803,14 +1803,7 @@ export default function App() {
 
       {/* 06: RESPONSIVE MOTION LAB */}
       {suiteView === 'responsive-lab' && (
-        <div style={{ flex: 1, padding: 24, overflowY: 'auto', background: '#060913', display: 'flex', justifyContent: 'center' }}>
-          <div style={{ width: '100%', maxWidth: 640 }}>
-            <ResponsiveMotionPanel
-              keyframes={keyframes}
-              onApplyAdaptedKeyframes={handleKeyframesChange}
-            />
-          </div>
-        </div>
+        <ResponsiveMotionLabView currentKeyframes={keyframes} />
       )}
 
       {/* 07: PRESET STUDIO & MORPHING */}
