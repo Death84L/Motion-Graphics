@@ -1787,9 +1787,14 @@ export default function App() {
         <DesignSystemStudioView />
       )}
 
-      {/* 07: VISUAL MOTION LOGIC GRAPH */}
+      {/* 07: PROCEDURAL ANIMATION GRAPH & PROGRAMMING SYSTEM */}
       {suiteView === 'logic-graph' && (
-        <MotionLogicGraphView />
+        <MotionLogicGraphView
+          onBakeKeyframesToEditor={(bakedKeys) => {
+            handleKeyframesChange(bakedKeys);
+            setSuiteView('editor');
+          }}
+        />
       )}
 
       {/* 08: 2.5D / 3D SCENE & CAMERA STUDIO */}

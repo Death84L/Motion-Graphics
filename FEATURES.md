@@ -16,17 +16,18 @@ flowchart TD
         A5["Multi-Track Audio & Speech Waves (WAV/MP3/FLAC/Mic)"]
     end
 
-    subgraph MotionDnaCore["2. 🧬 MOTION DNA UNIVERSAL INTELLIGENCE CORE"]
+    subgraph MotionDnaCore["2. 🧬 MOTION DNA & PROCEDURAL PROGRAMMING CORE"]
         B0["🧬 Motion DNA Universal Engine<br/>(Extract, Vector Similarity, DNA Morphing 0-100%, Git-Diff, Auto-Optimizer)"]
-        B1["🎞️ Universal Multi-Track Timeline<br/>(SMPTE Ruler, NLE Ripple/Slip/Roll/Slide, Parenting, Beat Sync)"]
-        B2["🦾 Complete Constraint & Rigging System<br/>(2-Bone IK, Universal Property Binding, Flexbox Auto-Hug, 1-Click Auto-Rig)"]
-        B3["🎵 Audio-Reactive Motion Engine<br/>(8-Band Spectral FFT, BPM Tracker, Modulation Graph, 1-Click Baker)"]
-        B4["🎯 Responsive Motion Lab & Breakpoints<br/>(5-Level Adaptive Motion, Safe-Area Protection, CSS/Framer Code Generators)"]
-        B5["🧩 Motion Batch Processor<br/>(100+ Layers, Stagger, Timing, Before/After Previews)"]
-        B6["📈 Dedicated Velocity Lab<br/>(Triple Synchronized Graphs, Normalization, Clamping, Retiming)"]
-        B7["🧬 Advanced Motion Matching<br/>(Find Similar, Match Motion, Reference Optimization 18.4% -> 2.1%)"]
-        B8["🏛️ Living Parametric Presets<br/>(Physical Sliders, Continuous Morphing, Variants, Live Extraction)"]
-        B9["📋 Smart Motion Clipboard<br/>(Selective Masks, Cross-Property Normalization, Linked Master Binding)"]
+        B1["🧠 Procedural Animation Graph<br/>(46+ Nodes, Math, Trig, Vectors, 2nd-Order Spring, Perlin Noise, Keyframe Baker)"]
+        B2["🎞️ Universal Multi-Track Timeline<br/>(SMPTE Ruler, NLE Ripple/Slip/Roll/Slide, Parenting, Beat Sync)"]
+        B3["🦾 Complete Constraint & Rigging System<br/>(2-Bone IK, Universal Property Binding, Flexbox Auto-Hug, 1-Click Auto-Rig)"]
+        B4["🎵 Audio-Reactive Motion Engine<br/>(8-Band Spectral FFT, BPM Tracker, Modulation Graph, 1-Click Baker)"]
+        B5["🎯 Responsive Motion Lab & Breakpoints<br/>(5-Level Adaptive Motion, Safe-Area Protection, CSS/Framer Code Generators)"]
+        B6["🧩 Motion Batch Processor<br/>(100+ Layers, Stagger, Timing, Before/After Previews)"]
+        B7["📈 Dedicated Velocity Lab<br/>(Triple Synchronized Graphs, Normalization, Clamping, Retiming)"]
+        B8["🧬 Advanced Motion Matching<br/>(Find Similar, Match Motion, Reference Optimization 18.4% -> 2.1%)"]
+        B9["🏛️ Living Parametric Presets<br/>(Physical Sliders, Continuous Morphing, Variants, Live Extraction)"]
+        B10["📋 Smart Motion Clipboard<br/>(Selective Masks, Cross-Property Normalization, Linked Master Binding)"]
     end
 
     subgraph ProductionSuites["3. PRODUCTION DESIGN SUITES"]
@@ -38,8 +39,7 @@ flowchart TD
         C6["🔀 Animation Git & Diff (Branching & Kinematic Parameter Deltas)"]
         C7["💬 Caption Studio (Word Timings, Karaoke Sweeps, Ripple Edit)"]
         C8["🎨 Design System Studio (Design Tokens, Component Library)"]
-        C9["🧠 Motion Logic Graph (Visual Node Graph, Math, Audio Inputs)"]
-        C10["🌌 2.5D / 3D Scene & Camera (Depth Layers, Dolly Rigs, Particles)"]
+        C9["🌌 2.5D / 3D Scene & Camera (Depth Layers, Dolly Rigs, Particles)"]
     end
 
     subgraph Infrastructure["4. PERFORMANCE, RELIABILITY & PROJECT ENGINE"]
@@ -67,7 +67,17 @@ flowchart TD
 
 ## 📋 Comprehensive Feature Catalog
 
-### 1. 🧬 Motion DNA Universal Intelligence System (50+ Features)
+### 1. 🧠 Procedural Animation Graph & Programming System (46+ Features)
+| Category | What It Does |
+| :--- | :--- |
+| **Comprehensive Node Palette** | Inputs (*Time, DeltaTime, Frame, Audio FFT, Mouse Distance, Char Index*), Math (*Add, Sub, Mul, Div, Modulo, Min/Max*), Trigonometry (*Sin, Cos, Tan, Atan2*), Vectors (*2D/3D Combine, Split, Distance, Lerp*), Interpolation (*Smoothstep, Remap, Easing*), Spring Dynamics (*Harmonic Frequency $f$, Damping $\zeta$*), Noise (*1D/2D Perlin Noise, Random Range*), Logic (*If/Else, Compare*), and Outputs. |
+| **Infinite Visual Canvas** | Node block graph with SVG Bézier wires, socket connections, and animated signal pulses. |
+| **Procedural Presets Library** | Pre-built templates: *Harmonic Spring Bounce, Perlin Noise Camera Shake, Audio-Reactive Bass Pop, Kinetic Typography Wave*. |
+| **1-Click Keyframe Baker** | Continuous DAG evaluator baking procedural motion into discrete Bézier keyframes for Premiere Pro, AE, and DaVinci Resolve. |
+
+---
+
+### 2. 🧬 Motion DNA Universal Intelligence System (50+ Features)
 | Category | What It Does |
 | :--- | :--- |
 | **Machine-Readable DNA Signatures** | Decodes any animation into Temporal, Kinematics, Physics, Quality ($0\text{–}100$), and Style DNA profiles. |
@@ -78,7 +88,7 @@ flowchart TD
 
 ---
 
-### 2. 🎵 Audio-Reactive Motion Engine (45+ Features)
+### 3. 🎵 Audio-Reactive Motion Engine (45+ Features)
 | Category | What It Does |
 | :--- | :--- |
 | **8-Band Spectral FFT Analyzer** | Split into sub-bass ($20\text{–}60\text{Hz}$), bass ($60\text{–}250\text{Hz}$), low-mid, mid, high-mid, treble, high-treble, and RMS volume. |
@@ -89,7 +99,7 @@ flowchart TD
 
 ---
 
-### 3. 🎯 Responsive Motion Lab & Breakpoint Engine (52+ Features)
+### 4. 🎯 Responsive Motion Lab & Breakpoint Engine (52+ Features)
 | Category | What It Does |
 | :--- | :--- |
 | **5-Level Adaptive Motion** | **Level 1 (Fixed)**, **Level 2 (Fluid Smoothstep)**, **Level 3 (Relative vw/vh)**, **Level 4 (Constraint Docking)**, and **Level 5 (Semantic Kinetic Intent)**. |
@@ -100,7 +110,7 @@ flowchart TD
 
 ---
 
-### 4. 🦾 Complete Constraint & Rigging System (45+ Features)
+### 5. 🦾 Complete Constraint & Rigging System (45+ Features)
 | Category | What It Does |
 | :--- | :--- |
 | **2-Bone & 3-Bone Analytic IK** | Law-of-cosines Inverse Kinematics solver with pole vector elbow control, reach clamping, and smooth FK/IK blending ($0\% \to 100\%$). |
@@ -112,7 +122,7 @@ flowchart TD
 
 ---
 
-### 5. 🎞️ Universal Timeline Workspace & NLE Engine
+### 6. 🎞️ Universal Timeline Workspace & NLE Engine
 | Category | What It Does |
 | :--- | :--- |
 | **Canonical Multi-Track Model** | Unlimited tracks (*Video, Audio, Text, Shape, Camera, Light, Null/Controller, Adjustment, Pre-Comps*) with SMPTE frame ruler. |
@@ -124,7 +134,7 @@ flowchart TD
 
 ---
 
-### 6. 🧩 Motion Batch Processor (25+ Features)
+### 7. 🧩 Motion Batch Processor (25+ Features)
 | Category | What It Does |
 | :--- | :--- |
 | **Multi-Layer Selection & Filtering** | Select 10, 100, or 1,000+ layers simultaneously. Filter by layer type (*Text, Shape, Image, Caption, Video*) and property (*Position, Scale, Rotation, Opacity*). |
@@ -135,7 +145,7 @@ flowchart TD
 
 ---
 
-### 7. 📈 Dedicated Velocity Lab (30+ Features)
+### 8. 📈 Dedicated Velocity Lab (30+ Features)
 | Category | What It Does |
 | :--- | :--- |
 | **Triple Synchronized Graphs** | Real-time synchronized inspection: **Position-Time ($x$)**, **Velocity-Time ($v = \frac{\Delta x}{\Delta t}$)**, **Acceleration-Time ($a = \frac{\Delta v}{\Delta t}$)**, and Jerk ($\frac{da}{dt}$). |
@@ -145,7 +155,7 @@ flowchart TD
 
 ---
 
-### 8. 🧬 Flagship Motion Matching Engine (30+ Features)
+### 9. 🧬 Flagship Motion Matching Engine (30+ Features)
 | Category | What It Does |
 | :--- | :--- |
 | **Mode A: Find Similar Preset** | 5D Euclidean distance matching against the preset library (Energy, Smoothness, Elasticity, Aggression, Rhythm) with % similarity readouts. |
@@ -155,7 +165,7 @@ flowchart TD
 
 ---
 
-### 9. 🏛️ Living Parametric Presets (30+ Features)
+### 10. 🏛️ Living Parametric Presets (30+ Features)
 | Category | What It Does |
 | :--- | :--- |
 | **Parametric Living Presets** | Presets expose live physical sliders: Duration, Speed, Intensity, Elasticity, Smoothness, Overshoot, Damping, Stiffness, Direction, and Stagger. |
@@ -165,7 +175,7 @@ flowchart TD
 
 ---
 
-### 10. 📋 Smart Motion Clipboard (25+ Features)
+### 11. 📋 Smart Motion Clipboard (25+ Features)
 | Category | What It Does |
 | :--- | :--- |
 | **Selective Copy Mask** | Granular checkboxes to copy specific components: Values, Timing, Easing, Tangents, Velocity, Modifiers, Spring Parameters, or Styles. |
@@ -180,7 +190,7 @@ flowchart TD
 The application features a comprehensive suite switcher located directly in the top navigation bar:
 
 ```
-[🎬 Motion Graph] [🎞️ Universal Timeline] [🦾 Constraints & Rigging] [🎵 Audio Reactive] [🎯 Responsive Lab] [🧬 Motion DNA] [🧩 Batch Processor] [📈 Velocity Lab] ... [⚡ Export ▾]
+[🎬 Motion Graph] [🎞️ Universal Timeline] [🦾 Constraints & Rigging] [🎵 Audio Reactive] [🎯 Responsive Lab] [🧬 Motion DNA] [🧠 Logic Graph] ... [⚡ Export ▾]
 ```
 
 All subsystems operate locally with zero mandatory cloud accounts, zero subscription fees, and complete cross-application interchangeability.
