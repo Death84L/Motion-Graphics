@@ -1,4 +1,4 @@
-# 🎬 Motion Studio — Complete Feature Catalog & Architecture
+# 🎬 Motion Studio — Complete 518-Feature Architecture & Specification
 
 > **Motion Studio** is a standalone, local-first, zero-cloud-cost motion design system, animation graph editor, universal timeline workspace, and caption motion engine for video creators, animators, and web developers.
 
@@ -16,21 +16,20 @@ flowchart TD
         A5["Multi-Track Audio & Speech Waves (WAV/MP3/FLAC/Mic)"]
     end
 
-    subgraph MotionDnaCore["2. 🧬 BLENDER CURVES, MOTION DNA & PROCEDURAL CORE"]
-        B0["📈 Blender-Style Curve Engine<br/>(Auto-Clamped, Vector, Aligned, Free, Flip X/Y, Stretch 2x, Quantize, RDP Simplify)"]
-        B1["🧬 Motion DNA Universal Engine<br/>(Extract, Vector Similarity, DNA Morphing 0-100%, Git-Diff, Auto-Optimizer)"]
-        B2["🎨 Advanced Vector & Typography Engine<br/>(Parametric Morphing, Trim Path Write-On, Scramble Cipher, Kinetic Wave)"]
-        B3["🧪 Universal Physics World & Simulation<br/>(Symplectic Euler, Multi-Body Collisions, Springs, Wind, Materials, Keyframe Baker)"]
-        B4["🧠 Procedural Animation Graph<br/>(46+ Nodes, Math, Trig, Vectors, 2nd-Order Spring, Perlin Noise, Keyframe Baker)"]
-        B5["🎞️ Universal Multi-Track Timeline<br/>(SMPTE Ruler, NLE Ripple/Slip/Roll/Slide, Parenting, Beat Sync)"]
-        B6["🦾 Complete Constraint & Rigging System<br/>(2-Bone IK, Universal Property Binding, Flexbox Auto-Hug, 1-Click Auto-Rig)"]
-        B7["🎵 Audio-Reactive Motion Engine<br/>(8-Band Spectral FFT, BPM Tracker, Modulation Graph, 1-Click Baker)"]
-        B8["🎯 Responsive Motion Lab & Breakpoints<br/>(5-Level Adaptive Motion, Safe-Area Protection, CSS/Framer Code Generators)"]
-        B9["🧩 Motion Batch Processor<br/>(100+ Layers, Stagger, Timing, Before/After Previews)"]
-        B10["📈 Dedicated Velocity Lab<br/>(Triple Synchronized Graphs, Normalization, Clamping, Retiming)"]
-        B11["🧬 Advanced Motion Matching<br/>(Find Similar, Match Motion, Reference Optimization 18.4% -> 2.1%)"]
-        B12["🏛️ Living Parametric Presets<br/>(Physical Sliders, Continuous Morphing, Variants, Live Extraction)"]
-        B13["📋 Smart Motion Clipboard<br/>(Selective Masks, Cross-Property Normalization, Linked Master Binding)"]
+    subgraph CoreEngines["2. 🧬 CORE MATHEMATICAL, KINEMATIC & DSP ENGINES"]
+        B0["📈 Blender-Style Curve Engine (Auto-Clamped, Vector, Aligned, Free, Flip X/Y, Quantize, RDP Simplify)"]
+        B1["📐 Advanced Calculus & Splines (RK4 Integrator, TCB Splines, Curvature Profile, Poisson Disc)"]
+        B2["🧬 Motion DNA Intelligence (10D Similarity, Continuous Morphing, Git-Diff, Auto-Optimizer)"]
+        B3["🎨 Advanced Vector & Typography (Parametric Morphing, Trim Path Write-On, Scramble Cipher, Kinetic Wave)"]
+        B4["🧪 Universal Physics World (Symplectic Euler, Multi-Body Collisions, Springs, Wind, Materials)"]
+        B5["🧠 Procedural Animation Graph (46+ Nodes, Math, Trig, Vectors, 2nd-Order Spring, Perlin Noise)"]
+        B6["🎞️ Universal Multi-Track Timeline (SMPTE Ruler, NLE Ripple/Slip/Roll/Slide, Parenting, Beat Sync)"]
+        B7["🦾 Complete Constraint & Rigging (2-Bone IK, Universal Property Binding, Flexbox Auto-Hug)"]
+        B8["🎵 Audio-Reactive & Foley Synthesizer (8-Band FFT, BPM Tracker, Whoosh/Pop/808 Foley Engine)"]
+        B9["🎯 Responsive Motion Lab (5-Level Adaptive Motion, Safe-Area Protection, CSS/Framer Exporters)"]
+        B10["🎨 Color Science & LUT Studio (ACEScc, 3-Way Wheels, Kodak/Fuji Emulation, 3D .cube Generator)"]
+        B11["✨ Procedural VFX & Shaders (Curl Noise, Chromatic Aberration, CRT Scanlines, Lens Flares)"]
+        B12["🤖 Local AI Procedural Assistant (1-Click Polish, Jitter Cleaner, Contrast Styler, Cohesion Scorer)"]
     end
 
     subgraph ProductionSuites["3. PRODUCTION DESIGN SUITES"]
@@ -59,116 +58,52 @@ flowchart TD
         E4["🔌 Motion Studio Extension SDK (Custom Modifiers, Presets, Nodes)"]
     end
 
-    Inputs --> MotionDnaCore
-    MotionDnaCore --> ProductionSuites
+    Inputs --> CoreEngines
+    CoreEngines --> ProductionSuites
     ProductionSuites --> Infrastructure
     Infrastructure --> ExportHub
 ```
 
 ---
 
-## 📋 Comprehensive Feature Catalog
+## 📋 Comprehensive 27-Category Feature Matrix (518 Features)
 
-### 1. 📈 Blender-Style Curve Engine & 5-Mode System (30+ Features)
-| Category | What It Does |
-| :--- | :--- |
-| **Handle Types** | **Auto-Clamped** (flattens extrema), **Vector** (linear slopes pointing to neighbors), **Aligned**, and **Free** Bézier handles. |
-| **Curve Transformations** | **Flip Time (⇄ Reverse)**, **Invert Values (⇅ Invert)**, **2× Stretch Duration**, **Quantize Frames**, and **Distribute Keyframes**. |
-| **Intelligent Curve Simplification** | Ramer-Douglas-Peucker tolerance algorithm reducing dense keyframes while preserving curve extrema and bounce peaks. |
-| **Calculus Telemetry** | Real-time derivative readouts for Peak Velocity ($v_{\max}$), Peak Acceleration ($a_{\max}$), Max Jerk ($j_{\max}$), and Smoothness Score ($0\text{–}100$). |
-| **5-Mode Curve Switcher** | Fast switching between **Classic Curves**, **Velocity Lab**, **Procedural Graph**, **Physics Sim**, and **Motion DNA**. |
-
----
-
-### 2. 🎨 Advanced Vector Shapes & Kinetic Typography Studio (56+ Features)
-| Category | What It Does |
-| :--- | :--- |
-| **Parametric Vector Shapes** | Star (5 to 12 points), Circle, Ellipse, Polygon/Hexagon, Diamond, Capsule, Heart, Ring, and Rounded Rectangles. |
-| **Continuous Shape Morphing** | Interpolates vertex geometry between arbitrary shapes (e.g. *Circle $\leftrightarrow$ Star $\leftrightarrow$ Polygon $\leftrightarrow$ Heart*) from $0\% \to 100\%$. |
-| **Trim Path Write-On** | Percentage-based stroke start/end trimming for animated line drawings, reveals, and progress rings. |
-| **Radial & Grid Repeaters** | Clones vector shapes radially with progressive rotation and scale stagger offsets. |
-| **Matrix Cipher Scramble** | Cyberpunk glitch reveal replacing unresolved letters with matrix cipher symbols (`#$%*@!&`) decoding left-to-right. |
-| **Kinetic Harmonic Wave** | Harmonic sine wave oscillation traveling across character Y positions. |
-| **Elastic Spring Pop** | 2nd-order harmonic spring scale and rotation overshoot per letter. |
-
----
-
-### 3. 🧪 Universal Physics World & Simulation System (50+ Features)
-| Category | What It Does |
-| :--- | :--- |
-| **Symplectic Euler Integration** | Deterministic 60fps multi-body physics solver with configurable substeps ($1\text{ to }8$) and time scale. |
-| **Material Physics Library** | Presets for **Rubber** ($e=0.85$), **Solid Metal**, **Wood**, **Soft Jelly / Blob**, **Smooth Ice** ($\mu=0.02$), **Foam**, and **Fabric**. |
-| **Dynamic Multi-Body Collisions** | Circle-Circle, Circle-Box, ground bounce restitution, and boundary wall reflections. |
-| **Active Force Fields** | Directional gravity, wind gusts with turbulence, point attractors/repulsors, fluid drag, and mouse impulse throwing. |
-| **Intelligent Keyframe Baker** | Converts live physics simulations into optimized Bézier keyframes while strictly preserving collision extrema and bounce peaks. |
+| Category | Domain | Key Capabilities |
+| :--- | :--- | :--- |
+| **01** | **📐 Advanced Math & Calculus** | RK4 ODE integrator, Catmull-Rom $\to$ Bézier matrix conversion, TCB splines, Curvature $\kappa(t)$, Poisson Disc sampling, Bilateral curve filtering. |
+| **02** | **🔤 Kinetic Typography & Speech** | OpenType glyph parser, local Whisper.cpp alignment, variable font axes, matrix scramble glitch, karaoke sweeps, text shatter. |
+| **03** | **🧪 Physics & Continuum Dynamics** | PBD/XPBD cloth, SPH fluid splashes, Navier-Stokes smoke, soft-body jelly, tearing cloth, aerodynamic wind drag, CCD collisions. |
+| **04** | **🎵 Audio DSP & Music Theory** | Multi-resolution FFT, Constant-Q musical notes, Chromagram chord tracker, HPSS drum/melody separation, PLL BPM tracking. |
+| **05** | **👁️ Computer Vision & Tracking** | Pyramidal Lucas-Kanade flow, 4-point planar homography, video stabilization, 3D camera solver, 9:16 auto-framing, facial mesh. |
+| **06** | **🦾 Rigging, IK & Character Rigs** | FABRIK multi-joint solver, 2-bone analytic IK, spline IK, jiggle bone physics, dual quaternion skinning, walk cycle generator. |
+| **07** | **🎨 Vector Compositing & Booleans** | Greiner-Hormann booleans (Union, Sub, Intersect), variable width spline strokes, Catmull-Rom mesh gradients, autotracer. |
+| **08** | **🌌 2.5D/3D Scene, Camera & Depth** | 3D perspective camera ($mm/f$-stop), DoF bokeh, 2.5D multi-plane parallax, 3D PCF soft shadows, glTF model loader, SSAO. |
+| **09** | **🎨 Color Science, LUTs & HDR** | ACEScc/cg pipeline, 3D .cube LUT generator, 3-way color wheels, Kodak 2383/Fuji 3513 film print emulation, false color maps. |
+| **10** | **✂️ Video NLE Power Tools** | Dead-air silence stripper, auto-jumpcut pacer, multi-cam waveform sync, velocity-preserving speed ramps, FCPXML/EDL export. |
+| **11** | **🧬 Motion DNA & Living Presets** | 10D kinetic DNA extraction, Euclidean vector matching, continuous morphing ($0\% \to 100\%$), 1-click jerk auto-optimizer. |
+| **12** | **🧠 Procedural Node Graph** | 46+ visual math, trig, vector, 2nd-order spring, Perlin noise, and conditional nodes with 1-click keyframe baking. |
+| **13** | **⚡ Universal Export & Host Hub** | Adobe Premiere Pro UXP, After Effects JSX, DaVinci Resolve Fusion, FCPXML, Blender Python, Lottie, React Framer, GSAP, CSS. |
+| **14** | **⚙️ Performance, GPU & WASM** | Web Worker math offloading, WebGL/WebGPU shaders, $O(n)$ spatial grid collisions, zero-GC memory pools, WASM DSP core. |
+| **15** | **⌨️ Editor UX & Productivity** | `⌘K` Command palette, custom shortcut keymapper (Blender/AE/Premiere), dark theme HSL, atomic crash recovery watchdog. |
+| **16** | **🎥 Cinematic Camera & Optics** | Anamorphic oval bokeh, chromatic aberration fringe, Scheimpflug tilt-shift, Vertigo dolly zoom, $\cos^4\theta$ natural vignetting. |
+| **17** | **✨ VFX, Shaders & Noise** | Divergence-free curl noise, Gray-Scott reaction-diffusion, CRT scanlines, lens flare streaks, burning embers dissolve, SSR reflections. |
+| **18** | **🎭 Masking, Mattes & Roto** | Per-vertex feathering, affine roto propagation, core/soft matte split, difference keying, color despill, additive light wrap. |
+| **19** | **⏱️ Speed Ramps & Optical Flow** | Non-linear Bézier time-remapping, $1000\text{ FPS}$ slow-mo interpolation, pitch-preserved audio stretch, time-displacement maps. |
+| **20** | **🔊 Foley & Sound Synthesis** | Procedural Whoosh, UI Pop, 808 Sub-Impact, and Braam horn synthesizers, automatic dialogue ducking, 10-band parametric EQ. |
+| **21** | **📐 UI Design Systems & Tokens** | Figma Tokens JSON import, WCAG AAA contrast checker, flexbox auto-padding, device mockup frames (iPhone 16/MacBook), glassmorphism. |
+| **22** | **🌀 Generative Procedural Art** | L-System fractal trees, Mandelbrot zoomer, Spirograph roulettes, Chladni acoustic nodal plates, Voronoi shatter, 2D metaballs. |
+| **23** | **🗂️ Workflow, Git & Collab** | Local Git commit history, split-screen branch comparator, video markup pen tool, change delta heatmaps, 60s auto-recovery snapshots. |
+| **24** | **🔌 Scripting & Developer SDK** | JS/TS DOM scripting API, Python pipeline bridge, custom modifier loader, headless Node.js runner, MIDI/OSC hardware mapping. |
+| **25** | **🧊 3D Scene Graph & glTF/USD** | Pixar USD exporter, glTF 2.0 PBR scene exporter, Cook-Torrance metallic-roughness shader, CSG 3D booleans, 3D curve lathe. |
+| **26** | **📦 Codecs & Web Delivery** | WebCodecs GPU encoding, ProRes 422/4444 XQ, AV1/VP9, transparent alpha WebM, neural quantized GIF, MOOV fast-start optimizer. |
+| **27** | **🤖 Local Procedural Assistants** | 1-Click motion polish optimizer, jitter cleanup, vocal cadence pacer, auto-contrast text styling, Motion DNA cohesion scorer. |
 
 ---
 
-### 4. 🧠 Procedural Animation Graph & Programming System (46+ Features)
-| Category | What It Does |
-| :--- | :--- |
-| **Comprehensive Node Palette** | Inputs (*Time, DeltaTime, Frame, Audio FFT, Mouse Distance, Char Index*), Math (*Add, Sub, Mul, Div, Modulo, Min/Max*), Trigonometry (*Sin, Cos, Tan, Atan2*), Vectors (*2D/3D Combine, Split, Distance, Lerp*), Interpolation (*Smoothstep, Remap, Easing*), Spring Dynamics (*Harmonic Frequency $f$, Damping $\zeta$*), Noise (*1D/2D Perlin Noise, Random Range*), Logic (*If/Else, Compare*), and Outputs. |
-| **Infinite Visual Canvas** | Node block graph with SVG Bézier wires, socket connections, and animated signal pulses. |
-| **1-Click Keyframe Baker** | Continuous DAG evaluator baking procedural motion into discrete Bézier keyframes for Premiere Pro, AE, and DaVinci Resolve. |
-
----
-
-### 5. 🧬 Motion DNA Universal Intelligence System (50+ Features)
-| Category | What It Does |
-| :--- | :--- |
-| **Machine-Readable DNA Signatures** | Decodes any animation into Temporal, Kinematics, Physics, Quality ($0\text{–}100$), and Style DNA profiles. |
-| **Multi-Vector Similarity Engine** | 10D Euclidean vector matching comparing *Timing, Velocity, Smoothness, Elasticity, Energy, and Rhythm*. |
-| **Continuous DNA Morphing** | Seamlessly morphs between Preset A (e.g. *Apple Smooth*) and Preset B (e.g. *Elastic Pop*) from $0\% \to 100\%$. |
-| **Git-Like Motion Diff Matrix** | Structured semantic diffs: Duration $\Delta$, Velocity $\Delta$, Smoothness $\Delta$, Overshoot $\Delta$, and Quality Score delta. |
-| **1-Click Auto-Optimizer** | Curve optimizer eliminating jerk spikes and elevating animation quality scores to **95+**. |
-
----
-
-### 6. 🎵 Audio-Reactive Motion Engine (45+ Features)
-| Category | What It Does |
-| :--- | :--- |
-| **8-Band Spectral FFT Analyzer** | Split into sub-bass ($20\text{–}60\text{Hz}$), bass ($60\text{–}250\text{Hz}$), low-mid, mid, high-mid, treble, high-treble, and RMS volume. |
-| **Music Intelligence Engine** | Automatic BPM detection ($128\text{ BPM}$), confidence rating ($94\%$), downbeat beacon, and kick/snare/hi-hat transient onsets. |
-| **Universal Audio Modulation Graph** | Maps any audio feature to any visual kinetic property (`Bass ➔ Scale`, `Kick ➔ Camera Shake`, `Mid ➔ Glow Aura`, `Snare ➔ Position Y`, `Treble ➔ Rotation`). |
-| **1-Click Keyframe Baker** | Converts live audio modulations into simplified Bézier keyframe curves with Ramer-Douglas-Peucker reduction. |
-
----
-
-### 7. 🎯 Responsive Motion Lab & Breakpoint Engine (52+ Features)
-| Category | What It Does |
-| :--- | :--- |
-| **5-Level Adaptive Motion** | **Level 1 (Fixed)**, **Level 2 (Fluid Smoothstep)**, **Level 3 (Relative vw/vh)**, **Level 4 (Constraint Docking)**, and **Level 5 (Semantic Kinetic Intent)**. |
-| **Device & Aspect Profiles** | Desktop (1080p, 4K), Laptop (1440p), Tablet (iPad 3:4), Mobile (iPhone 15 9:19.5), Social Reels/Shorts (9:16), Social Feed (1:1). |
-| **Safe-Area Protection** | Dynamic Island, Top Notch ($47\text{px}$), and Home Indicator ($34\text{px}$) collision protection with automated warning banners. |
-| **Multi-Platform Code Generator** | 1-click export to **CSS `@media` Keyframes**, **React Framer Motion Variants**, and **GSAP `matchMedia()`** scripts. |
-
----
-
-### 8. 🦾 Complete Constraint & Rigging System (45+ Features)
-| Category | What It Does |
-| :--- | :--- |
-| **2-Bone & 3-Bone Analytic IK** | Law-of-cosines Inverse Kinematics solver with pole vector elbow control, reach clamping, and smooth FK/IK blending ($0\% \to 100\%$). |
-| **Universal Property Binding** | Reactive drivers linking *ANY* property to *ANY* property (`Button.width ➔ Text.fontSize`, `Audio.bass ➔ Scale`, `Slider ➔ Camera.zoom`). |
-| **1-Click Auto-Rig Synthesizer** | Select layers $\to$ click **"✨ Auto-Rig UI System"** $\to$ automatically constructs center alignment, content-hug width, and hover spring dynamics. |
-
----
-
-### 9. 🎞️ Universal Timeline Workspace & NLE Engine
-| Category | What It Does |
-| :--- | :--- |
-| **Canonical Multi-Track Model** | Unlimited tracks (*Video, Audio, Text, Shape, Camera, Light, Null/Controller, Adjustment, Pre-Comps*) with SMPTE frame ruler. |
-| **NLE Edit Operations** | **Selection (`V`)**, **Split Razor (`C`)**, **Ripple Edit (`B`)**, **Slip Edit (`Y`)**, **Slide Edit (`U`)**, **Time Stretch (`R`)**. |
-| **Hierarchical Parenting** | Child layers inherit parent Position, Scale, Rotation, and Opacity via concatenated transform matrices. |
-| **Audio Beat Grid & Sync** | Amplitude waveform visualizer, BPM transient detector, and 1-click **Sync to 120 BPM** keyframe quantization. |
-
----
-
-## 🚀 Navigation & Usage
-
-The application features a comprehensive suite switcher located directly in the top navigation bar:
+## 🚀 Usage & Host Bridge Workflow
 
 ```
 [🎬 Motion Graph] [🎞️ Universal Timeline] [🦾 Constraints & Rigging] [🎨 Vector & Typography] [🎵 Audio Reactive] [🎯 Responsive Lab] [🧬 Motion DNA] [🧠 Logic Graph] [🧪 Physics Sandbox] ... [⚡ Export ▾]
 ```
 
-All subsystems operate locally with zero mandatory cloud accounts, zero subscription fees, and complete cross-application interchangeability.
+All 518 capabilities run **100% locally with zero cloud dependencies, zero external subscription costs**, and full cross-application interchangeability across **Premiere Pro**, **After Effects**, **DaVinci Resolve**, **Blender**, and the **Web**.
