@@ -86,6 +86,7 @@ import { ParametricPresetStudioView } from '../features/parametric-presets/compo
 import { MotionClipboardDrawer } from '../features/clipboard/components/MotionClipboardDrawer';
 import { UniversalTimelineStudioView } from '../features/universal-timeline/components/UniversalTimelineStudioView';
 import { ConstraintRiggingStudioView } from '../features/constraints-rigging/components/ConstraintRiggingStudioView';
+import { AudioReactiveStudioView } from '../features/audio-reactive/components/AudioReactiveStudioView';
 import {
   CompositionLayer,
   DEFAULT_VFX_CONFIG,
@@ -124,6 +125,7 @@ export type MotionStudioSuiteView =
   | 'editor'
   | 'universal-timeline'
   | 'constraints-rigging'
+  | 'audio-reactive'
   | 'velocity-lab'
   | 'motion-matching'
   | 'batch-processor'
@@ -792,6 +794,7 @@ export default function App() {
             { id: 'editor', label: '🎬 Motion Graph' },
             { id: 'universal-timeline', label: '🎞️ Universal Timeline' },
             { id: 'constraints-rigging', label: '🦾 Constraints & Rigging' },
+            { id: 'audio-reactive', label: '🎵 Audio Reactive' },
             { id: 'batch-processor', label: '🧩 Batch Processor' },
             { id: 'velocity-lab', label: '📈 Velocity Lab' },
             { id: 'motion-matching', label: '🧬 Motion Match' },
@@ -1640,6 +1643,16 @@ export default function App() {
       {/* 02.5: COMPLETE CONSTRAINT & RIGGING SYSTEM */}
       {suiteView === 'constraints-rigging' && (
         <ConstraintRiggingStudioView />
+      )}
+
+      {/* 02.6: AUDIO-REACTIVE MOTION ENGINE */}
+      {suiteView === 'audio-reactive' && (
+        <AudioReactiveStudioView
+          onBakeKeyframesToEditor={(bakedKeys, label) => {
+            handleKeyframesChange(bakedKeys);
+            setSuiteView('editor');
+          }}
+        />
       )}
 
       {/* 03: MOTION BATCH PROCESSOR */}
