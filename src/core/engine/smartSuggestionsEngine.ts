@@ -1,0 +1,256 @@
+import { ObjectAnimationModel, ParametricBlockConfig, AnimationStageSequence } from './universalAnimationModel';
+
+export type ObjectTypeCategory = 'logo' | 'ui-button' | 'ui-card' | 'text' | 'lower-third' | 'icon' | 'badge';
+
+export interface SmartAnimationTemplate {
+  id: string;
+  name: string;
+  category: ObjectTypeCategory;
+  description: string;
+  tags: string[];
+  stages: AnimationStageSequence[];
+}
+
+export const SMART_ANIMATION_TEMPLATES: SmartAnimationTemplate[] = [
+  // 1. LOGO REVEAL TEMPLATE
+  {
+    id: 'tpl-logo-pop-spin',
+    name: 'Dynamic Logo Pop & Glow',
+    category: 'logo',
+    description: 'Punchy scale expansion with subtle rotational settle and glowing pulse.',
+    tags: ['logo', 'punchy', 'branding', 'pop'],
+    stages: [
+      {
+        id: 'stg-logo-ent',
+        name: 'Entrance',
+        stage: 'entrance',
+        enabled: true,
+        startFrame: 0,
+        durationFrames: 30,
+        stageEase: 'back',
+        blocks: [
+          {
+            id: 'blk-logo-scale',
+            presetId: 'scale-pop',
+            name: 'Scale Pop + Overshoot',
+            category: 'motion-design',
+            stage: 'entrance',
+            targetProperties: ['scale-uniform'],
+            enabled: true,
+            startFrame: 0,
+            durationFrames: 28,
+            delayFrames: 0,
+            loopCount: 1,
+            pingPong: false,
+            reverse: false,
+            intensity: 1.2,
+            startValue: 0,
+            targetValue: 100,
+            ease: 'back',
+            blendMode: 'replace',
+            params: { overshootPercent: 18, reboundDecay: 0.7 },
+          },
+          {
+            id: 'blk-logo-fade',
+            presetId: 'fade-in',
+            name: 'Opacity Fade In',
+            category: 'basic',
+            stage: 'entrance',
+            targetProperties: ['opacity'],
+            enabled: true,
+            startFrame: 0,
+            durationFrames: 14,
+            delayFrames: 0,
+            loopCount: 1,
+            pingPong: false,
+            reverse: false,
+            intensity: 1.0,
+            startValue: 0,
+            targetValue: 100,
+            ease: 'easeOut',
+            blendMode: 'replace',
+            params: {},
+          },
+        ],
+      },
+      {
+        id: 'stg-logo-emp',
+        name: 'Idle Breathing Glow',
+        stage: 'emphasis',
+        enabled: true,
+        startFrame: 30,
+        durationFrames: 50,
+        stageEase: 'easeInOut',
+        blocks: [
+          {
+            id: 'blk-logo-glow',
+            presetId: 'sine-wave',
+            name: 'Glow Intensity Breathing',
+            category: 'procedural',
+            stage: 'emphasis',
+            targetProperties: ['glow-intensity'],
+            enabled: true,
+            startFrame: 30,
+            durationFrames: 50,
+            delayFrames: 0,
+            loopCount: 0,
+            pingPong: false,
+            reverse: false,
+            intensity: 1.0,
+            startValue: 10,
+            targetValue: 30,
+            ease: 'easeInOut',
+            blendMode: 'additive',
+            params: { frequency: 2.0, amplitude: 15 },
+          },
+        ],
+      },
+    ],
+  },
+
+  // 2. UI BUTTON TACTILE TEMPLATE
+  {
+    id: 'tpl-button-tactile',
+    name: 'Tactile Pill Button',
+    category: 'ui-button',
+    description: 'Instant reactive scale compression and spring rebound for UI components.',
+    tags: ['button', 'ui', 'tactile', 'micro-interaction'],
+    stages: [
+      {
+        id: 'stg-btn-ent',
+        name: 'Slide In Entrance',
+        stage: 'entrance',
+        enabled: true,
+        startFrame: 0,
+        durationFrames: 22,
+        stageEase: 'easeOut',
+        blocks: [
+          {
+            id: 'blk-btn-slide',
+            presetId: 'slide-overshoot',
+            name: 'Slide Up Entrance',
+            category: 'motion-design',
+            stage: 'entrance',
+            targetProperties: ['position-y'],
+            enabled: true,
+            startFrame: 0,
+            durationFrames: 22,
+            delayFrames: 0,
+            loopCount: 1,
+            pingPong: false,
+            reverse: false,
+            intensity: 1.0,
+            startValue: 60,
+            targetValue: 0,
+            ease: 'easeOut',
+            blendMode: 'replace',
+            params: { overshootPercent: 12 },
+          },
+        ],
+      },
+      {
+        id: 'stg-btn-hover',
+        name: 'Hover Lift State',
+        stage: 'interaction',
+        enabled: true,
+        startFrame: 25,
+        durationFrames: 15,
+        stageEase: 'spring',
+        blocks: [
+          {
+            id: 'blk-btn-hover-scale',
+            presetId: 'harmonic-spring',
+            name: 'Spring Scale Lift',
+            category: 'physics',
+            stage: 'interaction',
+            targetProperties: ['scale-uniform'],
+            enabled: true,
+            startFrame: 25,
+            durationFrames: 15,
+            delayFrames: 0,
+            loopCount: 1,
+            pingPong: false,
+            reverse: false,
+            intensity: 1.0,
+            startValue: 100,
+            targetValue: 106,
+            ease: 'spring',
+            blendMode: 'replace',
+            params: { stiffness: 180, damping: 14, mass: 1 },
+          },
+        ],
+      },
+    ],
+  },
+
+  // 3. LOWER THIRD CINEMATIC TEMPLATE
+  {
+    id: 'tpl-lower-third-cinematic',
+    name: 'Cinematic Lower Third Banner',
+    category: 'lower-third',
+    description: 'Smooth horizontal glide with tracking expansion and blur reveal.',
+    tags: ['video', 'broadcast', 'lower-third', 'title'],
+    stages: [
+      {
+        id: 'stg-lt-ent',
+        name: 'Slide & Blur Entrance',
+        stage: 'entrance',
+        enabled: true,
+        startFrame: 0,
+        durationFrames: 26,
+        stageEase: 'easeInOut',
+        blocks: [
+          {
+            id: 'blk-lt-pos',
+            presetId: 'slide-overshoot',
+            name: 'Horizontal Slide In',
+            category: 'motion-design',
+            stage: 'entrance',
+            targetProperties: ['position-x'],
+            enabled: true,
+            startFrame: 0,
+            durationFrames: 26,
+            delayFrames: 0,
+            loopCount: 1,
+            pingPong: false,
+            reverse: false,
+            intensity: 1.0,
+            startValue: -150,
+            targetValue: 0,
+            ease: 'easeInOut',
+            blendMode: 'replace',
+            params: { overshootPercent: 10 },
+          },
+          {
+            id: 'blk-lt-blur',
+            presetId: 'blur-reveal',
+            name: 'Blur Reveal',
+            category: 'basic',
+            stage: 'entrance',
+            targetProperties: ['blur'],
+            enabled: true,
+            startFrame: 0,
+            durationFrames: 18,
+            delayFrames: 0,
+            loopCount: 1,
+            pingPong: false,
+            reverse: false,
+            intensity: 1.0,
+            startValue: 16,
+            targetValue: 0,
+            ease: 'easeOut',
+            blendMode: 'replace',
+            params: {},
+          },
+        ],
+      },
+    ],
+  },
+];
+
+/**
+ * Returns rule-based suggestions for an object type.
+ */
+export function getSuggestionsForObjectType(category: ObjectTypeCategory): SmartAnimationTemplate[] {
+  return SMART_ANIMATION_TEMPLATES.filter((t) => t.category === category || t.category === 'logo');
+}

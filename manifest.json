@@ -1,0 +1,44 @@
+{
+  "id": "com.motionstudio.panel",
+  "name": "Motion Studio",
+  "version": "1.0.0",
+  "main": "dist/index.html",
+  "manifestVersion": 5,
+  "host": [
+    {
+      "app": "PPRO",
+      "minVersion": "22.0.0"
+    }
+  ],
+  "entrypoints": [
+    {
+      "type": "panel",
+      "id": "motionStudioPanel",
+      "name": "Motion Studio",
+      "main": "dist/index.html",
+      "minimumSize": {
+        "width": 480,
+        "height": 360
+      },
+      "maximumSize": {
+        "width": 3840,
+        "height": 2160
+      },
+      "preferredDockedSize": {
+        "width": 900,
+        "height": 650
+      },
+      "preferredFloatingSize": {
+        "width": 1100,
+        "height": 780
+      }
+    }
+  ],
+  "requiredPermissions": {
+    "clipboard": "readAndWrite",
+    "localFileSystem": "fullAccess",
+    "network": {
+      "domains": "all"
+    }
+  }
+}
