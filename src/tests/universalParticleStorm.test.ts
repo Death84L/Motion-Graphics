@@ -58,6 +58,17 @@ describe('Universal 3D Particle Storm Engine (250+ Features) Test Suite', () => 
     expect(result.springLinks[0].distance).toBeLessThanOrEqual(DEFAULT_PARTICLE_CONFIG.meshConnections.maxLinkDistance);
   });
 
+  it('configures custom sprite images and presets', () => {
+    const customConfig = {
+      ...DEFAULT_PARTICLE_CONFIG,
+      spriteType: 'coin' as const,
+      customImageSrc: 'data:image/png;base64,sample',
+    };
+    const p = UniversalParticleStormEngine.spawnParticle(1, 100, 100, 0, customConfig);
+    expect(p.id).toBe(1);
+    expect(customConfig.spriteType).toBe('coin');
+  });
+
   it('bakes 3D particle simulation centroid motion into standard Bézier keyframes', () => {
     const p1 = UniversalParticleStormEngine.spawnParticle(1, 100, 100, 0, DEFAULT_PARTICLE_CONFIG);
     const keyframes = UniversalParticleStormEngine.bakeParticleSimulationToKeyframes([p1], 2.0);

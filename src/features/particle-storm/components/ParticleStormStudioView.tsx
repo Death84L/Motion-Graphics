@@ -30,8 +30,11 @@ export function ParticleStormStudioView({ onBakeKeyframesToEditor }: ParticleSto
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [collisionCount, setCollisionCount] = useState<number>(0);
   const [isBaked, setIsBaked] = useState<boolean>(false);
+  const [uploadedImageName, setUploadedImageName] = useState<string | null>(null);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const customImgRef = useRef<HTMLImageElement | null>(null);
   const particleIdCounter = useRef<number>(1);
 
   // Initialize Initial Particle Pool
@@ -50,6 +53,29 @@ export function ParticleStormStudioView({ onBakeKeyframesToEditor }: ParticleSto
     }
     setParticles(initial);
   }, []);
+
+  // Handle Custom Particle Image Upload
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const dataUrl = event.target?.result as string;
+      const img = new Image();
+      img.src = dataUrl;
+      img.onload = () => {
+        customImgRef.current = img;
+        setUploadedImageName(file.name);
+        setConfig((c) => ({
+          ...c,
+          spriteType: 'custom-image',
+          customImageSrc: dataUrl,
+        }));
+      };
+    };
+    reader.readAsDataURL(file);
+  };
 
   // 60FPS Simulation Loop
   useEffect(() => {
@@ -101,7 +127,7 @@ export function ParticleStormStudioView({ onBakeKeyframesToEditor }: ParticleSto
     ctx.fillRect(0, 0, 480, 320);
 
     // 1. Draw Mesh Spring Connections (Constellation Network)
-    if (config.meshConnections.enabled && springLinks.length > 0) {
+    if (config.meshConnections.enabled && springLinks.length > 0 && config.spriteType === 'glow-dot') {
       const pMap = new Map<number, Particle3D>(particles.map((p) => [p.id, p]));
       springLinks.forEach((link) => {
         const p1 = pMap.get(link.p1Id);
@@ -133,7 +159,7 @@ export function ParticleStormStudioView({ onBakeKeyframesToEditor }: ParticleSto
     ctx.fill();
     ctx.restore();
 
-    // 3. Draw Particles
+    // 3. Draw Particles (Sprites vs Custom Image vs Glow Dots)
     particles.forEach((p) => {
       ctx.save();
       ctx.globalAlpha = p.alpha;
@@ -142,12 +168,48 @@ export function ParticleStormStudioView({ onBakeKeyframesToEditor }: ParticleSto
       const depthScale = Math.max(0.4, (p.z + 200) / 200);
       const renderSize = p.size * depthScale;
 
-      ctx.fillStyle = p.color;
-      ctx.shadowColor = p.color;
-      ctx.shadowBlur = 8;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, renderSize, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.translate(p.x, p.y);
+      ctx.rotate((p.rotZ * Math.PI) / 180);
+
+      if (config.spriteType === 'custom-image' && customImgRef.current) {
+        // Draw Uploaded Custom Image
+        const s = renderSize * 4;
+        ctx.drawImage(customImgRef.current, -s / 2, -s / 2, s, s);
+      } else if (config.spriteType === 'coin') {
+        ctx.font = `${Math.round(renderSize * 3.5)}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('🪙', 0, 0);
+      } else if (config.spriteType === 'star') {
+        ctx.font = `${Math.round(renderSize * 3.5)}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('⭐', 0, 0);
+      } else if (config.spriteType === 'heart') {
+        ctx.font = `${Math.round(renderSize * 3.5)}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('❤️', 0, 0);
+      } else if (config.spriteType === 'fire') {
+        ctx.font = `${Math.round(renderSize * 3.5)}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('🔥', 0, 0);
+      } else if (config.spriteType === 'leaf') {
+        ctx.font = `${Math.round(renderSize * 3.5)}px sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('🍃', 0, 0);
+      } else {
+        // Default Radiant Glow Dot
+        ctx.fillStyle = p.color;
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 8;
+        ctx.beginPath();
+        ctx.arc(0, 0, renderSize, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
       ctx.restore();
     });
   }, [particles, springLinks, activeForce, config]);
@@ -163,7 +225,7 @@ export function ParticleStormStudioView({ onBakeKeyframesToEditor }: ParticleSto
   const handleBake = () => {
     const baked = UniversalParticleStormEngine.bakeParticleSimulationToKeyframes(particles, 3.0);
     if (onBakeKeyframesToEditor) {
-      onBakeKeyframesToEditor(baked, `Particle Storm • ${config.emitterShape.toUpperCase()}`);
+      onBakeKeyframesToEditor(baked, `Particle Storm • ${config.emitterShape.toUpperCase()} (${config.spriteType})`);
     }
     setIsBaked(true);
     setTimeout(() => setIsBaked(false), 2500);
@@ -173,14 +235,14 @@ export function ParticleStormStudioView({ onBakeKeyframesToEditor }: ParticleSto
     <div
       style={{
         display: 'grid',
-        gridTemplateColumns: '290px 1fr 310px',
+        gridTemplateColumns: '300px 1fr 310px',
         height: '100%',
         background: '#040711',
         overflow: 'hidden',
         color: '#f8fafc',
       }}
     >
-      {/* 1. LEFT COLUMN: EMITTER GEOMETRIES & PRESETS */}
+      {/* 1. LEFT COLUMN: EMITTERS & CUSTOM SPRITE IMAGE */}
       <div
         style={{
           background: '#090e1a',
@@ -199,6 +261,73 @@ export function ParticleStormStudioView({ onBakeKeyframesToEditor }: ParticleSto
           </span>
         </div>
 
+        {/* Upload Custom Sprite Image */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <span style={{ fontSize: 9, color: '#94a3b8', textTransform: 'uppercase' }}>
+            CUSTOM PARTICLE IMAGE:
+          </span>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleImageUpload}
+            accept="image/png,image/svg+xml,image/jpeg,image/webp"
+            style={{ display: 'none' }}
+          />
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            style={{
+              background: config.spriteType === 'custom-image' ? 'rgba(56, 189, 248, 0.2)' : '#1e293b',
+              border: `1px dashed ${config.spriteType === 'custom-image' ? '#38bdf8' : '#64748b'}`,
+              borderRadius: 6,
+              color: '#38bdf8',
+              padding: '8px',
+              fontSize: 10,
+              fontWeight: 700,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 6,
+            }}
+          >
+            🖼️ {uploadedImageName ? `Loaded: ${uploadedImageName}` : 'Upload Particle PNG/SVG/JPG'}
+          </button>
+        </div>
+
+        {/* Quick Sprite Presets */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <span style={{ fontSize: 9, color: '#94a3b8', textTransform: 'uppercase' }}>
+            SPRITE SHAPE / ICON:
+          </span>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 4 }}>
+            {[
+              { id: 'glow-dot', label: '✦ Dot' },
+              { id: 'coin', label: '🪙 Coin' },
+              { id: 'star', label: '⭐ Star' },
+              { id: 'heart', label: '❤️ Heart' },
+              { id: 'fire', label: '🔥 Fire' },
+              { id: 'leaf', label: '🍃 Leaf' },
+            ].map((spr) => (
+              <button
+                key={spr.id}
+                onClick={() => setConfig((c) => ({ ...c, spriteType: spr.id as any }))}
+                style={{
+                  background: config.spriteType === spr.id ? '#38bdf8' : '#11182c',
+                  color: config.spriteType === spr.id ? '#040711' : '#f8fafc',
+                  border: 'none',
+                  borderRadius: 4,
+                  padding: '6px 4px',
+                  fontSize: 9,
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                }}
+              >
+                {spr.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Emitter Shapes */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           <span style={{ fontSize: 9, color: '#94a3b8', textTransform: 'uppercase' }}>EMITTER GEOMETRY:</span>
@@ -211,7 +340,7 @@ export function ParticleStormStudioView({ onBakeKeyframesToEditor }: ParticleSto
                 border: `1px solid ${config.emitterShape === shape ? '#38bdf8' : '#1e293b'}`,
                 color: config.emitterShape === shape ? '#38bdf8' : '#94a3b8',
                 borderRadius: 6,
-                padding: '6px 8px',
+                padding: '5px 8px',
                 fontSize: 9,
                 fontWeight: 700,
                 textAlign: 'left',
@@ -258,8 +387,8 @@ export function ParticleStormStudioView({ onBakeKeyframesToEditor }: ParticleSto
             <span style={{ color: '#38bdf8', fontWeight: 800 }}>{particles.length} / {config.maxParticles}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ color: '#94a3b8' }}>Spring Links:</span>
-            <span style={{ color: '#ec4899', fontWeight: 800 }}>{springLinks.length}</span>
+            <span style={{ color: '#94a3b8' }}>Sprite Mode:</span>
+            <span style={{ color: '#ec4899', fontWeight: 800, textTransform: 'capitalize' }}>{config.spriteType}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <span style={{ color: '#94a3b8' }}>Floor Collisions:</span>

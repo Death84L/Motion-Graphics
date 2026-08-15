@@ -76,11 +76,14 @@ export interface ParticleSimulationConfig {
     mid: string;
     death: string;
   };
+  spriteType: 'glow-dot' | 'custom-image' | 'star' | 'coin' | 'heart' | 'fire' | 'leaf';
+  customImageSrc?: string;
 }
 
 export const DEFAULT_PARTICLE_CONFIG: ParticleSimulationConfig = {
   emitterShape: 'point',
   renderStyle: 'glow-dot',
+  spriteType: 'glow-dot',
   maxParticles: 180,
   birthRate: 6,
   lifetimeFrames: 90,
