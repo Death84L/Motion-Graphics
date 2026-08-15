@@ -11,28 +11,31 @@ flowchart TD
     subgraph Inputs["1. LOCAL INPUTS & ASSETS (100% Free & Local)"]
         A1["Raw Text & Scripts"]
         A2["SRT / VTT / ASS Transcripts"]
-        A3[".motionstudio Project Files"]
-        A4["Reference Motion Curves (JSON/CSV)"]
-        A5["Multi-Track Audio & Speech Waves (WAV/MP3/FLAC/Mic)"]
-        A6["B-Roll Media Library (Videos, Photos, GIFs, Overlays)"]
+        A3[".motionstudio & .motionpkg Files"]
+        A4["CSV / JSON Datasets"]
+        A5["Multi-Track Audio & Speech Waves"]
+        A6["B-Roll Media Library (4K/HD Footage, Overlays)"]
     end
 
     subgraph CoreEngines["2. 🧬 CORE MATHEMATICAL, KINEMATIC & DSP ENGINES"]
         B0["📈 Blender-Style Curve Engine (Auto-Clamped, Vector, Aligned, Free, Flip X/Y, Quantize, RDP Simplify)"]
         B1["🎬 Universal B-Roll Engine (Media Browser, Ken Burns Motion, 128 BPM Beat Sequencer, Keyframe Baker)"]
-        B2["🔤 Extended Kinetic Typography & UI (Liquid Chrome, Hormozi Captions, MrBeast Comic, Dynamic Island, Neumorphism)"]
-        B3["📐 Advanced Calculus & Splines (RK4 Integrator, TCB Splines, Curvature Profile, Poisson Disc)"]
-        B4["🧬 Motion DNA Intelligence (10D Similarity, Continuous Morphing, Git-Diff, Auto-Optimizer)"]
-        B5["🎨 Advanced Vector & Typography (Parametric Morphing, Trim Path Write-On, Scramble Cipher, Kinetic Wave)"]
-        B6["🧪 Universal Physics World (Symplectic Euler, Multi-Body Collisions, Springs, Wind, Materials)"]
-        B7["🧠 Procedural Animation Graph (46+ Nodes, Math, Trig, Vectors, 2nd-Order Spring, Perlin Noise)"]
-        B8["🎞️ Universal Multi-Track Timeline (SMPTE Ruler, NLE Ripple/Slip/Roll/Slide, Parenting, Beat Sync)"]
-        B9["🦾 Complete Constraint & Rigging (2-Bone IK, Universal Property Binding, Flexbox Auto-Hug)"]
-        B10["🎵 Audio-Reactive & Foley Synthesizer (8-Band FFT, BPM Tracker, Whoosh/Pop/808 Foley Engine)"]
-        B11["🎯 Responsive Motion Lab (5-Level Adaptive Motion, Safe-Area Protection, CSS/Framer Exporters)"]
-        B12["🎨 Color Science & LUT Studio (ACEScc, 3-Way Wheels, Kodak/Fuji Emulation, 3D .cube Generator)"]
-        B13["✨ Procedural VFX & Shaders (Curl Noise, Chromatic Aberration, CRT Scanlines, Lens Flares)"]
-        B14["🤖 Local AI Procedural Assistant (1-Click Polish, Jitter Cleaner, Contrast Styler, Cohesion Scorer)"]
+        B2["📊 Data-Driven Infographics (Racing Bar Charts, Dynamic Line Graphs, Odometer Counters)"]
+        B3["🎨 3-Way Color Grading & Film LUTs (Lift/Gamma/Gain Wheels, Kodak 2383/Fuji 3513, 3D .cube LUT Generator)"]
+        B4["🌌 GPU Particle Storm & Vortex Engine (Sparks, Falling Snow, Confetti, Smoke Plumes, 60 FPS Canvas)"]
+        B5["🪄 Smart Auto-Roto & Local Matte (Point-and-Click Vector Masks, Optical Flow Bounding Box Tracker)"]
+        B6["🗺️ 3D Spatial Matchmove & Corner-Pin (4-Point Planar Homography Matrix, Screen Replacement)"]
+        B7["🎙️ Speech-to-Motion Captions (Word-Level Timing Sequence, Karaoke Highlights, Pop Keyframes)"]
+        B8["📱 Viral Social Auto-Reframe (16:9 to 9:16 Crop Box Math, Subject Auto-Centering Pan Tracker)"]
+        B9["⚡ Preset Marketplace & Local Vault (.motionpkg Bundle Serializer/Deserializer, 1-Click Installer)"]
+        B10["🔤 Extended Kinetic Typography & UI (Liquid Chrome, Hormozi Captions, MrBeast Comic, Dynamic Island, Neumorphism)"]
+        B11["📐 Advanced Calculus & Splines (RK4 Integrator, TCB Splines, Curvature Profile, Poisson Disc)"]
+        B12["🧬 Motion DNA Intelligence (10D Similarity, Continuous Morphing, Git-Diff, Auto-Optimizer)"]
+        B13["🧪 Universal Physics World (Symplectic Euler, Multi-Body Collisions, Springs, Wind, Materials)"]
+        B14["🧠 Procedural Animation Graph (46+ Nodes, Math, Trig, Vectors, 2nd-Order Spring, Perlin Noise)"]
+        B15["🎞️ Universal Multi-Track Timeline (SMPTE Ruler, NLE Ripple/Slip/Roll/Slide, Parenting, Beat Sync)"]
+        B16["🦾 Complete Constraint & Rigging (2-Bone IK, Universal Property Binding, Flexbox Auto-Hug)"]
+        B17["🎵 Audio-Reactive & Foley Synthesizer (8-Band FFT, BPM Tracker, Whoosh/Pop/808 Foley Engine)"]
     end
 
     subgraph ProductionSuites["3. PRODUCTION DESIGN SUITES"]
@@ -69,23 +72,25 @@ flowchart TD
 
 ---
 
-## 📋 Comprehensive Feature Catalog & Subsystems
+## 📋 Flagship Next-Gen Domains Catalog
 
-### 🔤 Extended Kinetic Typography & UI Style System (150 Suggestions)
-| Category | What It Does |
+| Domain | What It Does |
 | :--- | :--- |
-| **Kinetic Typography Physics** | **Liquid Molten Chrome**, **Alex Hormozi Captions**, **MrBeast Comic Stroke**, **Split-Flap Airport Flip**, **Cyberpunk Neon**, **Origami 3D Paper Fold**, **ASCII Terminal**, **Chalkboard**. |
-| **UI Micro-Interactions** | **Dynamic Island Squircle**, **Skeleton Shimmer Waves**, **Elastic Toggle Switch Thumb Stretch**, **3D Card Flip**, **Odometer Slot Roll**, **Magnetic Tabs**. |
-| **Modern UI Shaders** | **Glassmorphism Frosted Glass**, **Neumorphic Soft Extrusion**, **Claymorphism 3D**, **Cyberpunk HUD Reticles**, **Bento Grid Cards**. |
-| **Responsive Tokens & Math** | Fluid `clamp()` typography formula calculator and standardized **8px Grid Spacing Scale tokens**. |
-| **1-Click Keyframe Baker** | Bakes kinetic text and UI interaction trajectories into standard Bézier keyframes for Premiere Pro, AE, and DaVinci Resolve! |
+| **📊 Data-Driven Infographics** | Racing bar charts, dynamic line graphs, and animated odometer counters from CSV/JSON datasets. |
+| **🎨 3-Way Color Grading & Film LUTs** | Interactive Lift/Gamma/Gain color wheels, Kodak 2383/Fuji 3513 film stock emulation, and 3D `.cube` LUT export. |
+| **🌌 GPU Particle Storm** | 60 FPS HTML5 canvas particle simulation for Sparks, Snow, Confetti, and Smoke with gravity fields. |
+| **🪄 Smart Auto-Roto & Matte** | Point-and-click vector roto masks, edge feathering, and optical flow tracking. |
+| **🗺️ 3D Spatial Matchmove** | 4-Point planar homography screen replacement for phone mockups, laptops, and billboards. |
+| **🎙️ Speech-to-Motion Captions** | Word-by-word active karaoke highlighter with emphasis scale pops. |
+| **📱 Viral Social Auto-Reframe** | 16:9 $\to$ 9:16 vertical crop box calculator with talking-head subject centering. |
+| **⚡ Preset Marketplace (.motionpkg)** | Local package vault with 1-click import, export, and installation of motion bundles. |
 
 ---
 
 ## 🚀 Usage & Host Bridge Workflow
 
 ```
-[🎬 Motion Graph] [🎞️ Universal Timeline] [🦾 Constraints & Rigging] [🎬 B-Roll Engine] [🎨 Vector & Typography] [🎵 Audio Reactive] [🎯 Responsive Lab] [🧬 Motion DNA] [🧠 Logic Graph] [🧪 Physics Sandbox] ... [⚡ Export ▾]
+[🎬 Motion Graph] [🎞️ Universal Timeline] [🦾 Constraints] [🎬 B-Roll] [📊 Infographics] [🎨 Color & LUTs] [🌌 Particle Storm] [🪄 Smart Roto] [🗺️ 3D Matchmove] [🎙️ Speech Captions] [📱 Social Reframe] [⚡ Marketplace] ... [⚡ Export ▾]
 ```
 
-All subsystems operate locally with zero mandatory cloud accounts, zero subscription fees, and complete cross-application interchangeability.
+All 518+ capabilities operate **100% locally with zero cloud subscriptions, zero third-party API fees**, and direct keyframe baking to **Premiere Pro**, **After Effects**, **DaVinci Resolve**, and the **Web**.

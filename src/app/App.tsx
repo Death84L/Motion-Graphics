@@ -90,6 +90,14 @@ import { ConstraintRiggingStudioView } from '../features/constraints-rigging/com
 import { AudioReactiveStudioView } from '../features/audio-reactive/components/AudioReactiveStudioView';
 import { ShapeTypographyStudioView } from '../features/shapes-typography/components/ShapeTypographyStudioView';
 import { BrollStudioView } from '../features/broll-engine/components/BrollStudioView';
+import { InfographicsStudioView } from '../features/infographics-charts/components/InfographicsStudioView';
+import { ColorGradingStudioView } from '../features/color-grading/components/ColorGradingStudioView';
+import { ParticleStormStudioView } from '../features/particle-storm/components/ParticleStormStudioView';
+import { SmartRotoStudioView } from '../features/smart-roto/components/SmartRotoStudioView';
+import { MatchmoveStudioView } from '../features/matchmove/components/MatchmoveStudioView';
+import { SpeechCaptionsStudioView } from '../features/speech-captions/components/SpeechCaptionsStudioView';
+import { SocialReframeStudioView } from '../features/social-reframe/components/SocialReframeStudioView';
+import { PresetMarketplaceView } from '../features/preset-marketplace/components/PresetMarketplaceView';
 import {
   CompositionLayer,
   DEFAULT_VFX_CONFIG,
@@ -129,6 +137,14 @@ export type MotionStudioSuiteView =
   | 'universal-timeline'
   | 'constraints-rigging'
   | 'broll-engine'
+  | 'infographics'
+  | 'color-grading'
+  | 'particle-storm'
+  | 'smart-roto'
+  | 'matchmove'
+  | 'speech-captions'
+  | 'social-reframe'
+  | 'marketplace'
   | 'shapes-typography'
   | 'audio-reactive'
   | 'velocity-lab'
@@ -799,6 +815,14 @@ export default function App() {
             { id: 'universal-timeline', label: '🎞️ Universal Timeline' },
             { id: 'constraints-rigging', label: '🦾 Constraints & Rigging' },
             { id: 'broll-engine', label: '🎬 B-Roll Engine' },
+            { id: 'infographics', label: '📊 Infographics' },
+            { id: 'color-grading', label: '🎨 Color & LUTs' },
+            { id: 'particle-storm', label: '🌌 Particle Storm' },
+            { id: 'smart-roto', label: '🪄 Smart Roto' },
+            { id: 'matchmove', label: '🗺️ 3D Matchmove' },
+            { id: 'speech-captions', label: '🎙️ Speech Captions' },
+            { id: 'social-reframe', label: '📱 Social Reframe' },
+            { id: 'marketplace', label: '⚡ Marketplace' },
             { id: 'shapes-typography', label: '🎨 Vector & Typography' },
             { id: 'audio-reactive', label: '🎵 Audio Reactive' },
             { id: 'batch-processor', label: '🧩 Batch Processor' },
@@ -1653,7 +1677,77 @@ export default function App() {
         />
       )}
 
-      {/* 02.55: ADVANCED VECTOR SHAPES & KINETIC TYPOGRAPHY */}
+      {/* 02.53: DATA-DRIVEN INFOGRAPHICS & DYNAMIC CHARTS */}
+      {suiteView === 'infographics' && (
+        <InfographicsStudioView
+          onBakeKeyframesToEditor={(bakedKeys, label) => {
+            handleKeyframesChange(bakedKeys);
+            setSuiteView('editor');
+          }}
+        />
+      )}
+
+      {/* 02.54: 3-WAY COLOR GRADING & FILM LUTS */}
+      {suiteView === 'color-grading' && (
+        <ColorGradingStudioView />
+      )}
+
+      {/* 02.55: GPU PARTICLE STORM & VORTEX STUDIO */}
+      {suiteView === 'particle-storm' && (
+        <ParticleStormStudioView
+          onBakeKeyframesToEditor={(bakedKeys, label) => {
+            handleKeyframesChange(bakedKeys);
+            setSuiteView('editor');
+          }}
+        />
+      )}
+
+      {/* 02.56: SMART AUTO-ROTO & LOCAL MASKING */}
+      {suiteView === 'smart-roto' && (
+        <SmartRotoStudioView
+          onBakeKeyframesToEditor={(bakedKeys, label) => {
+            handleKeyframesChange(bakedKeys);
+            setSuiteView('editor');
+          }}
+        />
+      )}
+
+      {/* 02.57: 3D SPATIAL MATCHMOVE & CORNER-PIN */}
+      {suiteView === 'matchmove' && (
+        <MatchmoveStudioView
+          onBakeKeyframesToEditor={(bakedKeys, label) => {
+            handleKeyframesChange(bakedKeys);
+            setSuiteView('editor');
+          }}
+        />
+      )}
+
+      {/* 02.58: SPEECH-TO-MOTION CAPTIONS */}
+      {suiteView === 'speech-captions' && (
+        <SpeechCaptionsStudioView
+          onBakeKeyframesToEditor={(bakedKeys, label) => {
+            handleKeyframesChange(bakedKeys);
+            setSuiteView('editor');
+          }}
+        />
+      )}
+
+      {/* 02.59: VIRAL SOCIAL AUTO-REFRAME */}
+      {suiteView === 'social-reframe' && (
+        <SocialReframeStudioView
+          onBakeKeyframesToEditor={(bakedKeys, label) => {
+            handleKeyframesChange(bakedKeys);
+            setSuiteView('editor');
+          }}
+        />
+      )}
+
+      {/* 02.60: PRESET MARKETPLACE (.motionpkg) */}
+      {suiteView === 'marketplace' && (
+        <PresetMarketplaceView />
+      )}
+
+      {/* 02.61: ADVANCED VECTOR SHAPES & KINETIC TYPOGRAPHY */}
       {suiteView === 'shapes-typography' && (
         <ShapeTypographyStudioView
           onBakeKeyframesToEditor={(bakedKeys, label) => {
