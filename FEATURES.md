@@ -14,22 +14,24 @@ flowchart TD
         A3[".motionstudio Project Files"]
         A4["Reference Motion Curves (JSON/CSV)"]
         A5["Multi-Track Audio & Speech Waves (WAV/MP3/FLAC/Mic)"]
+        A6["B-Roll Media Library (Videos, Photos, GIFs, Overlays)"]
     end
 
     subgraph CoreEngines["2. 🧬 CORE MATHEMATICAL, KINEMATIC & DSP ENGINES"]
         B0["📈 Blender-Style Curve Engine (Auto-Clamped, Vector, Aligned, Free, Flip X/Y, Quantize, RDP Simplify)"]
-        B1["📐 Advanced Calculus & Splines (RK4 Integrator, TCB Splines, Curvature Profile, Poisson Disc)"]
-        B2["🧬 Motion DNA Intelligence (10D Similarity, Continuous Morphing, Git-Diff, Auto-Optimizer)"]
-        B3["🎨 Advanced Vector & Typography (Parametric Morphing, Trim Path Write-On, Scramble Cipher, Kinetic Wave)"]
-        B4["🧪 Universal Physics World (Symplectic Euler, Multi-Body Collisions, Springs, Wind, Materials)"]
-        B5["🧠 Procedural Animation Graph (46+ Nodes, Math, Trig, Vectors, 2nd-Order Spring, Perlin Noise)"]
-        B6["🎞️ Universal Multi-Track Timeline (SMPTE Ruler, NLE Ripple/Slip/Roll/Slide, Parenting, Beat Sync)"]
-        B7["🦾 Complete Constraint & Rigging (2-Bone IK, Universal Property Binding, Flexbox Auto-Hug)"]
-        B8["🎵 Audio-Reactive & Foley Synthesizer (8-Band FFT, BPM Tracker, Whoosh/Pop/808 Foley Engine)"]
-        B9["🎯 Responsive Motion Lab (5-Level Adaptive Motion, Safe-Area Protection, CSS/Framer Exporters)"]
-        B10["🎨 Color Science & LUT Studio (ACEScc, 3-Way Wheels, Kodak/Fuji Emulation, 3D .cube Generator)"]
-        B11["✨ Procedural VFX & Shaders (Curl Noise, Chromatic Aberration, CRT Scanlines, Lens Flares)"]
-        B12["🤖 Local AI Procedural Assistant (1-Click Polish, Jitter Cleaner, Contrast Styler, Cohesion Scorer)"]
+        B1["🎬 Universal B-Roll Engine (Media Browser, Ken Burns Motion, 128 BPM Beat Sequencer, Keyframe Baker)"]
+        B2["📐 Advanced Calculus & Splines (RK4 Integrator, TCB Splines, Curvature Profile, Poisson Disc)"]
+        B3["🧬 Motion DNA Intelligence (10D Similarity, Continuous Morphing, Git-Diff, Auto-Optimizer)"]
+        B4["🎨 Advanced Vector & Typography (Parametric Morphing, Trim Path Write-On, Scramble Cipher, Kinetic Wave)"]
+        B5["🧪 Universal Physics World (Symplectic Euler, Multi-Body Collisions, Springs, Wind, Materials)"]
+        B6["🧠 Procedural Animation Graph (46+ Nodes, Math, Trig, Vectors, 2nd-Order Spring, Perlin Noise)"]
+        B7["🎞️ Universal Multi-Track Timeline (SMPTE Ruler, NLE Ripple/Slip/Roll/Slide, Parenting, Beat Sync)"]
+        B8["🦾 Complete Constraint & Rigging (2-Bone IK, Universal Property Binding, Flexbox Auto-Hug)"]
+        B9["🎵 Audio-Reactive & Foley Synthesizer (8-Band FFT, BPM Tracker, Whoosh/Pop/808 Foley Engine)"]
+        B10["🎯 Responsive Motion Lab (5-Level Adaptive Motion, Safe-Area Protection, CSS/Framer Exporters)"]
+        B11["🎨 Color Science & LUT Studio (ACEScc, 3-Way Wheels, Kodak/Fuji Emulation, 3D .cube Generator)"]
+        B12["✨ Procedural VFX & Shaders (Curl Noise, Chromatic Aberration, CRT Scanlines, Lens Flares)"]
+        B13["🤖 Local AI Procedural Assistant (1-Click Polish, Jitter Cleaner, Contrast Styler, Cohesion Scorer)"]
     end
 
     subgraph ProductionSuites["3. PRODUCTION DESIGN SUITES"]
@@ -66,44 +68,23 @@ flowchart TD
 
 ---
 
-## 📋 Comprehensive 27-Category Feature Matrix (518 Features)
+## 📋 Comprehensive Feature Catalog & Subsystems
 
-| Category | Domain | Key Capabilities |
-| :--- | :--- | :--- |
-| **01** | **📐 Advanced Math & Calculus** | RK4 ODE integrator, Catmull-Rom $\to$ Bézier matrix conversion, TCB splines, Curvature $\kappa(t)$, Poisson Disc sampling, Bilateral curve filtering. |
-| **02** | **🔤 Kinetic Typography & Speech** | OpenType glyph parser, local Whisper.cpp alignment, variable font axes, matrix scramble glitch, karaoke sweeps, text shatter. |
-| **03** | **🧪 Physics & Continuum Dynamics** | PBD/XPBD cloth, SPH fluid splashes, Navier-Stokes smoke, soft-body jelly, tearing cloth, aerodynamic wind drag, CCD collisions. |
-| **04** | **🎵 Audio DSP & Music Theory** | Multi-resolution FFT, Constant-Q musical notes, Chromagram chord tracker, HPSS drum/melody separation, PLL BPM tracking. |
-| **05** | **👁️ Computer Vision & Tracking** | Pyramidal Lucas-Kanade flow, 4-point planar homography, video stabilization, 3D camera solver, 9:16 auto-framing, facial mesh. |
-| **06** | **🦾 Rigging, IK & Character Rigs** | FABRIK multi-joint solver, 2-bone analytic IK, spline IK, jiggle bone physics, dual quaternion skinning, walk cycle generator. |
-| **07** | **🎨 Vector Compositing & Booleans** | Greiner-Hormann booleans (Union, Sub, Intersect), variable width spline strokes, Catmull-Rom mesh gradients, autotracer. |
-| **08** | **🌌 2.5D/3D Scene, Camera & Depth** | 3D perspective camera ($mm/f$-stop), DoF bokeh, 2.5D multi-plane parallax, 3D PCF soft shadows, glTF model loader, SSAO. |
-| **09** | **🎨 Color Science, LUTs & HDR** | ACEScc/cg pipeline, 3D .cube LUT generator, 3-way color wheels, Kodak 2383/Fuji 3513 film print emulation, false color maps. |
-| **10** | **✂️ Video NLE Power Tools** | Dead-air silence stripper, auto-jumpcut pacer, multi-cam waveform sync, velocity-preserving speed ramps, FCPXML/EDL export. |
-| **11** | **🧬 Motion DNA & Living Presets** | 10D kinetic DNA extraction, Euclidean vector matching, continuous morphing ($0\% \to 100\%$), 1-click jerk auto-optimizer. |
-| **12** | **🧠 Procedural Node Graph** | 46+ visual math, trig, vector, 2nd-order spring, Perlin noise, and conditional nodes with 1-click keyframe baking. |
-| **13** | **⚡ Universal Export & Host Hub** | Adobe Premiere Pro UXP, After Effects JSX, DaVinci Resolve Fusion, FCPXML, Blender Python, Lottie, React Framer, GSAP, CSS. |
-| **14** | **⚙️ Performance, GPU & WASM** | Web Worker math offloading, WebGL/WebGPU shaders, $O(n)$ spatial grid collisions, zero-GC memory pools, WASM DSP core. |
-| **15** | **⌨️ Editor UX & Productivity** | `⌘K` Command palette, custom shortcut keymapper (Blender/AE/Premiere), dark theme HSL, atomic crash recovery watchdog. |
-| **16** | **🎥 Cinematic Camera & Optics** | Anamorphic oval bokeh, chromatic aberration fringe, Scheimpflug tilt-shift, Vertigo dolly zoom, $\cos^4\theta$ natural vignetting. |
-| **17** | **✨ VFX, Shaders & Noise** | Divergence-free curl noise, Gray-Scott reaction-diffusion, CRT scanlines, lens flare streaks, burning embers dissolve, SSR reflections. |
-| **18** | **🎭 Masking, Mattes & Roto** | Per-vertex feathering, affine roto propagation, core/soft matte split, difference keying, color despill, additive light wrap. |
-| **19** | **⏱️ Speed Ramps & Optical Flow** | Non-linear Bézier time-remapping, $1000\text{ FPS}$ slow-mo interpolation, pitch-preserved audio stretch, time-displacement maps. |
-| **20** | **🔊 Foley & Sound Synthesis** | Procedural Whoosh, UI Pop, 808 Sub-Impact, and Braam horn synthesizers, automatic dialogue ducking, 10-band parametric EQ. |
-| **21** | **📐 UI Design Systems & Tokens** | Figma Tokens JSON import, WCAG AAA contrast checker, flexbox auto-padding, device mockup frames (iPhone 16/MacBook), glassmorphism. |
-| **22** | **🌀 Generative Procedural Art** | L-System fractal trees, Mandelbrot zoomer, Spirograph roulettes, Chladni acoustic nodal plates, Voronoi shatter, 2D metaballs. |
-| **23** | **🗂️ Workflow, Git & Collab** | Local Git commit history, split-screen branch comparator, video markup pen tool, change delta heatmaps, 60s auto-recovery snapshots. |
-| **24** | **🔌 Scripting & Developer SDK** | JS/TS DOM scripting API, Python pipeline bridge, custom modifier loader, headless Node.js runner, MIDI/OSC hardware mapping. |
-| **25** | **🧊 3D Scene Graph & glTF/USD** | Pixar USD exporter, glTF 2.0 PBR scene exporter, Cook-Torrance metallic-roughness shader, CSG 3D booleans, 3D curve lathe. |
-| **26** | **📦 Codecs & Web Delivery** | WebCodecs GPU encoding, ProRes 422/4444 XQ, AV1/VP9, transparent alpha WebM, neural quantized GIF, MOOV fast-start optimizer. |
-| **27** | **🤖 Local Procedural Assistants** | 1-Click motion polish optimizer, jitter cleanup, vocal cadence pacer, auto-contrast text styling, Motion DNA cohesion scorer. |
+### 🎬 Universal B-Roll Engine & Smart Media Sequencer
+| Category | What It Does |
+| :--- | :--- |
+| **Media Library & Indexer** | Multi-format browser (Videos, Images, GIFs, Overlays) with categories (*Cinematic, Tech, UI, Nature, Abstract*), tags, ratings, and color labels. |
+| **Ken Burns Dynamic Motion** | Directional pan & zoom (*Zoom In, Zoom Out, Pan Left/Right, Diagonal*) with smooth velocity easing. |
+| **Music Beat-Sync Sequencer** | Auto-sequences B-roll clips synchronized to audio BPM (e.g. cuts every 4 beats = $1.875\text{s}$ at $128\text{ BPM}$). |
+| **Transitions & Speed Ramping** | Dissolves, Whip Pans, Glitch Transitions, Light Leaks, and $0.25\times \to 3.0\times$ speed multipliers. |
+| **1-Click Keyframe Baker** | Bakes Ken Burns trajectories directly into Bézier keyframes for Premiere Pro, After Effects, and DaVinci Resolve! |
 
 ---
 
 ## 🚀 Usage & Host Bridge Workflow
 
 ```
-[🎬 Motion Graph] [🎞️ Universal Timeline] [🦾 Constraints & Rigging] [🎨 Vector & Typography] [🎵 Audio Reactive] [🎯 Responsive Lab] [🧬 Motion DNA] [🧠 Logic Graph] [🧪 Physics Sandbox] ... [⚡ Export ▾]
+[🎬 Motion Graph] [🎞️ Universal Timeline] [🦾 Constraints & Rigging] [🎬 B-Roll Engine] [🎨 Vector & Typography] [🎵 Audio Reactive] [🎯 Responsive Lab] [🧬 Motion DNA] [🧠 Logic Graph] [🧪 Physics Sandbox] ... [⚡ Export ▾]
 ```
 
-All 518 capabilities run **100% locally with zero cloud dependencies, zero external subscription costs**, and full cross-application interchangeability across **Premiere Pro**, **After Effects**, **DaVinci Resolve**, **Blender**, and the **Web**.
+All subsystems operate locally with zero mandatory cloud accounts, zero subscription fees, and complete cross-application interchangeability.

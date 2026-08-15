@@ -89,6 +89,7 @@ import { UniversalTimelineStudioView } from '../features/universal-timeline/comp
 import { ConstraintRiggingStudioView } from '../features/constraints-rigging/components/ConstraintRiggingStudioView';
 import { AudioReactiveStudioView } from '../features/audio-reactive/components/AudioReactiveStudioView';
 import { ShapeTypographyStudioView } from '../features/shapes-typography/components/ShapeTypographyStudioView';
+import { BrollStudioView } from '../features/broll-engine/components/BrollStudioView';
 import {
   CompositionLayer,
   DEFAULT_VFX_CONFIG,
@@ -127,6 +128,7 @@ export type MotionStudioSuiteView =
   | 'editor'
   | 'universal-timeline'
   | 'constraints-rigging'
+  | 'broll-engine'
   | 'shapes-typography'
   | 'audio-reactive'
   | 'velocity-lab'
@@ -796,6 +798,7 @@ export default function App() {
             { id: 'editor', label: '🎬 Motion Graph' },
             { id: 'universal-timeline', label: '🎞️ Universal Timeline' },
             { id: 'constraints-rigging', label: '🦾 Constraints & Rigging' },
+            { id: 'broll-engine', label: '🎬 B-Roll Engine' },
             { id: 'shapes-typography', label: '🎨 Vector & Typography' },
             { id: 'audio-reactive', label: '🎵 Audio Reactive' },
             { id: 'batch-processor', label: '🧩 Batch Processor' },
@@ -1638,6 +1641,16 @@ export default function App() {
       {/* 02.5: COMPLETE CONSTRAINT & RIGGING SYSTEM */}
       {suiteView === 'constraints-rigging' && (
         <ConstraintRiggingStudioView />
+      )}
+
+      {/* 02.52: UNIVERSAL B-ROLL ENGINE & SMART MEDIA SEQUENCER */}
+      {suiteView === 'broll-engine' && (
+        <BrollStudioView
+          onBakeKeyframesToEditor={(bakedKeys, label) => {
+            handleKeyframesChange(bakedKeys);
+            setSuiteView('editor');
+          }}
+        />
       )}
 
       {/* 02.55: ADVANCED VECTOR SHAPES & KINETIC TYPOGRAPHY */}
