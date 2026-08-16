@@ -19,12 +19,20 @@ interface SocialReframeStudioViewProps {
   onBakeKeyframesToEditor?: (keyframes: KeyframePoint[], label: string) => void;
 }
 
+export type MediaFitMode =
+  | 'smart-ambient-fit'
+  | 'ken-burns-scan'
+  | 'stacked-duplex'
+  | 'elevated-card'
+  | 'full-bleed-crop';
+
 export type PhotoAnimationMode = 'ken-burns-zoom' | 'pan-across' | 'subtle-breathe' | 'static';
 
 export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialReframeStudioViewProps) {
   // Target Aspect Ratio & Layout
   const [format, setFormat] = useState<SocialTargetFormat>('9:16-reels');
   const [layoutMode, setLayoutMode] = useState<ReframeLayoutMode>('full-bleed-pan');
+  const [fitMode, setFitMode] = useState<MediaFitMode>('smart-ambient-fit');
   const [platformOverlay, setPlatformOverlay] = useState<SafeZonePlatform>('tiktok');
   const [showRuleOfThirds, setShowRuleOfThirds] = useState<boolean>(true);
 
@@ -194,7 +202,7 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
 
     const baked = ExtendedSocialReframeEngine.bakeReframeTrajectoryToKeyframes(trajectory);
     if (onBakeKeyframesToEditor) {
-      onBakeKeyframesToEditor(baked, `Auto-Reframe • ${layoutMode.toUpperCase()} (${format.toUpperCase()})`);
+      onBakeKeyframesToEditor(baked, `Auto-Reframe • ${fitMode.toUpperCase()} (${format.toUpperCase()})`);
     }
     setIsBaked(true);
     setTimeout(() => setIsBaked(false), 2500);
@@ -204,14 +212,14 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
     <div
       style={{
         display: 'grid',
-        gridTemplateColumns: '310px 1fr 310px',
+        gridTemplateColumns: '320px 1fr 310px',
         height: '100%',
         background: '#040711',
         overflow: 'hidden',
         color: '#f8fafc',
       }}
     >
-      {/* 1. LEFT COLUMN: UPLOAD ANY RATIO, LAYOUT PRESETS & PHOTO MOTION */}
+      {/* 1. LEFT COLUMN: UPLOAD, ASPECT RATIOS, FIT MODES & 2.5D MOTION */}
       <div
         style={{
           background: '#090e1a',
@@ -289,6 +297,50 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
           {isAutoProcessing ? '⏳ Auto-Processing 12 Stages...' : '⚡ 1-Click Auto-Reframe (Zero Manual Work)'}
         </button>
 
+        {/* 🌟 SMART PHOTO/VIDEO FITTING MODE (NO CROPPING / ZERO CUT OFF) */}
+        <div style={{ background: '#11182c', border: '1px solid #38bdf8', borderRadius: 8, padding: 10, display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: 9, color: '#38bdf8', textTransform: 'uppercase', fontWeight: 800 }}>
+              🌟 SMART CONTENT FITTING (NO CUTOFF):
+            </span>
+            <span style={{ fontSize: 8, background: '#10b981', color: '#040711', padding: '1px 4px', borderRadius: 2, fontWeight: 800 }}>
+              100% VISIBLE
+            </span>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            {[
+              { id: 'smart-ambient-fit', label: '🌟 Ambient Gaussian Blur (100% Uncropped)', desc: 'Zero crop: sharp center + dynamic color-matched blur fill' },
+              { id: 'ken-burns-scan', label: '🎬 Ken Burns Scan (Pans Across Full Width)', desc: 'Animates camera across wide photo so all details are shown' },
+              { id: 'stacked-duplex', label: '👥 Stacked Duplex (Left & Right Split)', desc: 'Stacks left & right subjects vertically at full resolution' },
+              { id: 'elevated-card', label: '🖼️ Glassmorphic Elevated Card', desc: 'Floating rounded frame with depth drop shadow' },
+              { id: 'full-bleed-crop', label: '✂️ Full-Bleed Crop (Auto-Centered)', desc: 'Traditional fill crop on active tracked speaker' },
+            ].map((f) => (
+              <button
+                key={f.id}
+                onClick={() => setFitMode(f.id as MediaFitMode)}
+                style={{
+                  background: fitMode === f.id ? 'rgba(56, 189, 248, 0.25)' : '#090e1a',
+                  border: `1px solid ${fitMode === f.id ? '#38bdf8' : '#1e293b'}`,
+                  color: fitMode === f.id ? '#38bdf8' : '#f8fafc',
+                  borderRadius: 6,
+                  padding: '6px 8px',
+                  fontSize: 9,
+                  fontWeight: fitMode === f.id ? 800 : 500,
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 2,
+                }}
+              >
+                <span>{f.label}</span>
+                <span style={{ fontSize: 7, color: '#94a3b8' }}>{f.desc}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Target Aspect Ratios (1:1, 4:5, 9:16, 16:9) */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           <span style={{ fontSize: 9, color: '#94a3b8', textTransform: 'uppercase' }}>
@@ -358,118 +410,9 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
             </div>
           </div>
         )}
-
-        {/* 1-Click Layout Modes */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <span style={{ fontSize: 9, color: '#94a3b8', textTransform: 'uppercase' }}>
-            VERTICAL COMPOSITION LAYOUT:
-          </span>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
-            {[
-              { id: 'full-bleed-pan', label: '🎬 Full-Bleed Pan' },
-              { id: 'split-duplex', label: '👥 Split Duplex' },
-              { id: 'tri-stack', label: '🎮 Tri-Stack' },
-              { id: 'blurred-mirror', label: '🌫️ Blurred Mirror' },
-              { id: 'pip-bubble', label: '💬 PiP Bubble' },
-            ].map((m) => (
-              <button
-                key={m.id}
-                onClick={() => {
-                  setLayoutMode(m.id as ReframeLayoutMode);
-                  setAutoPipelineResult(null);
-                }}
-                style={{
-                  background: layoutMode === m.id ? '#38bdf8' : '#11182c',
-                  color: layoutMode === m.id ? '#040711' : '#f8fafc',
-                  border: 'none',
-                  borderRadius: 6,
-                  padding: '6px 8px',
-                  fontSize: 9,
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                }}
-              >
-                {m.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Multi-Speaker Angle Switching */}
-        <div style={{ background: '#11182c', border: '1px solid #1e293b', borderRadius: 8, padding: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <span style={{ fontSize: 9, color: '#94a3b8', textTransform: 'uppercase', fontWeight: 800 }}>
-            MULTI-SPEAKER CENTROIDS:
-          </span>
-
-          <div style={{ display: 'flex', gap: 4 }}>
-            <button
-              onClick={() => setActiveSpeakerId('speaker-a')}
-              style={{
-                flex: 1,
-                background: activeSpeakerId === 'speaker-a' ? '#38bdf8' : '#1e293b',
-                color: activeSpeakerId === 'speaker-a' ? '#040711' : '#94a3b8',
-                border: 'none',
-                padding: '4px',
-                borderRadius: 4,
-                fontSize: 9,
-                fontWeight: 800,
-                cursor: 'pointer',
-              }}
-            >
-              🎤 Host (A)
-            </button>
-            <button
-              onClick={() => setActiveSpeakerId('speaker-b')}
-              style={{
-                flex: 1,
-                background: activeSpeakerId === 'speaker-b' ? '#ec4899' : '#1e293b',
-                color: activeSpeakerId === 'speaker-b' ? '#ffffff' : '#94a3b8',
-                border: 'none',
-                padding: '4px',
-                borderRadius: 4,
-                fontSize: 9,
-                fontWeight: 800,
-                cursor: 'pointer',
-              }}
-            >
-              🎤 Guest (B)
-            </button>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 9 }}>
-              <span style={{ color: '#38bdf8' }}>Host Pan X:</span>
-              <span style={{ fontWeight: 800 }}>{speakerA_X}px</span>
-            </div>
-            <input
-              type="range"
-              min="40"
-              max="400"
-              value={speakerA_X}
-              onChange={(e) => setSpeakerA_X(parseInt(e.target.value))}
-              style={{ width: '100%', accentColor: '#38bdf8' }}
-            />
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 9 }}>
-              <span style={{ color: '#ec4899' }}>Guest Pan X:</span>
-              <span style={{ fontWeight: 800 }}>{speakerB_X}px</span>
-            </div>
-            <input
-              type="range"
-              min="40"
-              max="440"
-              value={speakerB_X}
-              onChange={(e) => setSpeakerB_X(parseInt(e.target.value))}
-              style={{ width: '100%', accentColor: '#ec4899' }}
-            />
-          </div>
-        </div>
       </div>
 
-      {/* 2. CENTER COLUMN: DYNAMIC ASPECT RATIO VIEWPORT (1:1, 4:5, 9:16) */}
+      {/* 2. CENTER COLUMN: DYNAMIC ASPECT RATIO VIEWPORT WITH AMBIENT BLUR */}
       <div
         style={{
           display: 'flex',
@@ -612,38 +555,110 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
               </div>
             )}
 
-            {/* Media Rendering (Uploaded Video / Photo vs Placeholder) */}
+            {/* MEDIA RENDERING: SMART AMBIENT BLUR VS KEN BURNS SCAN VS DUPLEX VS FULL-BLEED */}
             {mediaSrc ? (
-              <div style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}>
-                {mediaType === 'video' ? (
-                  <video
-                    ref={videoRef}
-                    src={mediaSrc}
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
+              <div style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {/* 1. LAYER 1: AMBIENT GAUSSIAN BLUR BACKGROUND (Always fills canvas with rich color) */}
+                {(fitMode === 'smart-ambient-fit' || fitMode === 'elevated-card') && (
+                  <div
                     style={{
-                      width: 'auto',
-                      height: '100%',
                       position: 'absolute',
-                      left: `-${reframeResult.primaryCrop.x * (viewportDim.width / sourceResolution.width)}px`,
-                      top: 0,
-                      objectFit: 'cover',
+                      inset: -20,
+                      backgroundImage: `url(${mediaSrc})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      filter: 'blur(28px) brightness(0.6) saturate(1.4)',
+                      transform: 'scale(1.25)',
+                      zIndex: 1,
                     }}
                   />
+                )}
+
+                {/* 2. LAYER 2: FOREGROUND UNCRIPPLED MEDIA */}
+                {fitMode === 'smart-ambient-fit' ? (
+                  /* 100% UNCROPPED CENTERED FIT WITH DROP SHADOW */
+                  <div style={{ position: 'relative', zIndex: 10, width: '92%', height: 'auto', maxHeight: '90%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {mediaType === 'video' ? (
+                      <video
+                        ref={videoRef}
+                        src={mediaSrc}
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        style={{
+                          width: '100%',
+                          height: 'auto',
+                          borderRadius: 8,
+                          boxShadow: '0 12px 32px rgba(0,0,0,0.8), 0 0 1px rgba(255,255,255,0.2)',
+                          objectFit: 'contain',
+                        }}
+                      />
+                    ) : (
+                      <img
+                        src={mediaSrc}
+                        alt="100% Uncropped Photo"
+                        style={{
+                          width: '100%',
+                          height: 'auto',
+                          borderRadius: 8,
+                          boxShadow: '0 12px 32px rgba(0,0,0,0.8), 0 0 1px rgba(255,255,255,0.2)',
+                          objectFit: 'contain',
+                          transform: photoAnimMode === 'ken-burns-zoom' ? 'scale(1.05)' : 'none',
+                          transition: 'transform 3s ease-in-out',
+                        }}
+                      />
+                    )}
+                  </div>
+                ) : fitMode === 'ken-burns-scan' ? (
+                  /* FULL WIDTH SCANNING KEN BURNS (REVEALS 100% OF WIDE PHOTO ACROSS TIME) */
+                  <div style={{ position: 'relative', zIndex: 10, width: '100%', height: '100%', overflow: 'hidden' }}>
+                    <img
+                      src={mediaSrc}
+                      alt="Ken Burns Wide Scan"
+                      style={{
+                        width: 'auto',
+                        height: '100%',
+                        position: 'absolute',
+                        left: '0%',
+                        transform: 'translateX(-25%) scale(1.15)',
+                        transition: 'transform 6s linear',
+                        objectFit: 'cover',
+                      }}
+                    />
+                  </div>
+                ) : fitMode === 'stacked-duplex' ? (
+                  /* STACKED DUPLEX (LEFT HALF ON TOP, RIGHT HALF ON BOTTOM) */
+                  <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', width: '100%', height: '100%' }}>
+                    <div style={{ flex: 1, overflow: 'hidden', borderBottom: '2px solid #38bdf8', position: 'relative' }}>
+                      <img src={mediaSrc} alt="Left Crop" style={{ width: '200%', height: '100%', objectFit: 'cover', transform: 'translateX(0%)' }} />
+                      <span style={{ position: 'absolute', bottom: 4, left: 6, fontSize: 7, color: '#38bdf8', fontWeight: 800, background: 'rgba(0,0,0,0.7)', padding: '1px 4px', borderRadius: 2 }}>Left Subject</span>
+                    </div>
+                    <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
+                      <img src={mediaSrc} alt="Right Crop" style={{ width: '200%', height: '100%', objectFit: 'cover', transform: 'translateX(-50%)' }} />
+                      <span style={{ position: 'absolute', bottom: 4, left: 6, fontSize: 7, color: '#ec4899', fontWeight: 800, background: 'rgba(0,0,0,0.7)', padding: '1px 4px', borderRadius: 2 }}>Right Subject</span>
+                    </div>
+                  </div>
+                ) : fitMode === 'elevated-card' ? (
+                  /* GLASSMORPHIC ELEVATED CARD WITH NEON BORDER */
+                  <div style={{ position: 'relative', zIndex: 10, width: '85%', padding: 4, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(56, 189, 248, 0.4)', borderRadius: 10, backdropFilter: 'blur(10px)', boxShadow: '0 16px 40px rgba(0,0,0,0.9)' }}>
+                    <img src={mediaSrc} alt="Elevated Card" style={{ width: '100%', height: 'auto', borderRadius: 6, display: 'block' }} />
+                  </div>
                 ) : (
-                  <img
-                    src={mediaSrc}
-                    alt="Reframed Subject"
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                      transform: photoAnimMode === 'ken-burns-zoom' ? 'scale(1.18)' : photoAnimMode === 'pan-across' ? 'translateX(15px) scale(1.1)' : 'scale(1.05)',
-                      transition: 'transform 3.5s cubic-bezier(0.25, 1, 0.5, 1)',
-                    }}
-                  />
+                  /* TRADITIONAL FULL-BLEED CROP */
+                  <div style={{ position: 'relative', zIndex: 10, width: '100%', height: '100%', overflow: 'hidden' }}>
+                    <img
+                      src={mediaSrc}
+                      alt="Full Bleed Crop"
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        transform: photoAnimMode === 'ken-burns-zoom' ? 'scale(1.18)' : 'none',
+                        transition: 'transform 3.5s ease',
+                      }}
+                    />
+                  </div>
                 )}
               </div>
             ) : layoutMode === 'split-duplex' ? (
@@ -738,11 +753,11 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
           </span>
           {[
             { label: `1. Aspect Format: ${format.toUpperCase()}`, done: true },
-            { label: '2. Subject & Face Detection', done: true },
+            { label: `2. Fit Mode: ${fitMode.replace('-', ' ').toUpperCase()}`, done: true },
             { label: '3. Optical Flow Tracking', done: true },
             { label: '4. Smoothed Bézier Keyframing', done: true },
             { label: '5. Rule-of-Thirds Headroom Framing', done: true },
-            { label: '6. Speaker Diarization & Angle Switch', done: true },
+            { label: '6. Zero Cutoff Ambient Blur Filter', done: true },
             { label: '7. Multi-Format Composition Solver', done: true },
             { label: '8. Ambient Blurred Mirror Generator', done: true },
             { label: '9. Safe-Zone Caption Collision Guard', done: true },
@@ -782,6 +797,10 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <span style={{ color: '#94a3b8' }}>Target Canvas:</span>
             <span style={{ color: '#38bdf8', fontWeight: 800 }}>{viewportDim.label}</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <span style={{ color: '#94a3b8' }}>Content Cutoff:</span>
+            <span style={{ color: '#10b981', fontWeight: 800 }}>0% (100% Visible)</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <span style={{ color: '#94a3b8' }}>Safe Bottom Margin:</span>
