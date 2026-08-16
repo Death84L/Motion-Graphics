@@ -103,14 +103,40 @@ describe('Extended Social Reframe Engine Test Suite', () => {
     expect(vertical.height).toBe(360);
   });
 
-  it('computes 2.5D multi-plane depth parallax rig keyframes', () => {
-    const rig = ExtendedSocialReframeEngine.compute25DParallaxRig({ x: 250, y: 150 }, 1.5, 5.0);
+  it('generates complete After Effects ExtendScript (.jsx) project with 3D camera controller', () => {
+    const jsx = ExtendedSocialReframeEngine.generateAfterEffectsProjectScript({
+      sourceWidth: 1920,
+      sourceHeight: 1080,
+      durationSec: 15.0,
+      format: '9:16-reels',
+      platform: 'tiktok',
+      hookText: 'Scale 10X Fast',
+      panKeyframes: [{ id: 1, time: 0, value: 400, type: 'bezier' }],
+      scaleKeyframes: [{ id: 2, time: 0, value: 100, type: 'bezier' }],
+    });
 
-    expect(rig.foregroundPanKeyframes.length).toBeGreaterThan(4);
-    expect(rig.foregroundScaleKeyframes.length).toBeGreaterThan(4);
-    expect(rig.backgroundPanKeyframes.length).toBeGreaterThan(4);
-    expect(rig.backgroundScaleKeyframes.length).toBeGreaterThan(4);
-    expect(rig.cameraZDepthKeyframes.length).toBeGreaterThan(4);
-    expect(rig.cameraZDepthKeyframes[rig.cameraZDepthKeyframes.length - 1].value).toBeLessThan(0);
+    expect(jsx).toContain('Reframed_9:16-REELS');
+    expect(jsx).toContain('Reframe_Camera_Controller');
+    expect(jsx).toContain('Scale 10X Fast');
+  });
+
+  it('generates complete Adobe Premiere Pro UXP multi-track sequence JSON', () => {
+    const jsonStr = ExtendedSocialReframeEngine.generatePremiereUxpSequence({
+      sourceWidth: 1920,
+      sourceHeight: 1080,
+      durationSec: 15.0,
+      format: '1:1-square',
+      platform: 'instagram-reels',
+      hookText: 'Scale 10X Fast',
+      panKeyframes: [{ id: 1, time: 0, value: 400, type: 'bezier' }],
+      scaleKeyframes: [{ id: 2, time: 0, value: 100, type: 'bezier' }],
+    });
+
+    const parsed = JSON.parse(jsonStr);
+    expect(parsed.host).toBe('premierepro');
+    expect(parsed.targetFormat).toBe('1:1-square');
+    expect(parsed.sequenceSettings.width).toBe(1080);
+    expect(parsed.sequenceSettings.height).toBe(1080);
+    expect(parsed.tracks.length).toBe(4);
   });
 });

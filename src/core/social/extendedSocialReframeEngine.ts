@@ -87,6 +87,17 @@ export interface ParallaxPlaneLayerKeyframes {
   cameraZDepthKeyframes: KeyframePoint[];
 }
 
+export interface SocialReframeProjectExportConfig {
+  sourceWidth: number;
+  sourceHeight: number;
+  durationSec: number;
+  format: SocialTargetFormat;
+  platform: SafeZonePlatform;
+  hookText: string;
+  panKeyframes: KeyframePoint[];
+  scaleKeyframes: KeyframePoint[];
+}
+
 export class ExtendedSocialReframeEngine {
   /**
    * Computes Responsive Viewport Dimensions & Aspect Ratio CSS for 1:1, 4:5, 9:16, and 16:9.
@@ -184,15 +195,12 @@ export class ExtendedSocialReframeEngine {
       const t = (i / steps) * duration;
       const progress = i / steps;
 
-      // Foreground Subject: Moves forward in Z and subtle X tracking
       const fgValX = characterCenter.x + (progress - 0.5) * 24 * depthIntensity;
       const fgScaleVal = 100 + progress * 14 * depthIntensity;
 
-      // Background Plane: Counter-drifts in reverse X and pushes back in Z
       const bgValX = -(progress - 0.5) * 40 * depthIntensity;
       const bgScaleVal = 125 + progress * 4;
 
-      // Camera Z-Depth (Push-in trajectory)
       const zDepth = -progress * 250 * depthIntensity;
 
       fgPan.push({
@@ -359,6 +367,103 @@ export class ExtendedSocialReframeEngine {
 
     targetY = Math.max(safeZone.topMarginPx + 40, Math.min(contentH - safeZone.bottomMarginPx - captionH, targetY));
     return { y: Math.round(targetY), isCollisionAvoided };
+  }
+
+  /**
+   * Generates Complete After Effects ExtendScript (.jsx) Multi-Track Project.
+   */
+  static generateAfterEffectsProjectScript(config: SocialReframeProjectExportConfig): string {
+    let compW = 1080;
+    let compH = 1920;
+    if (config.format === '1:1-square') { compW = 1080; compH = 1080; }
+    else if (config.format === '4:5-portrait') { compW = 1080; compH = 1350; }
+    else if (config.format === '16:9-landscape') { compW = 1920; compH = 1080; }
+
+    let jsx = `// Motion Studio — Automated Social Reframe Project Exporter\n`;
+    jsx += `// Generated for Adobe After Effects ExtendScript\n`;
+    jsx += `(function() {\n`;
+    jsx += `  app.beginUndoGroup("Motion Studio: Auto-Reframe (${config.format.toUpperCase()})");\n`;
+    jsx += `  var project = app.project;\n`;
+    jsx += `  var comp = project.items.addComp("Reframed_${config.format.toUpperCase()}", ${compW}, ${compH}, 1.0, ${config.durationSec}, 60);\n\n`;
+    jsx += `  // 1. Background Blur Layer\n`;
+    jsx += `  var bgSolid = comp.layers.addSolid([0.05, 0.07, 0.12], "Background_Ambient", ${compW}, ${compH}, 1.0);\n\n`;
+    jsx += `  // 2. Camera Null Controller\n`;
+    jsx += `  var camCtrl = comp.layers.addNull();\n`;
+    jsx += `  camCtrl.name = "Reframe_Camera_Controller";\n`;
+    jsx += `  var posProp = camCtrl.property("Transform").property("Position");\n`;
+    jsx += `  var scaleProp = camCtrl.property("Transform").property("Scale");\n\n`;
+
+    config.panKeyframes.forEach((k) => {
+      jsx += `  posProp.setValueAtTime(${k.time}, [${k.value}, ${compH / 2}, 0]);\n`;
+    });
+
+    config.scaleKeyframes.forEach((k) => {
+      jsx += `  scaleProp.setValueAtTime(${k.time}, [${k.value}, ${k.value}, 100]);\n`;
+    });
+
+    jsx += `\n  // 3. Top Retention Hook Banner\n`;
+    jsx += `  var textLayer = comp.layers.addText("${config.hookText.replace(/"/g, '\\"')}");\n`;
+    jsx += `  textLayer.name = "Retention_Hook_Title";\n`;
+    jsx += `  textLayer.property("Transform").property("Position").setValue([${compW / 2}, 120, 0]);\n\n`;
+
+    jsx += `  app.endUndoGroup();\n`;
+    jsx += `  alert("✓ Motion Studio: Successfully generated ${config.format.toUpperCase()} reframed composition in After Effects!");\n`;
+    jsx += `})();\n`;
+    return jsx;
+  }
+
+  /**
+   * Generates Complete Adobe Premiere Pro UXP Timeline Sequence JSON.
+   */
+  static generatePremiereUxpSequence(config: SocialReframeProjectExportConfig): string {
+    let targetW = 1080;
+    let targetH = 1920;
+    if (config.format === '1:1-square') { targetW = 1080; targetH = 1080; }
+    else if (config.format === '4:5-portrait') { targetW = 1080; targetH = 1350; }
+    else if (config.format === '16:9-landscape') { targetW = 1920; targetH = 1080; }
+
+    return JSON.stringify(
+      {
+        generator: 'Motion Studio Social Reframe Pipeline',
+        version: '2.5.0',
+        host: 'premierepro',
+        targetFormat: config.format,
+        sequenceSettings: {
+          width: targetW,
+          height: targetH,
+          frameRate: 60.0,
+          durationSec: config.durationSec,
+        },
+        tracks: [
+          {
+            trackIndex: 1,
+            name: 'V1_Ambient_Gaussian_Blur_Mirror',
+            scalePercent: 130,
+            effects: [{ name: 'GaussianBlur', blurriness: 30 }],
+          },
+          {
+            trackIndex: 2,
+            name: 'V2_Primary_Subject_Tracked',
+            panKeyframes: config.panKeyframes.map((k) => ({ timeSec: k.time, x: k.value, y: targetH / 2 })),
+            scaleKeyframes: config.scaleKeyframes.map((k) => ({ timeSec: k.time, scale: k.value })),
+          },
+          {
+            trackIndex: 3,
+            name: 'V3_Top_Neon_Progress_Bar',
+            type: 'shape_crop',
+            color: '#38bdf8',
+          },
+          {
+            trackIndex: 4,
+            name: 'V4_Viral_Retention_Hook',
+            headline: config.hookText,
+            style: 'viral-yellow',
+          },
+        ],
+      },
+      null,
+      2
+    );
   }
 
   /**

@@ -39,6 +39,7 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
   const [depthIntensity, setDepthIntensity] = useState<number>(1.2);
   const [platformOverlay, setPlatformOverlay] = useState<SafeZonePlatform>('tiktok');
   const [showRuleOfThirds, setShowRuleOfThirds] = useState<boolean>(true);
+  const [exportedCode, setExportedCode] = useState<{ type: string; content: string } | null>(null);
 
   // Media Ingestion (Video or Photo of ANY aspect ratio)
   const [mediaSrc, setMediaSrc] = useState<string | null>(null);
@@ -212,11 +213,63 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
     setTimeout(() => setIsBaked(false), 2500);
   };
 
+  // Export to After Effects JSX
+  const handleExportAfterEffects = () => {
+    const panKeys = [
+      { id: 1, time: 0.0, value: reframeResult.primaryCrop.x, type: 'bezier' as const },
+      { id: 2, time: 2.5, value: reframeResult.primaryCrop.x + 20, type: 'bezier' as const },
+      { id: 3, time: 5.0, value: reframeResult.secondaryCrop?.x || reframeResult.primaryCrop.x, type: 'bezier' as const },
+    ];
+    const scaleKeys = [
+      { id: 4, time: 0.0, value: 100, type: 'bezier' as const },
+      { id: 5, time: 1.5, value: hookCard.zoomPunchIn ? 108 : 100, type: 'bezier' as const },
+      { id: 6, time: 5.0, value: 100, type: 'bezier' as const },
+    ];
+
+    const jsx = ExtendedSocialReframeEngine.generateAfterEffectsProjectScript({
+      sourceWidth: sourceResolution.width,
+      sourceHeight: sourceResolution.height,
+      durationSec: 15.0,
+      format,
+      platform: platformOverlay,
+      hookText: hookCard.text,
+      panKeyframes: panKeys,
+      scaleKeyframes: scaleKeys,
+    });
+
+    setExportedCode({ type: 'After Effects (.jsx)', content: jsx });
+  };
+
+  // Export to Premiere Pro UXP Sequence JSON
+  const handleExportPremierePro = () => {
+    const panKeys = [
+      { id: 1, time: 0.0, value: reframeResult.primaryCrop.x, type: 'bezier' as const },
+      { id: 2, time: 2.5, value: reframeResult.primaryCrop.x + 20, type: 'bezier' as const },
+    ];
+    const scaleKeys = [
+      { id: 3, time: 0.0, value: 100, type: 'bezier' as const },
+      { id: 4, time: 1.5, value: 108, type: 'bezier' as const },
+    ];
+
+    const seq = ExtendedSocialReframeEngine.generatePremiereUxpSequence({
+      sourceWidth: sourceResolution.width,
+      sourceHeight: sourceResolution.height,
+      durationSec: 15.0,
+      format,
+      platform: platformOverlay,
+      hookText: hookCard.text,
+      panKeyframes: panKeys,
+      scaleKeyframes: scaleKeys,
+    });
+
+    setExportedCode({ type: 'Premiere Pro UXP (JSON)', content: seq });
+  };
+
   return (
     <div
       style={{
         display: 'grid',
-        gridTemplateColumns: '320px 1fr 310px',
+        gridTemplateColumns: '320px 1fr 320px',
         height: '100%',
         background: '#040711',
         overflow: 'hidden',
@@ -346,7 +399,7 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
           </div>
         </div>
 
-        {/* 2.5D Parallax Depth Controls (When Depth Parallax Mode is Selected) */}
+        {/* 2.5D Parallax Depth Controls */}
         {fitMode === 'depth-parallax-25d' && (
           <div style={{ background: '#11182c', border: '1px solid #a855f7', borderRadius: 8, padding: 10, display: 'flex', flexDirection: 'column', gap: 6 }}>
             <span style={{ fontSize: 9, color: '#c084fc', textTransform: 'uppercase', fontWeight: 800 }}>
@@ -487,22 +540,38 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
             ))}
           </div>
 
-          <button
-            onClick={handleBake}
-            style={{
-              background: isBaked ? '#10b981' : 'linear-gradient(135deg, #38bdf8, #8b5cf6)',
-              color: '#ffffff',
-              border: 'none',
-              padding: '6px 14px',
-              borderRadius: 6,
-              fontSize: 10,
-              fontWeight: 800,
-              cursor: 'pointer',
-              boxShadow: '0 0 14px rgba(56, 189, 248, 0.4)',
-            }}
-          >
-            {isBaked ? '✓ Baked to Graph Editor!' : '🔥 Bake to Graph Editor'}
-          </button>
+          <div style={{ display: 'flex', gap: 6 }}>
+            <button
+              onClick={handleExportAfterEffects}
+              style={{
+                background: '#4f46e5',
+                color: '#ffffff',
+                border: 'none',
+                padding: '5px 10px',
+                borderRadius: 6,
+                fontSize: 9,
+                fontWeight: 800,
+                cursor: 'pointer',
+              }}
+            >
+              📥 AE Script (.jsx)
+            </button>
+            <button
+              onClick={handleExportPremierePro}
+              style={{
+                background: '#059669',
+                color: '#ffffff',
+                border: 'none',
+                padding: '5px 10px',
+                borderRadius: 6,
+                fontSize: 9,
+                fontWeight: 800,
+                cursor: 'pointer',
+              }}
+            >
+              📥 Premiere UXP
+            </button>
+          </div>
         </div>
 
         {/* Viewport Canvas Area */}
@@ -583,7 +652,7 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
             {/* MEDIA RENDERING: SMART AMBIENT BLUR VS 2.5D PARALLAX VS KEN BURNS SCAN */}
             {mediaSrc ? (
               <div style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                {/* 1. LAYER 1: AMBIENT GAUSSIAN BLUR BACKGROUND (Always fills canvas with rich color) */}
+                {/* 1. LAYER 1: AMBIENT GAUSSIAN BLUR BACKGROUND */}
                 {(fitMode === 'smart-ambient-fit' || fitMode === 'depth-parallax-25d' || fitMode === 'elevated-card') && (
                   <div
                     style={{
@@ -657,7 +726,7 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
                     )}
                   </div>
                 ) : fitMode === 'ken-burns-scan' ? (
-                  /* FULL WIDTH SCANNING KEN BURNS (REVEALS 100% OF WIDE PHOTO ACROSS TIME) */
+                  /* FULL WIDTH SCANNING KEN BURNS */
                   <div style={{ position: 'relative', zIndex: 10, width: '100%', height: '100%', overflow: 'hidden' }}>
                     <img
                       src={mediaSrc}
@@ -674,7 +743,7 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
                     />
                   </div>
                 ) : fitMode === 'stacked-duplex' ? (
-                  /* STACKED DUPLEX (LEFT HALF ON TOP, RIGHT HALF ON BOTTOM) */
+                  /* STACKED DUPLEX */
                   <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', width: '100%', height: '100%' }}>
                     <div style={{ flex: 1, overflow: 'hidden', borderBottom: '2px solid #38bdf8', position: 'relative' }}>
                       <img src={mediaSrc} alt="Left Crop" style={{ width: '200%', height: '100%', objectFit: 'cover', transform: 'translateX(0%)' }} />
@@ -686,7 +755,7 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
                     </div>
                   </div>
                 ) : fitMode === 'elevated-card' ? (
-                  /* GLASSMORPHIC ELEVATED CARD WITH NEON BORDER */
+                  /* GLASSMORPHIC ELEVATED CARD */
                   <div style={{ position: 'relative', zIndex: 10, width: '85%', padding: 4, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(56, 189, 248, 0.4)', borderRadius: 10, backdropFilter: 'blur(10px)', boxShadow: '0 16px 40px rgba(0,0,0,0.9)' }}>
                     <img src={mediaSrc} alt="Elevated Card" style={{ width: '100%', height: 'auto', borderRadius: 6, display: 'block' }} />
                   </div>
@@ -776,7 +845,7 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
         </div>
       </div>
 
-      {/* 3. RIGHT COLUMN: ZERO-MANUAL PIPELINE HUD & INSPECTOR */}
+      {/* 3. RIGHT COLUMN: EXPORT CODE & ZERO-MANUAL PIPELINE HUD */}
       <div
         style={{
           background: '#090e1a',
@@ -789,8 +858,43 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
         }}
       >
         <div style={{ fontSize: 12, fontWeight: 800, color: '#f8fafc' }}>
-          Zero-Manual Pipeline Telemetry
+          Production Host Exporters
         </div>
+
+        {/* 1-Click Code Generator Box */}
+        {exportedCode && (
+          <div style={{ background: '#11182c', border: '1px solid #38bdf8', borderRadius: 8, padding: 10, display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: 9, color: '#38bdf8', fontWeight: 800 }}>{exportedCode.type} Ready:</span>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(exportedCode.content);
+                  setIsBaked(true);
+                  setTimeout(() => setIsBaked(false), 2000);
+                }}
+                style={{ background: '#38bdf8', color: '#040711', border: 'none', borderRadius: 4, padding: '2px 6px', fontSize: 8, fontWeight: 800, cursor: 'pointer' }}
+              >
+                📋 Copy Code
+              </button>
+            </div>
+            <textarea
+              readOnly
+              value={exportedCode.content}
+              style={{
+                width: '100%',
+                height: 110,
+                background: '#040711',
+                border: '1px solid #1e293b',
+                borderRadius: 4,
+                color: '#38bdf8',
+                fontFamily: 'monospace',
+                fontSize: 8,
+                padding: 6,
+                resize: 'none',
+              }}
+            />
+          </div>
+        )}
 
         {/* 12-Stage Automated Pipeline Checklist */}
         <div style={{ background: '#11182c', border: '1px solid #1e293b', borderRadius: 8, padding: 10, display: 'flex', flexDirection: 'column', gap: 6, fontSize: 9 }}>
