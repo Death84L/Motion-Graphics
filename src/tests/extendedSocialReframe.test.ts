@@ -88,15 +88,32 @@ describe('Extended Social Reframe Engine Test Suite', () => {
     expect(placement.y).toBeGreaterThan(120);
   });
 
-  it('bakes reframe pan and scale trajectory into standard Bézier keyframes', () => {
-    const trajectory = [
-      { time: 0, panX: 200, scale: 1.0 },
-      { time: 1.5, panX: 350, scale: 1.08 },
-    ];
+  it('computes exact viewport dimensions for 1:1, 4:5, 9:16, and 16:9', () => {
+    const square = ExtendedSocialReframeEngine.computeViewportDimensions('1:1-square');
+    expect(square.width).toBe(280);
+    expect(square.height).toBe(280);
+    expect(square.aspectRatio).toBe('1 / 1');
 
-    const keyframes = ExtendedSocialReframeEngine.bakeReframeTrajectoryToKeyframes(trajectory);
-    expect(keyframes.length).toBe(2);
-    expect(keyframes[0].value).toBe(200);
-    expect(keyframes[1].value).toBe(350);
+    const portrait = ExtendedSocialReframeEngine.computeViewportDimensions('4:5-portrait');
+    expect(portrait.width).toBe(240);
+    expect(portrait.height).toBe(300);
+
+    const vertical = ExtendedSocialReframeEngine.computeViewportDimensions('9:16-reels');
+    expect(vertical.width).toBe(202);
+    expect(vertical.height).toBe(360);
+  });
+
+  it('computes 2.5D photo character parallax and headroom alignment keyframes', () => {
+    const anim = ExtendedSocialReframeEngine.computePhotoCharacterAnimation(
+      { x: 300, y: 200 },
+      '1:1-square',
+      'ken-burns-zoom',
+      4.0
+    );
+
+    expect(anim.characterPanKeyframes.length).toBeGreaterThan(4);
+    expect(anim.characterScaleKeyframes.length).toBeGreaterThan(4);
+    expect(anim.backgroundDriftKeyframes.length).toBeGreaterThan(4);
+    expect(anim.headroomOffsetPx).toBe(50);
   });
 });

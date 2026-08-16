@@ -7,6 +7,7 @@ import {
   SpeakerProfile,
   RetentionHookCard,
   MultiSpeakerReframeResult,
+  ViewportDimensionsResult,
 } from '../../../core/social/extendedSocialReframeEngine';
 import {
   ZeroManualReframePipeline,
@@ -25,6 +26,7 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
   const [format, setFormat] = useState<SocialTargetFormat>('9:16-reels');
   const [layoutMode, setLayoutMode] = useState<ReframeLayoutMode>('full-bleed-pan');
   const [platformOverlay, setPlatformOverlay] = useState<SafeZonePlatform>('tiktok');
+  const [showRuleOfThirds, setShowRuleOfThirds] = useState<boolean>(true);
 
   // Media Ingestion (Video or Photo of ANY aspect ratio)
   const [mediaSrc, setMediaSrc] = useState<string | null>(null);
@@ -36,19 +38,6 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
     height: 1080,
     ratioName: '16:9 Landscape',
   });
-
-  // Calculate Aspect Ratio Name Helper
-  const getAspectRatioName = (w: number, h: number): string => {
-    const ratio = w / h;
-    if (Math.abs(ratio - 16 / 9) < 0.05) return '16:9 Landscape';
-    if (Math.abs(ratio - 9 / 16) < 0.05) return '9:16 Vertical';
-    if (Math.abs(ratio - 4 / 3) < 0.05) return '4:3 Standard';
-    if (Math.abs(ratio - 1.0) < 0.05) return '1:1 Square';
-    if (Math.abs(ratio - 21 / 9) < 0.1) return '21:9 Ultra-Wide';
-    if (Math.abs(ratio - 4 / 5) < 0.05) return '4:5 Portrait';
-    if (Math.abs(ratio - 3 / 2) < 0.05) return '3:2 DSLR';
-    return `${w}x${h} (${ratio.toFixed(2)}:1)`;
-  };
 
   // Multi-Speaker Profiles (Host & Guest)
   const [speakerA_X, setSpeakerA_X] = useState<number>(140);
@@ -72,6 +61,24 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  // Calculate Dynamic Viewport Dimensions (1:1, 4:5, 9:16, 16:9)
+  const viewportDim: ViewportDimensionsResult = useMemo(() => {
+    return ExtendedSocialReframeEngine.computeViewportDimensions(format);
+  }, [format]);
+
+  // Calculate Aspect Ratio Name Helper
+  const getAspectRatioName = (w: number, h: number): string => {
+    const ratio = w / h;
+    if (Math.abs(ratio - 16 / 9) < 0.05) return '16:9 Landscape';
+    if (Math.abs(ratio - 9 / 16) < 0.05) return '9:16 Vertical';
+    if (Math.abs(ratio - 4 / 3) < 0.05) return '4:3 Standard';
+    if (Math.abs(ratio - 1.0) < 0.05) return '1:1 Square';
+    if (Math.abs(ratio - 21 / 9) < 0.1) return '21:9 Ultra-Wide';
+    if (Math.abs(ratio - 4 / 5) < 0.05) return '4:5 Portrait';
+    if (Math.abs(ratio - 3 / 2) < 0.05) return '3:2 DSLR';
+    return `${w}x${h} (${ratio.toFixed(2)}:1)`;
+  };
 
   // Handle Media File Upload (Videos & Photos of ANY format or aspect ratio)
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -154,14 +161,14 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
   const reframeResult: MultiSpeakerReframeResult = useMemo(() => {
     if (autoPipelineResult) return autoPipelineResult.reframeResult;
     return ExtendedSocialReframeEngine.computeMultiSpeakerLayout(
-      480,
-      270,
+      sourceResolution.width,
+      sourceResolution.height,
       speakers,
       activeSpeakerId,
       layoutMode,
       format
     );
-  }, [speakers, activeSpeakerId, layoutMode, format, autoPipelineResult]);
+  }, [speakers, activeSpeakerId, layoutMode, format, sourceResolution, autoPipelineResult]);
 
   // Compute Safe-Zone Inset Margins
   const safeZone = useMemo(() => {
@@ -170,13 +177,13 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
 
   // Compute Caption Collision Placement
   const safeCaption = useMemo(() => {
-    return ExtendedSocialReframeEngine.solveSafeCaptionPlacement(360, 150, 40, {
-      topMarginPx: Math.round((safeZone.topMarginPx / 1920) * 360),
-      bottomMarginPx: Math.round((safeZone.bottomMarginPx / 1920) * 360),
-      rightMarginPx: Math.round((safeZone.rightMarginPx / 1080) * 200),
+    return ExtendedSocialReframeEngine.solveSafeCaptionPlacement(viewportDim.height, 150, 40, {
+      topMarginPx: Math.round(safeZone.topMarginPx * viewportDim.safeZoneScale),
+      bottomMarginPx: Math.round(safeZone.bottomMarginPx * viewportDim.safeZoneScale),
+      rightMarginPx: Math.round(safeZone.rightMarginPx * viewportDim.safeZoneScale),
       leftMarginPx: 10,
     });
-  }, [safeZone]);
+  }, [safeZone, viewportDim]);
 
   const handleBake = () => {
     const trajectory = [
@@ -187,7 +194,7 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
 
     const baked = ExtendedSocialReframeEngine.bakeReframeTrajectoryToKeyframes(trajectory);
     if (onBakeKeyframesToEditor) {
-      onBakeKeyframesToEditor(baked, `Auto-Reframe • ${layoutMode.toUpperCase()}`);
+      onBakeKeyframesToEditor(baked, `Auto-Reframe • ${layoutMode.toUpperCase()} (${format.toUpperCase()})`);
     }
     setIsBaked(true);
     setTimeout(() => setIsBaked(false), 2500);
@@ -282,18 +289,54 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
           {isAutoProcessing ? '⏳ Auto-Processing 12 Stages...' : '⚡ 1-Click Auto-Reframe (Zero Manual Work)'}
         </button>
 
-        {/* Photo Animation Mode (When Image is Uploaded) */}
+        {/* Target Aspect Ratios (1:1, 4:5, 9:16, 16:9) */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <span style={{ fontSize: 9, color: '#94a3b8', textTransform: 'uppercase' }}>
+            TARGET ASPECT RATIO & COMPOSITION:
+          </span>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 4 }}>
+            {[
+              { id: '9:16-reels', label: '9:16 Reels/TikTok' },
+              { id: '1:1-square', label: '1:1 Square (Feed)' },
+              { id: '4:5-portrait', label: '4:5 Portrait (IG)' },
+              { id: '16:9-landscape', label: '16:9 Landscape' },
+            ].map((fmt) => (
+              <button
+                key={fmt.id}
+                onClick={() => {
+                  setFormat(fmt.id as SocialTargetFormat);
+                  setAutoPipelineResult(null);
+                }}
+                style={{
+                  background: format === fmt.id ? '#38bdf8' : '#11182c',
+                  border: `1px solid ${format === fmt.id ? '#38bdf8' : '#1e293b'}`,
+                  color: format === fmt.id ? '#040711' : '#94a3b8',
+                  borderRadius: 6,
+                  padding: '6px 8px',
+                  fontSize: 9,
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  textAlign: 'center',
+                }}
+              >
+                {fmt.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Photo Animation & Character 2.5D Motion Mode */}
         {mediaType === 'photo' && (
-          <div style={{ background: '#11182c', border: '1px solid #1e293b', borderRadius: 8, padding: 10, display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <div style={{ background: '#11182c', border: '1px solid #1e293b', borderRadius: 8, padding: 10, display: 'flex', flexDirection: 'column', gap: 6 }}>
             <span style={{ fontSize: 9, color: '#f59e0b', textTransform: 'uppercase', fontWeight: 800 }}>
-              📸 PHOTO 2.5D MOTION MODE:
+              📸 PHOTO CHARACTER 2.5D MOTION:
             </span>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
               {[
                 { id: 'ken-burns-zoom', label: '🔍 Ken Burns Zoom' },
-                { id: 'pan-across', label: '↔️ Pan Across' },
+                { id: 'pan-across', label: '↔️ Two-Shot Pan' },
                 { id: 'subtle-breathe', label: '💨 2.5D Breathe' },
-                { id: 'static', label: '⏹️ Static Center' },
+                { id: 'static', label: '📐 Rule-of-Thirds' },
               ].map((pm) => (
                 <button
                   key={pm.id}
@@ -353,37 +396,6 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
           </div>
         </div>
 
-        {/* Target Aspect Ratios */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <span style={{ fontSize: 9, color: '#94a3b8', textTransform: 'uppercase' }}>
-            TARGET ASPECT RATIO:
-          </span>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 4 }}>
-            {[
-              { id: '9:16-reels', label: '9:16 Reels' },
-              { id: '1:1-square', label: '1:1 Square' },
-              { id: '4:5-portrait', label: '4:5 Feed' },
-            ].map((fmt) => (
-              <button
-                key={fmt.id}
-                onClick={() => setFormat(fmt.id as SocialTargetFormat)}
-                style={{
-                  background: format === fmt.id ? 'rgba(56, 189, 248, 0.2)' : '#11182c',
-                  border: `1px solid ${format === fmt.id ? '#38bdf8' : '#1e293b'}`,
-                  color: format === fmt.id ? '#38bdf8' : '#94a3b8',
-                  borderRadius: 4,
-                  padding: '5px',
-                  fontSize: 8,
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                }}
-              >
-                {fmt.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
         {/* Multi-Speaker Angle Switching */}
         <div style={{ background: '#11182c', border: '1px solid #1e293b', borderRadius: 8, padding: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
           <span style={{ fontSize: 9, color: '#94a3b8', textTransform: 'uppercase', fontWeight: 800 }}>
@@ -433,7 +445,7 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
             <input
               type="range"
               min="40"
-              max="240"
+              max="400"
               value={speakerA_X}
               onChange={(e) => setSpeakerA_X(parseInt(e.target.value))}
               style={{ width: '100%', accentColor: '#38bdf8' }}
@@ -447,7 +459,7 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
             </div>
             <input
               type="range"
-              min="240"
+              min="40"
               max="440"
               value={speakerB_X}
               onChange={(e) => setSpeakerB_X(parseInt(e.target.value))}
@@ -457,7 +469,7 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
         </div>
       </div>
 
-      {/* 2. CENTER COLUMN: 60FPS VIEWPORT & SAFE-ZONE OVERLAY */}
+      {/* 2. CENTER COLUMN: DYNAMIC ASPECT RATIO VIEWPORT (1:1, 4:5, 9:16) */}
       <div
         style={{
           display: 'flex',
@@ -470,14 +482,29 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#090e1a', padding: '8px 12px', borderRadius: 8, border: '1px solid #1e293b' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ fontSize: 9, color: '#94a3b8' }}>SAFE-ZONE OVERLAY:</span>
+            <span style={{ fontSize: 9, color: '#38bdf8', fontWeight: 800 }}>{viewportDim.label}</span>
+            <button
+              onClick={() => setShowRuleOfThirds((r) => !r)}
+              style={{
+                background: showRuleOfThirds ? '#38bdf8' : '#1e293b',
+                color: showRuleOfThirds ? '#040711' : '#94a3b8',
+                border: 'none',
+                padding: '3px 6px',
+                borderRadius: 4,
+                fontSize: 8,
+                fontWeight: 800,
+                cursor: 'pointer',
+              }}
+            >
+              # Rule-of-Thirds Grid
+            </button>
             {(['tiktok', 'instagram-reels', 'youtube-shorts', 'none'] as SafeZonePlatform[]).map((p) => (
               <button
                 key={p}
                 onClick={() => setPlatformOverlay(p)}
                 style={{
-                  background: platformOverlay === p ? '#38bdf8' : '#11182c',
-                  color: platformOverlay === p ? '#040711' : '#94a3b8',
+                  background: platformOverlay === p ? '#ec4899' : '#11182c',
+                  color: platformOverlay === p ? '#ffffff' : '#94a3b8',
                   border: 'none',
                   padding: '3px 6px',
                   borderRadius: 4,
@@ -516,7 +543,7 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
             background: '#040711',
             border: '1px solid #1e293b',
             borderRadius: 12,
-            minHeight: '380px',
+            minHeight: '390px',
             position: 'relative',
             display: 'flex',
             alignItems: 'center',
@@ -524,17 +551,18 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
             overflow: 'hidden',
           }}
         >
-          {/* 9:16 Vertical Phone Mockup Container */}
+          {/* Dynamic Aspect Ratio Canvas Container (1:1, 4:5, 9:16, 16:9) */}
           <div
             style={{
-              width: 202,
-              height: 360,
+              width: viewportDim.width,
+              height: viewportDim.height,
               background: '#090e1a',
-              border: '2px solid #334155',
-              borderRadius: 16,
+              border: '2px solid #38bdf8',
+              borderRadius: format === '9:16-reels' ? 16 : 8,
               position: 'relative',
               overflow: 'hidden',
-              boxShadow: '0 0 32px rgba(0,0,0,0.8)',
+              boxShadow: '0 0 32px rgba(56, 189, 248, 0.25)',
+              transition: 'width 0.3s ease, height 0.3s ease',
             }}
           >
             {/* Top Neon Progress Bar */}
@@ -574,6 +602,16 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
               {hookCard.text}
             </div>
 
+            {/* Rule-of-Thirds Grid Overlay */}
+            {showRuleOfThirds && (
+              <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 32 }}>
+                <div style={{ position: 'absolute', top: '33.3%', left: 0, right: 0, height: 1, background: 'rgba(56, 189, 248, 0.3)', borderTop: '1px dashed #38bdf8' }} />
+                <div style={{ position: 'absolute', top: '66.6%', left: 0, right: 0, height: 1, background: 'rgba(56, 189, 248, 0.3)', borderTop: '1px dashed #38bdf8' }} />
+                <div style={{ position: 'absolute', left: '33.3%', top: 0, bottom: 0, width: 1, background: 'rgba(56, 189, 248, 0.3)', borderLeft: '1px dashed #38bdf8' }} />
+                <div style={{ position: 'absolute', left: '66.6%', top: 0, bottom: 0, width: 1, background: 'rgba(56, 189, 248, 0.3)', borderLeft: '1px dashed #38bdf8' }} />
+              </div>
+            )}
+
             {/* Media Rendering (Uploaded Video / Photo vs Placeholder) */}
             {mediaSrc ? (
               <div style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}>
@@ -589,7 +627,7 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
                       width: 'auto',
                       height: '100%',
                       position: 'absolute',
-                      left: `-${reframeResult.primaryCrop.x * 0.4}px`,
+                      left: `-${reframeResult.primaryCrop.x * (viewportDim.width / sourceResolution.width)}px`,
                       top: 0,
                       objectFit: 'cover',
                     }}
@@ -602,8 +640,8 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
                       width: '100%',
                       height: '100%',
                       objectFit: 'cover',
-                      transform: photoAnimMode === 'ken-burns-zoom' ? 'scale(1.15)' : 'none',
-                      transition: 'transform 3s ease-in-out',
+                      transform: photoAnimMode === 'ken-burns-zoom' ? 'scale(1.18)' : photoAnimMode === 'pan-across' ? 'translateX(15px) scale(1.1)' : 'scale(1.05)',
+                      transition: 'transform 3.5s cubic-bezier(0.25, 1, 0.5, 1)',
                     }}
                   />
                 )}
@@ -623,7 +661,7 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
               </div>
             ) : layoutMode === 'blurred-mirror' ? (
               <div style={{ display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'center', alignItems: 'center', background: 'radial-gradient(circle, #334155, #0f172a)' }}>
-                <div style={{ width: '100%', height: 114, background: '#1e293b', borderTop: '1px solid #475569', borderBottom: '1px solid #475569', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: '100%', height: Math.round((viewportDim.width * 9) / 16), background: '#1e293b', borderTop: '1px solid #475569', borderBottom: '1px solid #475569', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <span style={{ fontSize: 28 }}>👤</span>
                 </div>
               </div>
@@ -699,16 +737,16 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
             AUTOMATED PIPELINE STAGES:
           </span>
           {[
-            { label: '1. Resolution & Crop Conversion', done: true },
+            { label: `1. Aspect Format: ${format.toUpperCase()}`, done: true },
             { label: '2. Subject & Face Detection', done: true },
-            { label: '3. Automatic Optical Flow Tracking', done: true },
-            { label: '4. Smoothed Bézier Camera Keyframing', done: true },
-            { label: '5. Intelligent Camera Framing', done: true },
-            { label: '6. Speaker Diarization & Switching', done: true },
-            { label: '7. Automatic Layout Composition', done: true },
-            { label: '8. Blurred Ambient Background', done: true },
+            { label: '3. Optical Flow Tracking', done: true },
+            { label: '4. Smoothed Bézier Keyframing', done: true },
+            { label: '5. Rule-of-Thirds Headroom Framing', done: true },
+            { label: '6. Speaker Diarization & Angle Switch', done: true },
+            { label: '7. Multi-Format Composition Solver', done: true },
+            { label: '8. Ambient Blurred Mirror Generator', done: true },
             { label: '9. Safe-Zone Caption Collision Guard', done: true },
-            { label: '10. Top Retention Hook & Progress Bar', done: true },
+            { label: '10. Top Retention Hook Banner', done: true },
             { label: '11. Silence Cutting & Pacing', done: true },
             { label: '12. 1-Click Multi-Host Keyframe Export', done: true },
           ].map((stage, idx) => (
@@ -742,12 +780,12 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
         {/* Safe-Zone Status */}
         <div style={{ background: '#11182c', border: '1px solid #1e293b', borderRadius: 8, padding: 10, display: 'flex', flexDirection: 'column', gap: 4, fontSize: 9 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ color: '#94a3b8' }}>Safe Bottom Margin:</span>
-            <span style={{ color: '#38bdf8', fontWeight: 800 }}>{safeZone.bottomMarginPx}px</span>
+            <span style={{ color: '#94a3b8' }}>Target Canvas:</span>
+            <span style={{ color: '#38bdf8', fontWeight: 800 }}>{viewportDim.label}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ color: '#94a3b8' }}>Safe Right Margin:</span>
-            <span style={{ color: '#f59e0b', fontWeight: 800 }}>{safeZone.rightMarginPx}px</span>
+            <span style={{ color: '#94a3b8' }}>Safe Bottom Margin:</span>
+            <span style={{ color: '#38bdf8', fontWeight: 800 }}>{safeZone.bottomMarginPx}px</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <span style={{ color: '#94a3b8' }}>Quality Validation:</span>

@@ -64,7 +64,56 @@ export interface RetentionHookCard {
   zoomPunchIn: boolean;
 }
 
+export interface ViewportDimensionsResult {
+  width: number;
+  height: number;
+  aspectRatio: string;
+  label: string;
+  safeZoneScale: number;
+}
+
 export class ExtendedSocialReframeEngine {
+  /**
+   * Computes Responsive Viewport Dimensions & Aspect Ratio CSS for 1:1, 4:5, 9:16, and 16:9.
+   */
+  static computeViewportDimensions(format: SocialTargetFormat): ViewportDimensionsResult {
+    switch (format) {
+      case '1:1-square':
+        return {
+          width: 280,
+          height: 280,
+          aspectRatio: '1 / 1',
+          label: '1:1 Square (1080x1080)',
+          safeZoneScale: 280 / 1080,
+        };
+      case '4:5-portrait':
+        return {
+          width: 240,
+          height: 300,
+          aspectRatio: '4 / 5',
+          label: '4:5 Portrait (1080x1350)',
+          safeZoneScale: 300 / 1350,
+        };
+      case '16:9-landscape':
+        return {
+          width: 360,
+          height: 202,
+          aspectRatio: '16 / 9',
+          label: '16:9 Landscape (1920x1080)',
+          safeZoneScale: 202 / 1080,
+        };
+      case '9:16-reels':
+      default:
+        return {
+          width: 202,
+          height: 360,
+          aspectRatio: '9 / 16',
+          label: '9:16 Vertical (1080x1920)',
+          safeZoneScale: 360 / 1920,
+        };
+    }
+  }
+
   /**
    * Platform Safe-Zone Inset Margins.
    */
@@ -84,7 +133,6 @@ export class ExtendedSocialReframeEngine {
 
   /**
    * Deadband Pan Smoothing Filter.
-   * If subject movement is within deadbandRadius, keep camera stationary to eliminate micro-jitter.
    */
   static filterDeadbandPan(
     currentPanX: number,
@@ -102,7 +150,7 @@ export class ExtendedSocialReframeEngine {
   }
 
   /**
-   * Solves Multi-Speaker Vertical Composition Layout (Full Bleed, Split Duplex, Tri-Stack, Blurred Mirror, PiP).
+   * Solves Multi-Speaker Composition Layout for 1:1, 4:5, 9:16, or 16:9.
    */
   static computeMultiSpeakerLayout(
     sourceW = 1920,
@@ -112,16 +160,16 @@ export class ExtendedSocialReframeEngine {
     layoutMode: ReframeLayoutMode = 'full-bleed-pan',
     targetFormat: SocialTargetFormat = '9:16-reels'
   ): MultiSpeakerReframeResult {
-    // 9:16 Vertical Target Dimensions
-    let targetW = Math.round((sourceH * 9) / 16); // e.g. 607.5 for 1080h
+    // Determine Target Dimensions based on aspect ratio
+    let targetW = Math.round((sourceH * 9) / 16); // 9:16 default
     if (targetFormat === '1:1-square') targetW = sourceH;
     else if (targetFormat === '4:5-portrait') targetW = Math.round((sourceH * 4) / 5);
+    else if (targetFormat === '16:9-landscape') targetW = sourceW;
 
     const activeSpeaker = speakers.find((s) => s.id === activeSpeakerId) || speakers[0] || { id: 'speaker-a', name: 'Host', x: sourceW * 0.3, y: sourceH * 0.5, isActive: true };
     const secondarySpeaker = speakers.find((s) => s.id !== activeSpeaker.id) || speakers[1] || { id: 'speaker-b', name: 'Guest', x: sourceW * 0.7, y: sourceH * 0.5, isActive: false };
 
     if (layoutMode === 'split-duplex') {
-      // Top Half: Speaker A, Bottom Half: Speaker B
       const halfH = Math.round(sourceH / 2);
       const halfW = targetW;
       const cropA_X = Math.max(0, Math.min(sourceW - halfW, activeSpeaker.x - halfW / 2));
@@ -136,7 +184,6 @@ export class ExtendedSocialReframeEngine {
     }
 
     if (layoutMode === 'tri-stack') {
-      // Tri-Split: Top = Host, Center = Screen/Gameplay, Bottom = Guest
       const thirdH = Math.round(sourceH / 3);
       const thirdW = targetW;
       return {
@@ -149,19 +196,17 @@ export class ExtendedSocialReframeEngine {
     }
 
     if (layoutMode === 'blurred-mirror') {
-      // 16:9 Video in Center with 30px Gaussian Blurred Top & Bottom Fillers
-      const contentH = Math.round((targetW * 9) / 16);
-      const padH = Math.round((sourceH - contentH) / 2);
+      const contentH = targetFormat === '1:1-square' ? Math.round((targetW * 9) / 16) : Math.round((targetW * 9) / 16);
+      const padH = Math.max(0, Math.round((sourceH - contentH) / 2));
       return {
         layoutMode,
         targetFormat,
-        primaryCrop: { x: 0, y: padH, width: targetW, height: contentH, scale: 1.0, label: '16:9 Video Centered' },
+        primaryCrop: { x: 0, y: padH, width: targetW, height: contentH, scale: 1.0, label: `${targetFormat.toUpperCase()} Centered` },
         blurredBackgroundPadding: { topH: padH, bottomH: padH, blurRadius: 30 },
       };
     }
 
     if (layoutMode === 'pip-bubble') {
-      // Full background with floating facecam squircle
       const cropX = Math.max(0, Math.min(sourceW - targetW, activeSpeaker.x - targetW / 2));
       return {
         layoutMode,
@@ -191,8 +236,89 @@ export class ExtendedSocialReframeEngine {
   }
 
   /**
+   * Computes 2.5D Multi-Plane Photo Character Parallax, Headroom Alignment & Camera Paths.
+   */
+  static computePhotoCharacterAnimation(
+    characterCenter: { x: number; y: number },
+    targetFormat: SocialTargetFormat = '9:16-reels',
+    animMode: 'ken-burns-zoom' | 'pan-across' | 'subtle-breathe' | 'static' = 'ken-burns-zoom',
+    duration = 5.0
+  ): {
+    characterPanKeyframes: KeyframePoint[];
+    characterScaleKeyframes: KeyframePoint[];
+    backgroundDriftKeyframes: KeyframePoint[];
+    headroomOffsetPx: number;
+  } {
+    const steps = 6;
+    const panKeys: KeyframePoint[] = [];
+    const scaleKeys: KeyframePoint[] = [];
+    const bgKeys: KeyframePoint[] = [];
+
+    // Calculate Rule-of-Thirds Headroom offset (align character eyes to upper 33% line)
+    const headroomOffsetPx = Math.round(characterCenter.y * 0.25);
+
+    for (let i = 0; i <= steps; i++) {
+      const t = (i / steps) * duration;
+      const progress = i / steps;
+
+      let currentX = characterCenter.x;
+      let currentScale = 1.0;
+      let bgDriftX = 0;
+
+      if (animMode === 'ken-burns-zoom') {
+        currentScale = 1.0 + progress * 0.18; // Smooth 1.0x to 1.18x push-in
+        currentX = characterCenter.x + (progress - 0.5) * 20;
+        bgDriftX = -(progress - 0.5) * 35; // Parallax reverse drift
+      } else if (animMode === 'pan-across') {
+        currentX = characterCenter.x - 40 + progress * 80; // 80px glide across
+        currentScale = 1.08;
+        bgDriftX = (progress - 0.5) * 25;
+      } else if (animMode === 'subtle-breathe') {
+        currentScale = 1.12 + Math.sin(progress * Math.PI) * 0.06; // Organic breathing pulse
+        currentX = characterCenter.x + Math.sin(progress * Math.PI * 2) * 10;
+      } else {
+        currentScale = 1.05;
+        currentX = characterCenter.x + (progress - 0.5) * 8;
+      }
+
+      panKeys.push({
+        id: 7100 + i,
+        time: Math.round(t * 10) / 10,
+        value: Math.round(currentX),
+        type: 'bezier',
+        handleIn: { x: 0.25, y: currentX },
+        handleOut: { x: 0.25, y: currentX },
+      });
+
+      scaleKeys.push({
+        id: 7200 + i,
+        time: Math.round(t * 10) / 10,
+        value: Math.round(currentScale * 100),
+        type: 'bezier',
+        handleIn: { x: 0.25, y: currentScale * 100 },
+        handleOut: { x: 0.25, y: currentScale * 100 },
+      });
+
+      bgKeys.push({
+        id: 7300 + i,
+        time: Math.round(t * 10) / 10,
+        value: Math.round(bgDriftX),
+        type: 'bezier',
+        handleIn: { x: 0.25, y: bgDriftX },
+        handleOut: { x: 0.25, y: bgDriftX },
+      });
+    }
+
+    return {
+      characterPanKeyframes: panKeys,
+      characterScaleKeyframes: scaleKeys,
+      backgroundDriftKeyframes: bgKeys,
+      headroomOffsetPx,
+    };
+  }
+
+  /**
    * Safe-Zone Collision Avoidance Placement Solver.
-   * Repositions caption/badge Y coordinate so it never collides with UI buttons or faces.
    */
   static solveSafeCaptionPlacement(
     contentH = 1920,
@@ -200,26 +326,20 @@ export class ExtendedSocialReframeEngine {
     captionH = 90,
     safeZone: SafeZoneBounds = { topMarginPx: 120, bottomMarginPx: 380, rightMarginPx: 140, leftMarginPx: 40 }
   ): { y: number; isCollisionAvoided: boolean } {
-    // Standard desired position: Above bottom safe margin
     let targetY = contentH - safeZone.bottomMarginPx - captionH - 20;
-
-    // Check if targetY collides with face bounds (faceY +- 150px)
     let isCollisionAvoided = false;
+
     if (Math.abs(targetY - faceY) < 180) {
       if (faceY > contentH * 0.5) {
-        // Face is lower -> push caption above face
         targetY = faceY - 200;
         isCollisionAvoided = true;
       } else {
-        // Face is higher -> push caption further down
         targetY = contentH - safeZone.bottomMarginPx - captionH;
         isCollisionAvoided = true;
       }
     }
 
-    // Clamp inside top and bottom safe zones
     targetY = Math.max(safeZone.topMarginPx + 40, Math.min(contentH - safeZone.bottomMarginPx - captionH, targetY));
-
     return { y: Math.round(targetY), isCollisionAvoided };
   }
 
