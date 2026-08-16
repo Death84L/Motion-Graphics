@@ -29,6 +29,9 @@ import { GazeLeadRoomSolver, GazeDirection } from '../../../core/social/gazeLead
 import { ResolutionIndependentSolver, MasterReframeProject } from '../../../core/social/resolutionAgnosticProject';
 import { AutoCutawayBrollDetector, CutawayCandidate } from '../../../core/social/autoCutawayBrollDetector';
 import { ConstraintLayoutSolver } from '../../../core/social/constraintLayoutSolver';
+import { AutoTransitionSoundEngine } from '../../../core/social/autoTransitionSoundEngine';
+import { AutoColorAudioMasterEngine, ColorGradePreset } from '../../../core/social/autoColorAudioMasterEngine';
+import { KineticLowerThirdsEngine } from '../../../core/social/kineticLowerThirdsEngine';
 import { KeyframePoint } from '../../graph-editor/types';
 
 interface SocialReframeStudioViewProps {
@@ -40,6 +43,10 @@ export type PhotoAnimationMode = 'ken-burns-zoom' | 'pan-across' | 'subtle-breat
 export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialReframeStudioViewProps) {
   // Target Aspect Ratio & Layout
   const [format, setFormat] = useState<SocialTargetFormat>('9:16-reels');
+  const [reframeStrategy, setReframeStrategy] = useState<'auto-reframe-subject' | 'full-frame-zero-loss'>('full-frame-zero-loss');
+  const [colorGrade, setColorGrade] = useState<ColorGradePreset>('clean-studio-pop');
+  const [enableFoleySfx, setEnableFoleySfx] = useState<boolean>(true);
+  const [enableLowerThirds, setEnableLowerThirds] = useState<boolean>(true);
   const [layoutMode, setLayoutMode] = useState<ReframeLayoutMode>('full-bleed-pan');
   const [fitMode, setFitMode] = useState<MediaFitMode>('smart-ambient-fit');
   const [deviceMockup, setDeviceMockup] = useState<DeviceMockupType>('none');
@@ -451,6 +458,46 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
           </span>
         </div>
 
+        {/* REFRAME STRATEGY QUICK-SWITCH: AUTO-REFRAME vs FULL-FRAME */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4, background: '#11182c', padding: 4, borderRadius: 6, border: '1px solid #1e293b' }}>
+          <button
+            onClick={() => {
+              setReframeStrategy('auto-reframe-subject');
+              setFitMode('full-bleed-crop');
+            }}
+            style={{
+              background: reframeStrategy === 'auto-reframe-subject' ? 'linear-gradient(135deg, #38bdf8, #2563eb)' : 'transparent',
+              color: reframeStrategy === 'auto-reframe-subject' ? '#ffffff' : '#94a3b8',
+              border: 'none',
+              borderRadius: 4,
+              padding: '6px 4px',
+              fontSize: 8,
+              fontWeight: 800,
+              cursor: 'pointer',
+            }}
+          >
+            ⚡ Auto-Reframe (Subject Lock)
+          </button>
+          <button
+            onClick={() => {
+              setReframeStrategy('full-frame-zero-loss');
+              setFitMode('smart-ambient-fit');
+            }}
+            style={{
+              background: reframeStrategy === 'full-frame-zero-loss' ? 'linear-gradient(135deg, #10b981, #059669)' : 'transparent',
+              color: reframeStrategy === 'full-frame-zero-loss' ? '#ffffff' : '#94a3b8',
+              border: 'none',
+              borderRadius: 4,
+              padding: '6px 4px',
+              fontSize: 8,
+              fontWeight: 800,
+              cursor: 'pointer',
+            }}
+          >
+            🖼️ Full-Frame (0% Cutoff)
+          </button>
+        </div>
+
         {/* 📁 UPLOAD ANY VIDEO OR PHOTO (ALL FORMATS) */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           <input
@@ -509,6 +556,42 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
         >
           {isAutoProcessing ? '⏳ Auto-Processing 12 Stages...' : '⚡ 1-Click Auto-Reframe (Zero Manual Work)'}
         </button>
+
+        {/* 🎨 AUTO COLOR & AUDIO MASTERING */}
+        <div style={{ background: '#11182c', border: '1px solid #1e293b', borderRadius: 8, padding: 10, display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <span style={{ fontSize: 9, color: '#38bdf8', textTransform: 'uppercase', fontWeight: 800 }}>
+            🎨 AUTO COLOR & AUDIO DSP:
+          </span>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
+            {[
+              { id: 'clean-studio-pop', label: '✨ Studio Pop' },
+              { id: 'teal-orange-modern', label: '🎬 Teal & Orange' },
+              { id: 'kodak-film-warm', label: '🎞️ Kodak 2383' },
+              { id: 'mkbhd-crisp-matte', label: '📱 Matte Dark' },
+            ].map((c) => (
+              <button
+                key={c.id}
+                onClick={() => setColorGrade(c.id as ColorGradePreset)}
+                style={{
+                  background: colorGrade === c.id ? '#38bdf8' : '#090e1a',
+                  color: colorGrade === c.id ? '#040711' : '#94a3b8',
+                  border: `1px solid ${colorGrade === c.id ? '#38bdf8' : '#1e293b'}`,
+                  borderRadius: 4,
+                  padding: '5px',
+                  fontSize: 8,
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                }}
+              >
+                {c.label}
+              </button>
+            ))}
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 8, color: '#94a3b8', marginTop: 2 }}>
+            <span>Target Loudness:</span>
+            <span style={{ color: '#10b981', fontWeight: 800 }}>-14.0 LUFS (Broadcast Spec)</span>
+          </div>
+        </div>
 
         {/* 🎤 SPEECH & KINETIC CAPTION TEMPLATES */}
         <div style={{ background: '#11182c', border: '1px solid #1e293b', borderRadius: 8, padding: 10, display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -958,6 +1041,7 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
                         height: '100%',
                         objectFit: 'contain',
                         transform: `scale(${animatedScale})`,
+                        filter: `${AutoColorAudioMasterEngine.solveColorGrade(colorGrade).colorFilterCss} ${AutoColorAudioMasterEngine.solveCropSharpnessCompensation(animatedScale).filterCss}`,
                       }}
                     />
                   ) : (
@@ -970,6 +1054,7 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
                         objectFit: 'contain',
                         transform: `scale(${animatedScale})`,
                         transition: isPlaying ? 'none' : 'transform 0.1s ease',
+                        filter: `${AutoColorAudioMasterEngine.solveColorGrade(colorGrade).colorFilterCss} ${AutoColorAudioMasterEngine.solveCropSharpnessCompensation(animatedScale).filterCss}`,
                       }}
                     />
                   )}
@@ -982,6 +1067,39 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
                 <span style={{ position: 'absolute', bottom: 12, left: 10, fontSize: 8, color: '#38bdf8', fontWeight: 800, background: 'rgba(0,0,0,0.7)', padding: '2px 6px', borderRadius: 4 }}>
                   {activeSpeakerId === 'speaker-a' ? 'Host (Tracked)' : 'Guest (Tracked)'}
                 </span>
+              </div>
+            )}
+
+            {/* DYNAMIC SPEAKER LOWER-THIRD BADGE */}
+            {enableLowerThirds && KineticLowerThirdsEngine.isBadgeVisible(currentTimeSec, 0.0, 5.0).isVisible && (
+              <div
+                style={{
+                  position: 'absolute',
+                  bottom: 50,
+                  left: 12,
+                  background: KineticLowerThirdsEngine.getSpeakerBadgeStyle('cyan-neon').background,
+                  border: KineticLowerThirdsEngine.getSpeakerBadgeStyle('cyan-neon').border,
+                  boxShadow: KineticLowerThirdsEngine.getSpeakerBadgeStyle('cyan-neon').boxShadow,
+                  borderRadius: 6,
+                  padding: '4px 8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  zIndex: 36,
+                  opacity: KineticLowerThirdsEngine.isBadgeVisible(currentTimeSec, 0.0, 5.0).opacity,
+                  transform: `translateY(${KineticLowerThirdsEngine.isBadgeVisible(currentTimeSec, 0.0, 5.0).translateYPx}px)`,
+                  transition: 'opacity 0.2s ease, transform 0.2s ease',
+                }}
+              >
+                <span style={{ fontSize: 12 }}>🎙️</span>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <span style={{ fontSize: 8, fontWeight: 900, color: KineticLowerThirdsEngine.getSpeakerBadgeStyle('cyan-neon').textColor }}>
+                    {activeSpeakerId === 'speaker-a' ? 'Alex Rivera' : 'Sarah Chen'}
+                  </span>
+                  <span style={{ fontSize: 7, color: KineticLowerThirdsEngine.getSpeakerBadgeStyle('cyan-neon').handleColor, fontWeight: 700 }}>
+                    {activeSpeakerId === 'speaker-a' ? '@alex • Host' : '@sarah • Guest Speaker'}
+                  </span>
+                </div>
               </div>
             )}
 
@@ -1070,6 +1188,16 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
             style={{ flex: 1, accentColor: '#38bdf8' }}
           />
           <div style={{ display: 'flex', gap: 4 }}>
+            <button
+              onClick={() => {
+                const snapped = AutoTransitionSoundEngine.snapTimestampToBeat(currentTimeSec, 128, '1/4');
+                setCurrentTimeSec(snapped);
+                if (enableFoleySfx) AutoTransitionSoundEngine.playProceduralFoleySfx('whoosh-air');
+              }}
+              style={{ background: '#1e293b', border: '1px solid #10b981', color: '#10b981', borderRadius: 4, padding: '2px 5px', fontSize: 8, cursor: 'pointer', fontWeight: 800 }}
+            >
+              🎵 Snap Beat
+            </button>
             <button
               onClick={() => handleNudgeOverride(-0.05)}
               style={{ background: '#1e293b', border: '1px solid #6366f1', color: '#818cf8', borderRadius: 4, padding: '2px 5px', fontSize: 8, cursor: 'pointer', fontWeight: 800 }}

@@ -58,7 +58,20 @@ Rather than baking camera keyframes into fixed pixel values ($X, Y, S$) tied to 
 - **Flexbox for Video Constraints**: Graphics, titles, and subtitles are anchored via rules (`rule-of-thirds-eye-line`, `safe-zone-bottom-dock`) and dynamically re-solved against target render profile viewports ($9:16, 1:1, 4:5, 16:9, 21:9$) in $O(1)$ time.
 - **Non-Destructive Override Delta Layer**: Manual editor nudges are stored as relative offset deltas ($\Delta u, \Delta v, \Delta \text{scale}$) on top of the auto-detected path, so re-running detection or changing resolutions never clobbers manual edits.
 
+### 1.7. Auto-Transitions & Local Web Audio API Foley Synthesis
+- **Cut-Aware Transition Selection**: Automatically picks `whip-pan` (speaker cuts), `zoom-blur-push` (B-roll cuts), `glitch-displace` (chapter markers), or `match-cut-pan` (reactions).
+- **Zero-Cost Local Foley Synthesizer**: Uses browser Web Audio API oscillator/noise nodes to generate real-time `whoosh-air`, `sub-impact`, and `click-tick` audio at transition points with 0 external sound asset dependencies.
+- **Beat-Snapping Keyframe Quantizer**: Snaps animation keyframe timestamps to the nearest 128 BPM / 120 BPM musical grid 1/4 note step.
+
+### 1.8. Platform Broadcast Standards (LUFS) & Crop Sharpness Compensation
+- **Target Loudness Compliance**: Automatically meters and targets TikTok ($-14\text{ LUFS}$), YouTube ($-14\text{ LUFS}$), and Instagram Reels ($-16\text{ LUFS}$) with automatic $-14\text{dB}$ background music ducking under active speech.
+- **Crop-Aware Super-Sharpness**: When virtual crop zoom exceeds $1.3\times$, dynamically applies $+20\%$ unsharp mask clarity and $+10\%$ contrast compensation to prevent soft, pixelated visuals.
+
+### 1.9. Dynamic Speaker Lower-Third Badges
+- Automatically triggers smooth $0.35\text{s}$ spring slide-in of `@HostAlex` / `@GuestSarah` badge upon speaker detection, auto-fading after $3.5\text{s}$ to preserve clean visual composition.
+
 ---
+
 
 
 ## 2. 🌟 The 5 Zero-Cutoff Fitting Modes
