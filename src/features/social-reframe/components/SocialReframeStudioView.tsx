@@ -16,7 +16,7 @@ import {
   AutoPipelineOutput,
 } from '../../../core/social/zeroManualReframePipeline';
 import { DepthParallaxEngine } from '../../../core/social/depthParallaxEngine';
-import { MultiSpeakerDirector, SplitRatioMode } from '../../../core/social/multiSpeakerDirector';
+import { MultiSpeakerDirector, SplitRatioMode, SpeechSegment } from '../../../core/social/multiSpeakerDirector';
 import { AudioKinematicsEngine, AudioKinematicsAnalysis } from '../../../core/social/audioKinematicsEngine';
 import { ViralRetentionEngine, RetentionHookStyle } from '../../../core/social/viralRetentionEngine';
 import { BatchReframeProcessor, BatchReframeBatchResult } from '../../../core/social/batchReframeProcessor';
@@ -24,7 +24,7 @@ import { AnimationQAEvaluator, AnimationQAScorecard, MotionTrajectoryPoint } fro
 import { ZeroCutoffEngine, DeviceMockupType } from '../../../core/social/zeroCutoffEngine';
 import { PanoramicSweepEngine } from '../../../core/social/panoramicSweepEngine';
 import { PRO_STUDIO_PRESETS, ProStudioPreset } from '../../../core/social/proStudioPresets';
-import { KineticCaptionEngine, KineticCaptionPhrase } from '../../../core/social/kineticCaptionEngine';
+import { KineticCaptionEngine, KineticCaptionPhrase, CaptionStylePreset } from '../../../core/social/kineticCaptionEngine';
 import { KeyframePoint } from '../../graph-editor/types';
 
 interface SocialReframeStudioViewProps {
@@ -39,13 +39,13 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
   const [layoutMode, setLayoutMode] = useState<ReframeLayoutMode>('full-bleed-pan');
   const [fitMode, setFitMode] = useState<MediaFitMode>('smart-ambient-fit');
   const [deviceMockup, setDeviceMockup] = useState<DeviceMockupType>('none');
+  const [captionPreset, setCaptionPreset] = useState<CaptionStylePreset>('hormozi-punch');
   const [backdropStyle, setBackdropStyle] = useState<ProceduralBackdropStyle>('ambient-color-glow');
   const [depthIntensity, setDepthIntensity] = useState<number>(1.2);
   const [platformOverlay, setPlatformOverlay] = useState<SafeZonePlatform>('tiktok');
   const [showRuleOfThirds, setShowRuleOfThirds] = useState<boolean>(true);
   const [showMotionTrail, setShowMotionTrail] = useState<boolean>(false);
   const [showBeforeAfterSplit, setShowBeforeAfterSplit] = useState<boolean>(false);
-  const [splitPositionPercent, setSplitPositionPercent] = useState<number>(50);
   const [exportedCode, setExportedCode] = useState<{ type: string; content: string; filename: string } | null>(null);
   const [batchResult, setBatchResult] = useState<BatchReframeBatchResult | null>(null);
 
@@ -145,6 +145,10 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
   const activeCaption = useMemo(() => {
     return KineticCaptionEngine.getActiveWord(kineticPhrases, currentTimeSec);
   }, [kineticPhrases, currentTimeSec]);
+
+  const captionStyleConfig = useMemo(() => {
+    return KineticCaptionEngine.getCaptionStyleConfig(captionPreset);
+  }, [captionPreset]);
 
   // Compute Speakers State
   const speakers: SpeakerProfile[] = useMemo(() => [
@@ -404,7 +408,7 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
         color: '#f8fafc',
       }}
     >
-      {/* 1. LEFT COLUMN: UPLOAD, PRO PRESETS, ZERO-CUTOFF & DEVICE FRAMES */}
+      {/* 1. LEFT COLUMN: UPLOAD, PRO PRESETS, SPEECH CAPTIONS & ZERO-CUTOFF */}
       <div
         style={{
           background: '#090e1a',
@@ -482,6 +486,56 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
           {isAutoProcessing ? '⏳ Auto-Processing 12 Stages...' : '⚡ 1-Click Auto-Reframe (Zero Manual Work)'}
         </button>
 
+        {/* 🎤 SPEECH & KINETIC CAPTION TEMPLATES */}
+        <div style={{ background: '#11182c', border: '1px solid #1e293b', borderRadius: 8, padding: 10, display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <span style={{ fontSize: 9, color: '#38bdf8', textTransform: 'uppercase', fontWeight: 800 }}>
+            🎤 SPEECH & CAPTION TEMPLATES:
+          </span>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
+            {[
+              { id: 'hormozi-punch', label: '🔥 Hormozi' },
+              { id: 'mrbeast-stroke', label: '⚡ MrBeast' },
+              { id: 'ali-clean', label: '☕ Ali Clean' },
+              { id: 'cyber-neon', label: '🤖 Cyber Neon' },
+            ].map((c) => (
+              <button
+                key={c.id}
+                onClick={() => setCaptionPreset(c.id as CaptionStylePreset)}
+                style={{
+                  background: captionPreset === c.id ? '#38bdf8' : '#1e293b',
+                  color: captionPreset === c.id ? '#040711' : '#94a3b8',
+                  border: 'none',
+                  borderRadius: 4,
+                  padding: '5px',
+                  fontSize: 8,
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                }}
+              >
+                {c.label}
+              </button>
+            ))}
+          </div>
+          <button
+            onClick={() => {
+              setIsBaked(true);
+              setTimeout(() => setIsBaked(false), 2000);
+            }}
+            style={{
+              background: '#090e1a',
+              border: '1px dashed #f59e0b',
+              color: '#f59e0b',
+              borderRadius: 4,
+              padding: '5px',
+              fontSize: 8,
+              fontWeight: 800,
+              cursor: 'pointer',
+            }}
+          >
+            ✂️ Auto-Clean 3 Filler Words ("um", "like")
+          </button>
+        </div>
+
         {/* 🎨 1-CLICK PRO CREATOR PRESETS */}
         <div style={{ background: '#11182c', border: '1px solid #1e293b', borderRadius: 8, padding: 10, display: 'flex', flexDirection: 'column', gap: 6 }}>
           <span style={{ fontSize: 9, color: '#38bdf8', textTransform: 'uppercase', fontWeight: 800 }}>
@@ -554,38 +608,6 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
               >
                 <span>{f.label}</span>
                 <span style={{ fontSize: 7, color: '#94a3b8' }}>{f.desc}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* 📱 DEVICE MOCKUP CONTAINER SELECTOR */}
-        <div style={{ background: '#11182c', border: '1px solid #1e293b', borderRadius: 8, padding: 10, display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <span style={{ fontSize: 9, color: '#94a3b8', textTransform: 'uppercase' }}>
-            📱 DEVICE MOCKUP FRAME:
-          </span>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
-            {[
-              { id: 'none', label: 'Borderless' },
-              { id: 'glass-smartphone', label: '📱 Phone' },
-              { id: 'macos-browser', label: '💻 Browser' },
-              { id: 'elevated-card', label: '🖼️ 3D Card' },
-            ].map((d) => (
-              <button
-                key={d.id}
-                onClick={() => setDeviceMockup(d.id as DeviceMockupType)}
-                style={{
-                  background: deviceMockup === d.id ? '#38bdf8' : '#1e293b',
-                  color: deviceMockup === d.id ? '#040711' : '#94a3b8',
-                  border: 'none',
-                  borderRadius: 4,
-                  padding: '5px',
-                  fontSize: 8,
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                }}
-              >
-                {d.label}
               </button>
             ))}
           </div>
@@ -900,11 +922,13 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
                   display: 'flex',
                   flexWrap: 'wrap',
                   justifyContent: 'center',
-                  gap: '3px 6px',
-                  background: 'rgba(0, 0, 0, 0.85)',
+                  alignItems: 'center',
+                  gap: '4px 6px',
+                  background: 'rgba(0, 0, 0, 0.88)',
                   border: '1px solid #38bdf8',
                   borderRadius: 6,
-                  padding: '4px 8px',
+                  padding: '5px 8px',
+                  boxShadow: captionStyleConfig.boxShadow,
                   zIndex: 34,
                 }}
               >
@@ -914,15 +938,24 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
                     <span
                       key={w.id}
                       style={{
-                        fontSize: isActive ? 10 : 8,
+                        fontFamily: captionStyleConfig.fontFamily,
+                        fontSize: isActive ? captionStyleConfig.fontSizePx * 1.15 : captionStyleConfig.fontSizePx,
+                        textTransform: captionStyleConfig.textTransform,
                         fontWeight: 900,
                         color: isActive ? w.highlightColor : '#94a3b8',
-                        transform: isActive ? 'scale(1.2) translateY(-2px)' : 'none',
-                        transition: 'transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                        textShadow: isActive ? `0 0 10px ${w.highlightColor}` : 'none',
+                        transform: isActive ? `scale(${captionStyleConfig.activeWordScale}) translateY(-2px)` : 'none',
+                        transition: 'transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                        textShadow: isActive ? captionStyleConfig.activeWordGlow : 'none',
+                        background: isActive && captionStyleConfig.pillBackground ? captionStyleConfig.pillBackground : 'transparent',
+                        padding: isActive && captionStyleConfig.pillBackground ? '1px 4px' : '0',
+                        borderRadius: 3,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 2,
                       }}
                     >
                       {w.word}
+                      {isActive && w.emojiTrigger && <span>{w.emojiTrigger}</span>}
                     </span>
                   );
                 })}

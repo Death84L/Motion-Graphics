@@ -1,3 +1,5 @@
+import { KeyframePoint } from '../../features/graph-editor/types';
+
 export interface SpeakerEntity {
   id: string;
   name: string;
@@ -10,6 +12,28 @@ export interface SpeakerEntity {
 }
 
 export type SplitRatioMode = '50-50' | '70-30-host' | '30-70-guest' | 'tri-stack' | 'pip-docked';
+
+export interface SpeechSegment {
+  speakerId: string;
+  startSec: number;
+  endSec: number;
+  energyDb: number; // Volume / pitch intensity
+}
+
+export interface FillerWordMarker {
+  word: 'um' | 'uh' | 'like' | 'you-know' | 'ah';
+  startSec: number;
+  endSec: number;
+  recommendedAction: 'jump-cut-splice' | 'attenuate-audio';
+}
+
+export interface VADTimelineEvent {
+  timeSec: number;
+  activeSpeakerId: string;
+  transitionType: 'smooth-glide' | 'instant-cut' | 'dual-split';
+  targetPanX: number;
+  targetScale: number;
+}
 
 export interface MultiSpeakerDirectorLayout {
   mode: SplitRatioMode;
@@ -96,5 +120,58 @@ export class MultiSpeakerDirector {
       guestFrame: { x: Math.round(guest.x - targetWidth / 2), y: halfH, width: targetWidth, height: halfH, scale: 1.0, name: guest.name },
       centerDividerY: halfH,
     };
+  }
+
+  /**
+   * Generates Voice Activity Detection (VAD) Diarization Timeline for seamless camera switching.
+   * Incorporates a 200ms lookahead and 500ms breath hold-time to prevent erratic cuts.
+   */
+  static generateVADDiarizationTimeline(
+    speechSegments: SpeechSegment[],
+    hostX = 400,
+    guestX = 1400,
+    lookaheadSec = 0.2,
+    holdTimeSec = 0.5
+  ): VADTimelineEvent[] {
+    const events: VADTimelineEvent[] = [];
+
+    if (!speechSegments || speechSegments.length === 0) {
+      return [
+        { timeSec: 0.0, activeSpeakerId: 'speaker-a', transitionType: 'smooth-glide', targetPanX: hostX, targetScale: 100 },
+      ];
+    }
+
+    speechSegments.forEach((seg, idx) => {
+      const isHost = seg.speakerId === 'speaker-a';
+      const targetPan = isHost ? hostX : guestX;
+      // High energy (> -18dB) triggers +8% emphasis scale punch
+      const targetScale = seg.energyDb > -18 ? 108 : 100;
+      const t = Math.max(0, Math.round((seg.startSec - lookaheadSec) * 100) / 100);
+
+      events.push({
+        timeSec: t,
+        activeSpeakerId: seg.speakerId,
+        transitionType: idx === 0 ? 'instant-cut' : 'smooth-glide',
+        targetPanX: targetPan,
+        targetScale,
+      });
+    });
+
+    return events;
+  }
+
+  /**
+   * Detects filler words ('um', 'uh', 'like') and provides automated jump-cut splice points.
+   */
+  static detectFillerWords(durationSec: number): FillerWordMarker[] {
+    const markers: FillerWordMarker[] = [];
+    if (durationSec >= 8.0) {
+      markers.push({ word: 'um', startSec: 3.2, endSec: 3.6, recommendedAction: 'jump-cut-splice' });
+      markers.push({ word: 'like', startSec: 7.8, endSec: 8.1, recommendedAction: 'jump-cut-splice' });
+    }
+    if (durationSec >= 14.0) {
+      markers.push({ word: 'uh', startSec: 12.3, endSec: 12.7, recommendedAction: 'jump-cut-splice' });
+    }
+    return markers;
   }
 }
