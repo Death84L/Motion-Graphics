@@ -51,12 +51,15 @@ Separates 2D media into two discrete 3D spatial planes:
 ### 1.4. Eye-Gaze Direction Lead Room
 $$\text{Crop}_X = \begin{cases} x_{\text{centroid}} - \frac{w_{\text{crop}}}{2} - 0.22 \cdot w_{\text{crop}} & \text{if Gaze = Left} \\ x_{\text{centroid}} - \frac{w_{\text{crop}}}{2} + 0.22 \cdot w_{\text{crop}} & \text{if Gaze = Right} \\ x_{\text{centroid}} - \frac{w_{\text{crop}}}{2} & \text{if Gaze = Center} \end{cases}$$
 
-### 1.5. Voice Activity Detection (VAD) Diarization
-- **Lookahead Buffer**: Virtual camera pans to active speaker $200\text{ms}$ before acoustic onset ($t_{\text{cut}} = t_{\text{speech start}} - 0.20\text{s}$).
-- **Breath Hold-Time**: Camera maintains active speaker framing during pause intervals $\le 500\text{ms}$.
-- **Vocal Emphasis Zoom**: When acoustic energy exceeds $-18\text{dB}$, scale punches in $+8\%$ ($S = 108\%$).
+### 1.6. Resolution-Independent Semantic Constraint Data Model
+Rather than baking camera keyframes into fixed pixel values ($X, Y, S$) tied to a single resolution, edits are stored in a universal, resolution-agnostic project schema:
+- **Normalized Coordinates**: Trajectories and positions stored as unit percentages $(u, v) \in [0.0, 1.0]$.
+- **Persistent Entity Graph**: Speakers, faces, and POIs retain stable IDs (`entity_primary_speaker`, `entity_guest_speaker`) across cuts.
+- **Flexbox for Video Constraints**: Graphics, titles, and subtitles are anchored via rules (`rule-of-thirds-eye-line`, `safe-zone-bottom-dock`) and dynamically re-solved against target render profile viewports ($9:16, 1:1, 4:5, 16:9, 21:9$) in $O(1)$ time.
+- **Non-Destructive Override Delta Layer**: Manual editor nudges are stored as relative offset deltas ($\Delta u, \Delta v, \Delta \text{scale}$) on top of the auto-detected path, so re-running detection or changing resolutions never clobbers manual edits.
 
 ---
+
 
 ## 2. 🌟 The 5 Zero-Cutoff Fitting Modes
 

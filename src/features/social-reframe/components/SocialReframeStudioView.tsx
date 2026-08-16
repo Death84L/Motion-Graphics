@@ -26,6 +26,9 @@ import { PanoramicSweepEngine } from '../../../core/social/panoramicSweepEngine'
 import { PRO_STUDIO_PRESETS, ProStudioPreset } from '../../../core/social/proStudioPresets';
 import { KineticCaptionEngine, KineticCaptionPhrase, CaptionStylePreset } from '../../../core/social/kineticCaptionEngine';
 import { GazeLeadRoomSolver, GazeDirection } from '../../../core/social/gazeLeadRoomSolver';
+import { ResolutionIndependentSolver, MasterReframeProject } from '../../../core/social/resolutionAgnosticProject';
+import { AutoCutawayBrollDetector, CutawayCandidate } from '../../../core/social/autoCutawayBrollDetector';
+import { ConstraintLayoutSolver } from '../../../core/social/constraintLayoutSolver';
 import { KeyframePoint } from '../../graph-editor/types';
 
 interface SocialReframeStudioViewProps {
@@ -51,6 +54,11 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
   const [gazeMode, setGazeMode] = useState<GazeDirection>('center');
   const [exportedCode, setExportedCode] = useState<{ type: string; content: string; filename: string } | null>(null);
   const [batchResult, setBatchResult] = useState<BatchReframeBatchResult | null>(null);
+
+  // Master Resolution-Agnostic Project State
+  const [masterProject, setMasterProject] = useState<MasterReframeProject>(() =>
+    ResolutionIndependentSolver.createDefaultMasterProject()
+  );
 
   // Animation Playback & Test Scrubber State
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -398,6 +406,19 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
   const handleExportSrt = () => {
     const srt = KineticCaptionEngine.exportToSrt(kineticPhrases);
     triggerBrowserDownload(srt, `MotionStudio_Captions_${format}.srt`, 'text/plain');
+  };
+
+  // Export Resolution-Agnostic Master Project (.motionprj.json)
+  const handleExportMasterProject = () => {
+    const json = JSON.stringify(masterProject, null, 2);
+    triggerBrowserDownload(json, `MotionStudio_MasterProject_${masterProject.projectId}.motionprj.json`, 'application/json');
+  };
+
+  // Nudge Override Delta (-5% / +5%)
+  const handleNudgeOverride = (deltaU: number) => {
+    setMasterProject((prev) => ResolutionIndependentSolver.applyUserOverrideDelta(prev, currentTimeSec, deltaU, 0, 0));
+    setIsBaked(true);
+    setTimeout(() => setIsBaked(false), 2000);
   };
 
   return (
@@ -773,6 +794,21 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
             >
               📥 Subtitles (.srt)
             </button>
+            <button
+              onClick={handleExportMasterProject}
+              style={{
+                background: '#8b5cf6',
+                color: '#ffffff',
+                border: 'none',
+                padding: '5px 10px',
+                borderRadius: 6,
+                fontSize: 9,
+                fontWeight: 800,
+                cursor: 'pointer',
+              }}
+            >
+              📥 Master (.json)
+            </button>
           </div>
         </div>
 
@@ -1034,6 +1070,18 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
             style={{ flex: 1, accentColor: '#38bdf8' }}
           />
           <div style={{ display: 'flex', gap: 4 }}>
+            <button
+              onClick={() => handleNudgeOverride(-0.05)}
+              style={{ background: '#1e293b', border: '1px solid #6366f1', color: '#818cf8', borderRadius: 4, padding: '2px 5px', fontSize: 8, cursor: 'pointer', fontWeight: 800 }}
+            >
+              ◀ Nudge X
+            </button>
+            <button
+              onClick={() => handleNudgeOverride(0.05)}
+              style={{ background: '#1e293b', border: '1px solid #6366f1', color: '#818cf8', borderRadius: 4, padding: '2px 5px', fontSize: 8, cursor: 'pointer', fontWeight: 800 }}
+            >
+              Nudge X ▶
+            </button>
             <button
               onClick={() => setCurrentTimeSec((t) => Math.max(0, Math.round((t - 1 / 60) * 100) / 100))}
               style={{ background: '#1e293b', border: 'none', color: '#94a3b8', borderRadius: 4, padding: '2px 5px', fontSize: 8, cursor: 'pointer' }}
