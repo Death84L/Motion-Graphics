@@ -26,11 +26,29 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
   const [layoutMode, setLayoutMode] = useState<ReframeLayoutMode>('full-bleed-pan');
   const [platformOverlay, setPlatformOverlay] = useState<SafeZonePlatform>('tiktok');
 
-  // Media Ingestion (Video or Photo)
+  // Media Ingestion (Video or Photo of ANY aspect ratio)
   const [mediaSrc, setMediaSrc] = useState<string | null>(null);
   const [mediaType, setMediaType] = useState<'video' | 'photo' | null>(null);
   const [mediaName, setMediaName] = useState<string | null>(null);
   const [photoAnimMode, setPhotoAnimMode] = useState<PhotoAnimationMode>('ken-burns-zoom');
+  const [sourceResolution, setSourceResolution] = useState<{ width: number; height: number; ratioName: string }>({
+    width: 1920,
+    height: 1080,
+    ratioName: '16:9 Landscape',
+  });
+
+  // Calculate Aspect Ratio Name Helper
+  const getAspectRatioName = (w: number, h: number): string => {
+    const ratio = w / h;
+    if (Math.abs(ratio - 16 / 9) < 0.05) return '16:9 Landscape';
+    if (Math.abs(ratio - 9 / 16) < 0.05) return '9:16 Vertical';
+    if (Math.abs(ratio - 4 / 3) < 0.05) return '4:3 Standard';
+    if (Math.abs(ratio - 1.0) < 0.05) return '1:1 Square';
+    if (Math.abs(ratio - 21 / 9) < 0.1) return '21:9 Ultra-Wide';
+    if (Math.abs(ratio - 4 / 5) < 0.05) return '4:5 Portrait';
+    if (Math.abs(ratio - 3 / 2) < 0.05) return '3:2 DSLR';
+    return `${w}x${h} (${ratio.toFixed(2)}:1)`;
+  };
 
   // Multi-Speaker Profiles (Host & Guest)
   const [speakerA_X, setSpeakerA_X] = useState<number>(140);
@@ -55,7 +73,7 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
-  // Handle Media File Upload (Videos & Photos)
+  // Handle Media File Upload (Videos & Photos of ANY format or aspect ratio)
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -68,6 +86,32 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
     setMediaType(isVideo ? 'video' : isImage ? 'photo' : 'video');
     setMediaName(file.name);
 
+    if (isVideo) {
+      const tempVideo = document.createElement('video');
+      tempVideo.src = url;
+      tempVideo.onloadedmetadata = () => {
+        const w = tempVideo.videoWidth || 1920;
+        const h = tempVideo.videoHeight || 1080;
+        setSourceResolution({
+          width: w,
+          height: h,
+          ratioName: getAspectRatioName(w, h),
+        });
+      };
+    } else if (isImage) {
+      const tempImg = new Image();
+      tempImg.src = url;
+      tempImg.onload = () => {
+        const w = tempImg.naturalWidth || 1920;
+        const h = tempImg.naturalHeight || 1080;
+        setSourceResolution({
+          width: w,
+          height: h,
+          ratioName: getAspectRatioName(w, h),
+        });
+      };
+    }
+
     // Run auto-reframe pipeline automatically on upload!
     handleRunFullAutoPipeline();
   };
@@ -77,8 +121,8 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
     setIsAutoProcessing(true);
     setTimeout(() => {
       const output = ZeroManualReframePipeline.runFullAutoPipeline({
-        sourceWidth: 480,
-        sourceHeight: 270,
+        sourceWidth: sourceResolution.width,
+        sourceHeight: sourceResolution.height,
         durationSec: 15.0,
         targetFormat: format,
         platform: platformOverlay,
@@ -160,7 +204,7 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
         color: '#f8fafc',
       }}
     >
-      {/* 1. LEFT COLUMN: UPLOAD, LAYOUT PRESETS, RATIOS & PHOTO MOTION */}
+      {/* 1. LEFT COLUMN: UPLOAD ANY RATIO, LAYOUT PRESETS & PHOTO MOTION */}
       <div
         style={{
           background: '#090e1a',
@@ -179,13 +223,13 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
           </span>
         </div>
 
-        {/* 📁 UPLOAD VIDEO OR PHOTO BUTTON */}
+        {/* 📁 UPLOAD ANY VIDEO OR PHOTO (ALL FORMATS) */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           <input
             type="file"
             ref={fileInputRef}
             onChange={handleFileUpload}
-            accept="video/mp4,video/quicktime,video/webm,image/png,image/jpeg,image/webp"
+            accept="video/*,image/*"
             style={{ display: 'none' }}
           />
           <button
@@ -206,8 +250,14 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
               boxShadow: mediaSrc ? '0 0 12px rgba(56, 189, 248, 0.2)' : 'none',
             }}
           >
-            📁 {mediaName ? `Loaded ${mediaType?.toUpperCase()}: ${mediaName}` : 'Upload 16:9 Video or Photo (MP4/PNG/JPG)'}
+            📁 {mediaName ? `Loaded ${mediaType?.toUpperCase()}: ${mediaName}` : 'Upload Any Video or Photo (All Ratios)'}
           </button>
+        </div>
+
+        {/* Detected Source Aspect Ratio Badge */}
+        <div style={{ background: '#11182c', border: '1px solid #1e293b', borderRadius: 6, padding: '6px 8px', display: 'flex', justifyContent: 'space-between', fontSize: 9 }}>
+          <span style={{ color: '#94a3b8' }}>Detected Source:</span>
+          <span style={{ color: '#38bdf8', fontWeight: 800 }}>{sourceResolution.ratioName} ({sourceResolution.width}x{sourceResolution.height})</span>
         </div>
 
         {/* ⚡ 1-Click Auto-Reframe Magic Button */}
