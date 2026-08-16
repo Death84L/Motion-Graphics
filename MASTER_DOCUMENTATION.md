@@ -1,4 +1,4 @@
-# 🎬 MOTION STUDIO — MASTER TECHNICAL REFERENCE & ENCYCLOPEDIC SPECIFICATION MANUAL
+# 🎬 MOTION STUDIO — MASTER ENCYCLOPEDIC SPECIFICATION & TECHNICAL REFERENCE MANUAL
 > **Version:** 2.0.0-Enterprise • **Build:** 2026-Production • **License:** 100% Free & Open-Source (Zero External API Fees / Zero Cloud Costs)  
 > **Host Applications:** Adobe Premiere Pro (UXP Manifest 5), Adobe After Effects (JSX ExtendScript), DaVinci Resolve Studio (Fusion Lua Splines), Apple Final Cut Pro (FCPXML 1.10), Blender 3D (Python `bpy`), Web (React Framer Motion, DotLottie / Lottie JSON, GSAP, Vanilla CSS3)
 
@@ -36,7 +36,7 @@
 
 ## 1. Executive Overview & Local-First Philosophy
 
-Motion Studio is an offline-first motion design operating system, animation graph editor, and video intelligence engine. It replaces proprietary third-party toolkits (*Red Giant Universe, Boris FX Sapphire, Trapcode Particular, Mocha Pro, Duik Angela, Flow, Mister Horse, and DaVinci Fusion tools*) by providing native, deterministic mathematical and physical solvers directly in the local runtime.
+Motion Studio is a self-contained, offline-first animation, motion design, and video intelligence engine. It replaces proprietary third-party toolkits (*Red Giant Universe, Boris FX Sapphire, Trapcode Particular, Mocha Pro, Duik Angela, Flow, Mister Horse, and DaVinci Fusion tools*) by providing native, deterministic mathematical and physical solvers directly in the local runtime.
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
@@ -256,7 +256,7 @@ Interpolates between two distinct animation curves by blending high-dimensional 
 ### 5.2 Procedural WebAudio Foley Synthesizers
 - **Whoosh / Swish Generator**: White noise burst filtered through swept bandpass filter linked to velocity.
 - **UI Pop / Click Generator**: Pure sine wave pulse with rapid pitch drop ($880\text{Hz} \to 220\text{Hz}$).
-- **808 Sub-Bass Impact Generator**: Heavy sine drop starting at $150\text{Hz}$ decaying to $35\text{Hz}$ with soft overdrive.
+- **808 Sub-Bass Impact Generator**: Heavy sine drop starting at $150\text{Hz} \to 35\text{Hz}$ with soft overdrive.
 - **Cinematic Braam Horn Generator**: Dual detuned sawtooth oscillators with lowpass sweeps.
 
 ---
