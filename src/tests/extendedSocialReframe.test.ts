@@ -103,17 +103,14 @@ describe('Extended Social Reframe Engine Test Suite', () => {
     expect(vertical.height).toBe(360);
   });
 
-  it('computes 2.5D photo character parallax and headroom alignment keyframes', () => {
-    const anim = ExtendedSocialReframeEngine.computePhotoCharacterAnimation(
-      { x: 300, y: 200 },
-      '1:1-square',
-      'ken-burns-zoom',
-      4.0
-    );
+  it('computes 2.5D multi-plane depth parallax rig keyframes', () => {
+    const rig = ExtendedSocialReframeEngine.compute25DParallaxRig({ x: 250, y: 150 }, 1.5, 5.0);
 
-    expect(anim.characterPanKeyframes.length).toBeGreaterThan(4);
-    expect(anim.characterScaleKeyframes.length).toBeGreaterThan(4);
-    expect(anim.backgroundDriftKeyframes.length).toBeGreaterThan(4);
-    expect(anim.headroomOffsetPx).toBe(50);
+    expect(rig.foregroundPanKeyframes.length).toBeGreaterThan(4);
+    expect(rig.foregroundScaleKeyframes.length).toBeGreaterThan(4);
+    expect(rig.backgroundPanKeyframes.length).toBeGreaterThan(4);
+    expect(rig.backgroundScaleKeyframes.length).toBeGreaterThan(4);
+    expect(rig.cameraZDepthKeyframes.length).toBeGreaterThan(4);
+    expect(rig.cameraZDepthKeyframes[rig.cameraZDepthKeyframes.length - 1].value).toBeLessThan(0);
   });
 });

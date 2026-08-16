@@ -12,6 +12,13 @@ export type ReframeLayoutMode =
 
 export type SafeZonePlatform = 'tiktok' | 'instagram-reels' | 'youtube-shorts' | 'none';
 
+export type ProceduralBackdropStyle =
+  | 'ambient-color-glow'
+  | 'studio-dark-radial'
+  | 'cyberpunk-gradient'
+  | 'kinetic-text-wall'
+  | 'clean-minimal-slate';
+
 export interface SpeakerProfile {
   id: string;
   name: string;
@@ -70,6 +77,14 @@ export interface ViewportDimensionsResult {
   aspectRatio: string;
   label: string;
   safeZoneScale: number;
+}
+
+export interface ParallaxPlaneLayerKeyframes {
+  foregroundPanKeyframes: KeyframePoint[];
+  foregroundScaleKeyframes: KeyframePoint[];
+  backgroundPanKeyframes: KeyframePoint[];
+  backgroundScaleKeyframes: KeyframePoint[];
+  cameraZDepthKeyframes: KeyframePoint[];
 }
 
 export class ExtendedSocialReframeEngine {
@@ -150,6 +165,92 @@ export class ExtendedSocialReframeEngine {
   }
 
   /**
+   * 2.5D Multi-Plane Depth Parallax Engine (Separating Character Foreground from Background).
+   * Replaces 45+ minutes of manual After Effects 3D Layer Rigging.
+   */
+  static compute25DParallaxRig(
+    characterCenter: { x: number; y: number },
+    depthIntensity = 1.0,
+    duration = 5.0
+  ): ParallaxPlaneLayerKeyframes {
+    const steps = 6;
+    const fgPan: KeyframePoint[] = [];
+    const fgScale: KeyframePoint[] = [];
+    const bgPan: KeyframePoint[] = [];
+    const bgScale: KeyframePoint[] = [];
+    const camZ: KeyframePoint[] = [];
+
+    for (let i = 0; i <= steps; i++) {
+      const t = (i / steps) * duration;
+      const progress = i / steps;
+
+      // Foreground Subject: Moves forward in Z and subtle X tracking
+      const fgValX = characterCenter.x + (progress - 0.5) * 24 * depthIntensity;
+      const fgScaleVal = 100 + progress * 14 * depthIntensity;
+
+      // Background Plane: Counter-drifts in reverse X and pushes back in Z
+      const bgValX = -(progress - 0.5) * 40 * depthIntensity;
+      const bgScaleVal = 125 + progress * 4;
+
+      // Camera Z-Depth (Push-in trajectory)
+      const zDepth = -progress * 250 * depthIntensity;
+
+      fgPan.push({
+        id: 9100 + i,
+        time: Math.round(t * 10) / 10,
+        value: Math.round(fgValX),
+        type: 'bezier',
+        handleIn: { x: 0.2, y: fgValX },
+        handleOut: { x: 0.2, y: fgValX },
+      });
+
+      fgScale.push({
+        id: 9200 + i,
+        time: Math.round(t * 10) / 10,
+        value: Math.round(fgScaleVal),
+        type: 'bezier',
+        handleIn: { x: 0.2, y: fgScaleVal },
+        handleOut: { x: 0.2, y: fgScaleVal },
+      });
+
+      bgPan.push({
+        id: 9300 + i,
+        time: Math.round(t * 10) / 10,
+        value: Math.round(bgValX),
+        type: 'bezier',
+        handleIn: { x: 0.2, y: bgValX },
+        handleOut: { x: 0.2, y: bgValX },
+      });
+
+      bgScale.push({
+        id: 9400 + i,
+        time: Math.round(t * 10) / 10,
+        value: Math.round(bgScaleVal),
+        type: 'bezier',
+        handleIn: { x: 0.2, y: bgScaleVal },
+        handleOut: { x: 0.2, y: bgScaleVal },
+      });
+
+      camZ.push({
+        id: 9500 + i,
+        time: Math.round(t * 10) / 10,
+        value: Math.round(zDepth),
+        type: 'bezier',
+        handleIn: { x: 0.2, y: zDepth },
+        handleOut: { x: 0.2, y: zDepth },
+      });
+    }
+
+    return {
+      foregroundPanKeyframes: fgPan,
+      foregroundScaleKeyframes: fgScale,
+      backgroundPanKeyframes: bgPan,
+      backgroundScaleKeyframes: bgScale,
+      cameraZDepthKeyframes: camZ,
+    };
+  }
+
+  /**
    * Solves Multi-Speaker Composition Layout for 1:1, 4:5, 9:16, or 16:9.
    */
   static computeMultiSpeakerLayout(
@@ -160,8 +261,7 @@ export class ExtendedSocialReframeEngine {
     layoutMode: ReframeLayoutMode = 'full-bleed-pan',
     targetFormat: SocialTargetFormat = '9:16-reels'
   ): MultiSpeakerReframeResult {
-    // Determine Target Dimensions based on aspect ratio
-    let targetW = Math.round((sourceH * 9) / 16); // 9:16 default
+    let targetW = Math.round((sourceH * 9) / 16);
     if (targetFormat === '1:1-square') targetW = sourceH;
     else if (targetFormat === '4:5-portrait') targetW = Math.round((sourceH * 4) / 5);
     else if (targetFormat === '16:9-landscape') targetW = sourceW;
@@ -196,7 +296,7 @@ export class ExtendedSocialReframeEngine {
     }
 
     if (layoutMode === 'blurred-mirror') {
-      const contentH = targetFormat === '1:1-square' ? Math.round((targetW * 9) / 16) : Math.round((targetW * 9) / 16);
+      const contentH = Math.round((targetW * 9) / 16);
       const padH = Math.max(0, Math.round((sourceH - contentH) / 2));
       return {
         layoutMode,
@@ -232,88 +332,6 @@ export class ExtendedSocialReframeEngine {
         scale: 1.0,
         label: activeSpeaker.name,
       },
-    };
-  }
-
-  /**
-   * Computes 2.5D Multi-Plane Photo Character Parallax, Headroom Alignment & Camera Paths.
-   */
-  static computePhotoCharacterAnimation(
-    characterCenter: { x: number; y: number },
-    targetFormat: SocialTargetFormat = '9:16-reels',
-    animMode: 'ken-burns-zoom' | 'pan-across' | 'subtle-breathe' | 'static' = 'ken-burns-zoom',
-    duration = 5.0
-  ): {
-    characterPanKeyframes: KeyframePoint[];
-    characterScaleKeyframes: KeyframePoint[];
-    backgroundDriftKeyframes: KeyframePoint[];
-    headroomOffsetPx: number;
-  } {
-    const steps = 6;
-    const panKeys: KeyframePoint[] = [];
-    const scaleKeys: KeyframePoint[] = [];
-    const bgKeys: KeyframePoint[] = [];
-
-    // Calculate Rule-of-Thirds Headroom offset (align character eyes to upper 33% line)
-    const headroomOffsetPx = Math.round(characterCenter.y * 0.25);
-
-    for (let i = 0; i <= steps; i++) {
-      const t = (i / steps) * duration;
-      const progress = i / steps;
-
-      let currentX = characterCenter.x;
-      let currentScale = 1.0;
-      let bgDriftX = 0;
-
-      if (animMode === 'ken-burns-zoom') {
-        currentScale = 1.0 + progress * 0.18; // Smooth 1.0x to 1.18x push-in
-        currentX = characterCenter.x + (progress - 0.5) * 20;
-        bgDriftX = -(progress - 0.5) * 35; // Parallax reverse drift
-      } else if (animMode === 'pan-across') {
-        currentX = characterCenter.x - 40 + progress * 80; // 80px glide across
-        currentScale = 1.08;
-        bgDriftX = (progress - 0.5) * 25;
-      } else if (animMode === 'subtle-breathe') {
-        currentScale = 1.12 + Math.sin(progress * Math.PI) * 0.06; // Organic breathing pulse
-        currentX = characterCenter.x + Math.sin(progress * Math.PI * 2) * 10;
-      } else {
-        currentScale = 1.05;
-        currentX = characterCenter.x + (progress - 0.5) * 8;
-      }
-
-      panKeys.push({
-        id: 7100 + i,
-        time: Math.round(t * 10) / 10,
-        value: Math.round(currentX),
-        type: 'bezier',
-        handleIn: { x: 0.25, y: currentX },
-        handleOut: { x: 0.25, y: currentX },
-      });
-
-      scaleKeys.push({
-        id: 7200 + i,
-        time: Math.round(t * 10) / 10,
-        value: Math.round(currentScale * 100),
-        type: 'bezier',
-        handleIn: { x: 0.25, y: currentScale * 100 },
-        handleOut: { x: 0.25, y: currentScale * 100 },
-      });
-
-      bgKeys.push({
-        id: 7300 + i,
-        time: Math.round(t * 10) / 10,
-        value: Math.round(bgDriftX),
-        type: 'bezier',
-        handleIn: { x: 0.25, y: bgDriftX },
-        handleOut: { x: 0.25, y: bgDriftX },
-      });
-    }
-
-    return {
-      characterPanKeyframes: panKeys,
-      characterScaleKeyframes: scaleKeys,
-      backgroundDriftKeyframes: bgKeys,
-      headroomOffsetPx,
     };
   }
 

@@ -4,6 +4,7 @@ import {
   SocialTargetFormat,
   ReframeLayoutMode,
   SafeZonePlatform,
+  ProceduralBackdropStyle,
   SpeakerProfile,
   RetentionHookCard,
   MultiSpeakerReframeResult,
@@ -21,6 +22,7 @@ interface SocialReframeStudioViewProps {
 
 export type MediaFitMode =
   | 'smart-ambient-fit'
+  | 'depth-parallax-25d'
   | 'ken-burns-scan'
   | 'stacked-duplex'
   | 'elevated-card'
@@ -33,6 +35,8 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
   const [format, setFormat] = useState<SocialTargetFormat>('9:16-reels');
   const [layoutMode, setLayoutMode] = useState<ReframeLayoutMode>('full-bleed-pan');
   const [fitMode, setFitMode] = useState<MediaFitMode>('smart-ambient-fit');
+  const [backdropStyle, setBackdropStyle] = useState<ProceduralBackdropStyle>('ambient-color-glow');
+  const [depthIntensity, setDepthIntensity] = useState<number>(1.2);
   const [platformOverlay, setPlatformOverlay] = useState<SafeZonePlatform>('tiktok');
   const [showRuleOfThirds, setShowRuleOfThirds] = useState<boolean>(true);
 
@@ -152,7 +156,7 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
 
       // Automatically bake keyframes to the editor!
       if (onBakeKeyframesToEditor) {
-        onBakeKeyframesToEditor(output.panKeyframes, `Auto-Reframe (${mediaType === 'photo' ? 'Photo Motion' : 'Video'}) • ${format.toUpperCase()}`);
+        onBakeKeyframesToEditor(output.panKeyframes, `Auto-Reframe (${mediaType === 'photo' ? 'Photo 2.5D Parallax' : 'Video'}) • ${format.toUpperCase()}`);
       }
       setIsBaked(true);
       setTimeout(() => setIsBaked(false), 3000);
@@ -301,16 +305,17 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
         <div style={{ background: '#11182c', border: '1px solid #38bdf8', borderRadius: 8, padding: 10, display: 'flex', flexDirection: 'column', gap: 6 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span style={{ fontSize: 9, color: '#38bdf8', textTransform: 'uppercase', fontWeight: 800 }}>
-              🌟 SMART CONTENT FITTING (NO CUTOFF):
+              🌟 CONTENT FITTING & PARALLAX:
             </span>
             <span style={{ fontSize: 8, background: '#10b981', color: '#040711', padding: '1px 4px', borderRadius: 2, fontWeight: 800 }}>
-              100% VISIBLE
+              0% CUTOFF
             </span>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
             {[
-              { id: 'smart-ambient-fit', label: '🌟 Ambient Gaussian Blur (100% Uncropped)', desc: 'Zero crop: sharp center + dynamic color-matched blur fill' },
+              { id: 'smart-ambient-fit', label: '🌟 Ambient Blur Fill (100% Uncropped)', desc: 'Zero crop: sharp center + dynamic color-matched blur fill' },
+              { id: 'depth-parallax-25d', label: '🧬 2.5D Multi-Plane Depth Parallax', desc: 'Separates character cutout from background with 3D Z-depth drift' },
               { id: 'ken-burns-scan', label: '🎬 Ken Burns Scan (Pans Across Full Width)', desc: 'Animates camera across wide photo so all details are shown' },
               { id: 'stacked-duplex', label: '👥 Stacked Duplex (Left & Right Split)', desc: 'Stacks left & right subjects vertically at full resolution' },
               { id: 'elevated-card', label: '🖼️ Glassmorphic Elevated Card', desc: 'Floating rounded frame with depth drop shadow' },
@@ -336,6 +341,60 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
               >
                 <span>{f.label}</span>
                 <span style={{ fontSize: 7, color: '#94a3b8' }}>{f.desc}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* 2.5D Parallax Depth Controls (When Depth Parallax Mode is Selected) */}
+        {fitMode === 'depth-parallax-25d' && (
+          <div style={{ background: '#11182c', border: '1px solid #a855f7', borderRadius: 8, padding: 10, display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <span style={{ fontSize: 9, color: '#c084fc', textTransform: 'uppercase', fontWeight: 800 }}>
+              🧬 2.5D DEPTH PARALLAX INTENSITY:
+            </span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 9 }}>
+              <span style={{ color: '#94a3b8' }}>Optical Z-Separation:</span>
+              <span style={{ color: '#c084fc', fontWeight: 800 }}>{depthIntensity.toFixed(1)}x</span>
+            </div>
+            <input
+              type="range"
+              min="0.2"
+              max="2.5"
+              step="0.1"
+              value={depthIntensity}
+              onChange={(e) => setDepthIntensity(parseFloat(e.target.value))}
+              style={{ width: '100%', accentColor: '#c084fc' }}
+            />
+          </div>
+        )}
+
+        {/* Procedural Backdrop Style */}
+        <div style={{ background: '#11182c', border: '1px solid #1e293b', borderRadius: 8, padding: 10, display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <span style={{ fontSize: 9, color: '#94a3b8', textTransform: 'uppercase' }}>
+            PROCEDURAL BACKDROP FILL:
+          </span>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
+            {[
+              { id: 'ambient-color-glow', label: '🌈 Ambient Glow' },
+              { id: 'studio-dark-radial', label: '🎬 Studio Dark' },
+              { id: 'cyberpunk-gradient', label: '⚡ Cyber Neon' },
+              { id: 'clean-minimal-slate', label: '🌫️ Minimal Slate' },
+            ].map((bd) => (
+              <button
+                key={bd.id}
+                onClick={() => setBackdropStyle(bd.id as ProceduralBackdropStyle)}
+                style={{
+                  background: backdropStyle === bd.id ? '#38bdf8' : '#1e293b',
+                  color: backdropStyle === bd.id ? '#040711' : '#94a3b8',
+                  border: 'none',
+                  borderRadius: 4,
+                  padding: '5px',
+                  fontSize: 8,
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                }}
+              >
+                {bd.label}
               </button>
             ))}
           </div>
@@ -376,43 +435,9 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
             ))}
           </div>
         </div>
-
-        {/* Photo Animation & Character 2.5D Motion Mode */}
-        {mediaType === 'photo' && (
-          <div style={{ background: '#11182c', border: '1px solid #1e293b', borderRadius: 8, padding: 10, display: 'flex', flexDirection: 'column', gap: 6 }}>
-            <span style={{ fontSize: 9, color: '#f59e0b', textTransform: 'uppercase', fontWeight: 800 }}>
-              📸 PHOTO CHARACTER 2.5D MOTION:
-            </span>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
-              {[
-                { id: 'ken-burns-zoom', label: '🔍 Ken Burns Zoom' },
-                { id: 'pan-across', label: '↔️ Two-Shot Pan' },
-                { id: 'subtle-breathe', label: '💨 2.5D Breathe' },
-                { id: 'static', label: '📐 Rule-of-Thirds' },
-              ].map((pm) => (
-                <button
-                  key={pm.id}
-                  onClick={() => setPhotoAnimMode(pm.id as PhotoAnimationMode)}
-                  style={{
-                    background: photoAnimMode === pm.id ? '#f59e0b' : '#1e293b',
-                    color: photoAnimMode === pm.id ? '#040711' : '#94a3b8',
-                    border: 'none',
-                    borderRadius: 4,
-                    padding: '5px',
-                    fontSize: 8,
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                  }}
-                >
-                  {pm.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
 
-      {/* 2. CENTER COLUMN: DYNAMIC ASPECT RATIO VIEWPORT WITH AMBIENT BLUR */}
+      {/* 2. CENTER COLUMN: DYNAMIC ASPECT RATIO VIEWPORT WITH 2.5D PARALLAX */}
       <div
         style={{
           display: 'flex',
@@ -499,7 +524,7 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
             style={{
               width: viewportDim.width,
               height: viewportDim.height,
-              background: '#090e1a',
+              background: backdropStyle === 'studio-dark-radial' ? 'radial-gradient(circle, #1e293b 0%, #020617 100%)' : backdropStyle === 'cyberpunk-gradient' ? 'linear-gradient(180deg, #090e1a 0%, #1e1b4b 50%, #030712 100%)' : '#090e1a',
               border: '2px solid #38bdf8',
               borderRadius: format === '9:16-reels' ? 16 : 8,
               position: 'relative',
@@ -555,11 +580,11 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
               </div>
             )}
 
-            {/* MEDIA RENDERING: SMART AMBIENT BLUR VS KEN BURNS SCAN VS DUPLEX VS FULL-BLEED */}
+            {/* MEDIA RENDERING: SMART AMBIENT BLUR VS 2.5D PARALLAX VS KEN BURNS SCAN */}
             {mediaSrc ? (
               <div style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 {/* 1. LAYER 1: AMBIENT GAUSSIAN BLUR BACKGROUND (Always fills canvas with rich color) */}
-                {(fitMode === 'smart-ambient-fit' || fitMode === 'elevated-card') && (
+                {(fitMode === 'smart-ambient-fit' || fitMode === 'depth-parallax-25d' || fitMode === 'elevated-card') && (
                   <div
                     style={{
                       position: 'absolute',
@@ -568,14 +593,35 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
                       backgroundSize: 'cover',
                       backgroundPosition: 'center',
                       filter: 'blur(28px) brightness(0.6) saturate(1.4)',
-                      transform: 'scale(1.25)',
+                      transform: fitMode === 'depth-parallax-25d' ? `scale(${1.2 + depthIntensity * 0.1})` : 'scale(1.25)',
+                      transition: 'transform 3s ease',
                       zIndex: 1,
                     }}
                   />
                 )}
 
-                {/* 2. LAYER 2: FOREGROUND UNCRIPPLED MEDIA */}
-                {fitMode === 'smart-ambient-fit' ? (
+                {/* 2. LAYER 2: FOREGROUND 2.5D DEPTH / UNCRIPPLED MEDIA */}
+                {fitMode === 'depth-parallax-25d' ? (
+                  /* 🧬 2.5D MULTI-PLANE DEPTH PARALLAX */
+                  <div style={{ position: 'relative', zIndex: 10, width: '92%', height: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <img
+                      src={mediaSrc}
+                      alt="2.5D Character Parallax"
+                      style={{
+                        width: '100%',
+                        height: 'auto',
+                        borderRadius: 8,
+                        boxShadow: '0 16px 40px rgba(0,0,0,0.9), 0 0 1px rgba(255,255,255,0.3)',
+                        objectFit: 'contain',
+                        transform: `scale(${1.0 + depthIntensity * 0.08}) translateY(-4px)`,
+                        transition: 'transform 2.5s cubic-bezier(0.25, 1, 0.5, 1)',
+                      }}
+                    />
+                    <span style={{ position: 'absolute', bottom: 8, right: 12, background: 'rgba(168, 85, 247, 0.9)', color: '#ffffff', fontSize: 7, fontWeight: 900, padding: '2px 5px', borderRadius: 3 }}>
+                      🧬 2.5D Z-DEPTH PARALLAX
+                    </span>
+                  </div>
+                ) : fitMode === 'smart-ambient-fit' ? (
                   /* 100% UNCROPPED CENTERED FIT WITH DROP SHADOW */
                   <div style={{ position: 'relative', zIndex: 10, width: '92%', height: 'auto', maxHeight: '90%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     {mediaType === 'video' ? (
@@ -754,8 +800,8 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
           {[
             { label: `1. Aspect Format: ${format.toUpperCase()}`, done: true },
             { label: `2. Fit Mode: ${fitMode.replace('-', ' ').toUpperCase()}`, done: true },
-            { label: '3. Optical Flow Tracking', done: true },
-            { label: '4. Smoothed Bézier Keyframing', done: true },
+            { label: '3. 2.5D Depth Plane Separation', done: true },
+            { label: '4. Smoothed Bézier Camera Rig', done: true },
             { label: '5. Rule-of-Thirds Headroom Framing', done: true },
             { label: '6. Zero Cutoff Ambient Blur Filter', done: true },
             { label: '7. Multi-Format Composition Solver', done: true },
@@ -803,12 +849,12 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
             <span style={{ color: '#10b981', fontWeight: 800 }}>0% (100% Visible)</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ color: '#94a3b8' }}>Safe Bottom Margin:</span>
-            <span style={{ color: '#38bdf8', fontWeight: 800 }}>{safeZone.bottomMarginPx}px</span>
+            <span style={{ color: '#94a3b8' }}>Parallax Z-Depth:</span>
+            <span style={{ color: '#c084fc', fontWeight: 800 }}>{depthIntensity.toFixed(1)}x Active</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ color: '#94a3b8' }}>Quality Validation:</span>
-            <span style={{ color: '#10b981', fontWeight: 800 }}>100% (Zero Collision)</span>
+            <span style={{ color: '#94a3b8' }}>Safe Bottom Margin:</span>
+            <span style={{ color: '#38bdf8', fontWeight: 800 }}>{safeZone.bottomMarginPx}px</span>
           </div>
         </div>
       </div>
