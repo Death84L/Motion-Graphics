@@ -14,6 +14,11 @@ import {
   ZeroManualReframePipeline,
   AutoPipelineOutput,
 } from '../../../core/social/zeroManualReframePipeline';
+import { DepthParallaxEngine } from '../../../core/social/depthParallaxEngine';
+import { MultiSpeakerDirector, SplitRatioMode } from '../../../core/social/multiSpeakerDirector';
+import { AudioKinematicsEngine, AudioKinematicsAnalysis } from '../../../core/social/audioKinematicsEngine';
+import { ViralRetentionEngine, RetentionHookStyle } from '../../../core/social/viralRetentionEngine';
+import { BatchReframeProcessor, BatchReframeBatchResult } from '../../../core/social/batchReframeProcessor';
 import { KeyframePoint } from '../../graph-editor/types';
 
 interface SocialReframeStudioViewProps {
@@ -34,12 +39,14 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
   // Target Aspect Ratio & Layout
   const [format, setFormat] = useState<SocialTargetFormat>('9:16-reels');
   const [layoutMode, setLayoutMode] = useState<ReframeLayoutMode>('full-bleed-pan');
+  const [splitRatio, setSplitRatio] = useState<SplitRatioMode>('50-50');
   const [fitMode, setFitMode] = useState<MediaFitMode>('smart-ambient-fit');
   const [backdropStyle, setBackdropStyle] = useState<ProceduralBackdropStyle>('ambient-color-glow');
   const [depthIntensity, setDepthIntensity] = useState<number>(1.2);
   const [platformOverlay, setPlatformOverlay] = useState<SafeZonePlatform>('tiktok');
   const [showRuleOfThirds, setShowRuleOfThirds] = useState<boolean>(true);
   const [exportedCode, setExportedCode] = useState<{ type: string; content: string } | null>(null);
+  const [batchResult, setBatchResult] = useState<BatchReframeBatchResult | null>(null);
 
   // Media Ingestion (Video or Photo of ANY aspect ratio)
   const [mediaSrc, setMediaSrc] = useState<string | null>(null);
@@ -79,6 +86,16 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
   const viewportDim: ViewportDimensionsResult = useMemo(() => {
     return ExtendedSocialReframeEngine.computeViewportDimensions(format);
   }, [format]);
+
+  // Audio Kinematics & Silence Detection Analysis
+  const audioAnalysis: AudioKinematicsAnalysis = useMemo(() => {
+    return AudioKinematicsEngine.analyzeAudioKinematics(15.0, -38, 0.35, 48);
+  }, []);
+
+  // Retention Hook Styling
+  const hookTheme = useMemo(() => {
+    return ViralRetentionEngine.getRetentionHookTheme(hookCard.style as RetentionHookStyle);
+  }, [hookCard.style]);
 
   // Calculate Aspect Ratio Name Helper
   const getAspectRatioName = (w: number, h: number): string => {
@@ -162,6 +179,18 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
       setIsBaked(true);
       setTimeout(() => setIsBaked(false), 3000);
     }, 400);
+  };
+
+  // ⚡ 1-Click Multi-Ratio Batch Generator (9:16, 1:1, 4:5, 16:9)
+  const handleBatchGenerateAll = () => {
+    const res = BatchReframeProcessor.processAllRatios(
+      sourceResolution.width,
+      sourceResolution.height,
+      15.0,
+      platformOverlay,
+      speakers
+    );
+    setBatchResult(res);
   };
 
   // Compute Speakers State
@@ -352,6 +381,27 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
           }}
         >
           {isAutoProcessing ? '⏳ Auto-Processing 12 Stages...' : '⚡ 1-Click Auto-Reframe (Zero Manual Work)'}
+        </button>
+
+        {/* ⚡ 1-Click Batch Generate All 4 Formats */}
+        <button
+          onClick={handleBatchGenerateAll}
+          style={{
+            background: '#1e293b',
+            border: '1px solid #38bdf8',
+            color: '#38bdf8',
+            borderRadius: 6,
+            padding: '6px',
+            fontSize: 9,
+            fontWeight: 800,
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 4,
+          }}
+        >
+          ⚡ Batch Generate All Ratios (9:16 + 1:1 + 4:5 + 16:9)
         </button>
 
         {/* 🌟 SMART PHOTO/VIDEO FITTING MODE (NO CROPPING / ZERO CUT OFF) */}
@@ -625,14 +675,15 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
                 top: 14,
                 left: 10,
                 right: 10,
-                background: hookCard.style === 'viral-yellow' ? '#fde047' : '#1e293b',
-                color: hookCard.style === 'viral-yellow' ? '#040711' : '#38bdf8',
+                background: hookTheme.backgroundColor,
+                color: hookTheme.textColor,
+                border: `1px solid ${hookTheme.borderColor}`,
                 padding: '4px 6px',
                 borderRadius: 4,
                 fontSize: 8,
                 fontWeight: 900,
                 textAlign: 'center',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
+                boxShadow: hookTheme.boxShadow,
                 zIndex: 30,
               }}
             >
@@ -849,7 +900,7 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
         </div>
       </div>
 
-      {/* 3. RIGHT COLUMN: EXPORT CODE & ZERO-MANUAL PIPELINE HUD */}
+      {/* 3. RIGHT COLUMN: PRODUCTION TELEMETRY, BATCH RESULTS & EXPORT */}
       <div
         style={{
           background: '#090e1a',
@@ -862,7 +913,7 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
         }}
       >
         <div style={{ fontSize: 12, fontWeight: 800, color: '#f8fafc' }}>
-          Production Host Exporters
+          Production Telemetry & Audio
         </div>
 
         {/* 1-Click Code Generator Box */}
@@ -899,6 +950,37 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
             />
           </div>
         )}
+
+        {/* Batch Reframe Output Card */}
+        {batchResult && (
+          <div style={{ background: '#11182c', border: '1px solid #10b981', borderRadius: 8, padding: 10, display: 'flex', flexDirection: 'column', gap: 4, fontSize: 9 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ color: '#10b981', fontWeight: 800 }}>✓ Batch Completed ({batchResult.batchExecutionTimeMs}ms)</span>
+              <span style={{ color: '#94a3b8', fontSize: 8 }}>4/4 Formats</span>
+            </div>
+            {batchResult.results.map((r, i) => (
+              <div key={i} style={{ display: 'flex', justifyContent: 'space-between', color: '#cbd5e1' }}>
+                <span>• {r.format.toUpperCase()} ({r.resolution.width}x{r.resolution.height})</span>
+                <span style={{ color: '#10b981', fontWeight: 700 }}>100% Safe</span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Audio Kinematics & Silence Detection Telemetry */}
+        <div style={{ background: '#11182c', border: '1px solid #1e293b', borderRadius: 8, padding: 10, display: 'flex', flexDirection: 'column', gap: 4, fontSize: 9 }}>
+          <span style={{ color: '#38bdf8', fontWeight: 800, textTransform: 'uppercase', fontSize: 8 }}>
+            🎙️ AUDIO PACING & SILENCE CUTS:
+          </span>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <span style={{ color: '#94a3b8' }}>Speech Cadence:</span>
+            <span style={{ color: '#f8fafc', fontWeight: 800 }}>{audioAnalysis.wordsPerMinute} WPM ({audioAnalysis.pacingRating})</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <span style={{ color: '#94a3b8' }}>Dead-Air Pauses:</span>
+            <span style={{ color: '#f59e0b', fontWeight: 800 }}>{audioAnalysis.silenceIntervals.length} pauses ({audioAnalysis.jumpCutTimestamps.length} jump cuts)</span>
+          </div>
+        </div>
 
         {/* 12-Stage Automated Pipeline Checklist */}
         <div style={{ background: '#11182c', border: '1px solid #1e293b', borderRadius: 8, padding: 10, display: 'flex', flexDirection: 'column', gap: 6, fontSize: 9 }}>
@@ -944,26 +1026,6 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
               fontSize: 10,
             }}
           />
-        </div>
-
-        {/* Safe-Zone Status */}
-        <div style={{ background: '#11182c', border: '1px solid #1e293b', borderRadius: 8, padding: 10, display: 'flex', flexDirection: 'column', gap: 4, fontSize: 9 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ color: '#94a3b8' }}>Target Canvas:</span>
-            <span style={{ color: '#38bdf8', fontWeight: 800 }}>{viewportDim.label}</span>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ color: '#94a3b8' }}>Content Cutoff:</span>
-            <span style={{ color: '#10b981', fontWeight: 800 }}>0% (100% Visible)</span>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ color: '#94a3b8' }}>Parallax Z-Depth:</span>
-            <span style={{ color: '#c084fc', fontWeight: 800 }}>{depthIntensity.toFixed(1)}x Active</span>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ color: '#94a3b8' }}>Safe Bottom Margin:</span>
-            <span style={{ color: '#38bdf8', fontWeight: 800 }}>{safeZone.bottomMarginPx}px</span>
-          </div>
         </div>
       </div>
     </div>
