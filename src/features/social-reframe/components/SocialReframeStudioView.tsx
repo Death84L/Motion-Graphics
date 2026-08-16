@@ -25,6 +25,7 @@ import { ZeroCutoffEngine, DeviceMockupType } from '../../../core/social/zeroCut
 import { PanoramicSweepEngine } from '../../../core/social/panoramicSweepEngine';
 import { PRO_STUDIO_PRESETS, ProStudioPreset } from '../../../core/social/proStudioPresets';
 import { KineticCaptionEngine, KineticCaptionPhrase, CaptionStylePreset } from '../../../core/social/kineticCaptionEngine';
+import { GazeLeadRoomSolver, GazeDirection } from '../../../core/social/gazeLeadRoomSolver';
 import { KeyframePoint } from '../../graph-editor/types';
 
 interface SocialReframeStudioViewProps {
@@ -46,6 +47,8 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
   const [showRuleOfThirds, setShowRuleOfThirds] = useState<boolean>(true);
   const [showMotionTrail, setShowMotionTrail] = useState<boolean>(false);
   const [showBeforeAfterSplit, setShowBeforeAfterSplit] = useState<boolean>(false);
+  const [is3DDepthDissect, setIs3DDepthDissect] = useState<boolean>(false);
+  const [gazeMode, setGazeMode] = useState<GazeDirection>('center');
   const [exportedCode, setExportedCode] = useState<{ type: string; content: string; filename: string } | null>(null);
   const [batchResult, setBatchResult] = useState<BatchReframeBatchResult | null>(null);
 
@@ -691,6 +694,37 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
             >
               📍 Trail
             </button>
+            <button
+              onClick={() => setIs3DDepthDissect((d) => !d)}
+              style={{
+                background: is3DDepthDissect ? '#a855f7' : '#1e293b',
+                color: is3DDepthDissect ? '#ffffff' : '#94a3b8',
+                border: 'none',
+                padding: '4px 8px',
+                borderRadius: 4,
+                fontSize: 8,
+                fontWeight: 800,
+                cursor: 'pointer',
+              }}
+            >
+              🧬 3D Dissect
+            </button>
+            <button
+              onClick={() => setGazeMode((g) => (g === 'center' ? 'left' : g === 'left' ? 'right' : 'center'))}
+              style={{
+                background: gazeMode !== 'center' ? '#10b981' : '#1e293b',
+                color: gazeMode !== 'center' ? '#040711' : '#94a3b8',
+                border: 'none',
+                padding: '4px 8px',
+                borderRadius: 4,
+                fontSize: 8,
+                fontWeight: 800,
+                cursor: 'pointer',
+                textTransform: 'capitalize',
+              }}
+            >
+              👁️ Gaze: {gazeMode}
+            </button>
           </div>
 
           <div style={{ display: 'flex', gap: 6 }}>
@@ -766,8 +800,10 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
               borderRadius: format === '9:16-reels' ? 16 : 8,
               position: 'relative',
               overflow: 'hidden',
-              boxShadow: '0 0 32px rgba(56, 189, 248, 0.25)',
-              transition: 'width 0.3s ease, height 0.3s ease, background 0.3s ease',
+              boxShadow: is3DDepthDissect ? '0 30px 60px rgba(0,0,0,0.95), 0 0 30px rgba(168, 85, 247, 0.4)' : '0 0 32px rgba(56, 189, 248, 0.25)',
+              transform: is3DDepthDissect ? 'perspective(800px) rotateY(-22deg) rotateX(14deg) scale(0.95)' : 'none',
+              transformStyle: 'preserve-3d',
+              transition: 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), width 0.3s ease, height 0.3s ease, background 0.3s ease',
             }}
           >
             {/* Top Neon Progress Bar (Driven Live by currentTimeSec) */}
@@ -848,7 +884,7 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
                       backgroundSize: 'cover',
                       backgroundPosition: 'center',
                       filter: 'blur(28px) brightness(0.65) saturate(1.4)',
-                      transform: fitMode === 'depth-parallax-25d' ? `scale(${1.2 + depthIntensity * 0.1})` : 'scale(1.25)',
+                      transform: fitMode === 'depth-parallax-25d' ? `scale(${1.2 + depthIntensity * 0.1})` : is3DDepthDissect ? 'translateZ(-40px) scale(1.3)' : 'scale(1.25)',
                       transition: isPlaying ? 'none' : 'transform 3s ease',
                       zIndex: 1,
                     }}
@@ -869,6 +905,8 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
                     boxShadow: zeroCutoffGeo.mockupFrameStyle?.boxShadow || '0 12px 32px rgba(0,0,0,0.85)',
                     border: zeroCutoffGeo.mockupFrameStyle?.border || '1px solid rgba(255,255,255,0.1)',
                     overflow: 'hidden',
+                    transform: is3DDepthDissect ? 'translateZ(45px)' : 'none',
+                    transition: 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)',
                   }}
                 >
                   {mediaType === 'video' ? (
