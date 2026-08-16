@@ -788,7 +788,7 @@ export default function App() {
                   border: '1px solid rgba(56, 189, 248, 0.3)',
                 }}
               >
-                Ultimate 90-Feature Suite
+                Universal Studio Suite
               </span>
               <span
                 style={{
@@ -810,65 +810,98 @@ export default function App() {
           </div>
         </div>
 
-        {/* Motion Studio Suite Switcher */}
-        <div style={{ display: 'flex', background: '#090e1a', padding: '3px', borderRadius: 8, border: '1px solid #1e293b', gap: 2, overflowX: 'auto' }}>
-          {[
-            { id: 'editor', label: '🎬 Motion Graph' },
-            { id: 'universal-timeline', label: '🎞️ Universal Timeline' },
-            { id: 'constraints-rigging', label: '🦾 Constraints & Rigging' },
-            { id: 'broll-engine', label: '🎬 B-Roll Engine' },
-            { id: 'infographics', label: '📊 Infographics' },
-            { id: 'color-grading', label: '🎨 Color & LUTs' },
-            { id: 'particle-storm', label: '🌌 Particle Storm' },
-            { id: 'smart-roto', label: '🪄 Smart Roto' },
-            { id: 'matchmove', label: '🗺️ 3D Matchmove' },
-            { id: 'speech-captions', label: '🎙️ Speech Captions' },
-            { id: 'social-reframe', label: '📱 Social Reframe' },
-            { id: 'marketplace', label: '⚡ Marketplace' },
-            { id: 'vfx-studio', label: '✨ VFX Shaders' },
-            { id: 'shapes-typography', label: '🎨 Vector & Typography' },
-            { id: 'audio-reactive', label: '🎵 Audio Reactive' },
-            { id: 'batch-processor', label: '🧩 Batch Processor' },
-            { id: 'velocity-lab', label: '📈 Velocity Lab' },
-            { id: 'motion-matching', label: '🧬 Motion Match' },
-            { id: 'parametric-presets', label: '🏛️ Parametric Presets' },
-            { id: 'motion-clipboard', label: '📋 Motion Clipboard' },
-            { id: 'canvas-timeline', label: '🎥 Live Canvas & Timeline' },
-            { id: 'builder-stack', label: '🧱 Stack & Builder' },
-            { id: 'text-ui', label: '📝 Text & UI States' },
-            { id: 'captions', label: '💬 Caption Studio' },
-            { id: 'reverse-engineering', label: '🧠 Explain & Rebuild' },
-            { id: 'physics-sandbox', label: '🧪 Physics Sandbox' },
-            { id: 'state-machine', label: '🎭 State Machine' },
-            { id: 'git-diff', label: '🔀 Motion Git' },
-            { id: 'design-system', label: '🎨 Design Tokens' },
-            { id: 'logic-graph', label: '🧠 Logic Graph' },
-            { id: 'scene-3d', label: '🌌 3D Scene' },
-            { id: 'review-ab', label: '👥 A/B Review' },
-            { id: 'dna-analyzer', label: '🧬 Motion DNA' },
-            { id: 'responsive-lab', label: '🎯 Responsive Lab' },
-            { id: 'presets-morph', label: '🏛️ Preset Morph' },
-            { id: 'export-hub', label: '📦 Export Hub' },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setSuiteView(tab.id as any)}
-              style={{
-                padding: '4px 7px',
-                borderRadius: 6,
-                fontSize: 10,
-                fontWeight: suiteView === tab.id ? 800 : 500,
-                background: suiteView === tab.id ? 'linear-gradient(135deg, #1e3a8a, #1e40af)' : 'transparent',
-                color: suiteView === tab.id ? '#38bdf8' : '#94a3b8',
-                border: suiteView === tab.id ? '1px solid #38bdf8' : '1px solid transparent',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {tab.label}
-            </button>
-          ))}
+        {/* Responsive Categorized Studio Switcher */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, maxWidth: '100%', overflowX: 'auto', paddingBottom: 2 }}>
+          {/* Quick Jump Dropdown for Compact / Small Panels */}
+          <select
+            value={suiteView}
+            onChange={(e) => setSuiteView(e.target.value as any)}
+            style={{
+              background: '#090e1a',
+              border: '1px solid #38bdf8',
+              color: '#38bdf8',
+              borderRadius: 6,
+              padding: '4px 8px',
+              fontSize: 10,
+              fontWeight: 800,
+              cursor: 'pointer',
+              outline: 'none',
+              maxWidth: 160,
+            }}
+          >
+            <optgroup label="📱 Video & Social">
+              <option value="social-reframe">📱 Social Reframe</option>
+              <option value="speech-captions">🎙️ Speech Captions</option>
+              <option value="broll-engine">🎬 B-Roll Engine</option>
+              <option value="infographics">📊 Infographics</option>
+              <option value="color-grading">🎨 Color & LUTs</option>
+              <option value="smart-roto">🪄 Smart Roto</option>
+              <option value="matchmove">🗺️ 3D Matchmove</option>
+              <option value="vfx-studio">✨ VFX Shaders</option>
+            </optgroup>
+            <optgroup label="🎬 Motion & Curves">
+              <option value="editor">🎬 Motion Graph</option>
+              <option value="universal-timeline">🎞️ Universal Timeline</option>
+              <option value="velocity-lab">📈 Velocity Lab</option>
+              <option value="parametric-presets">🏛️ Parametric Presets</option>
+              <option value="motion-matching">🧬 Motion Match</option>
+              <option value="physics-sandbox">🧪 Physics Sandbox</option>
+              <option value="state-machine">🎭 State Machine</option>
+              <option value="git-diff">🔀 Motion Git</option>
+              <option value="logic-graph">🧠 Logic Graph</option>
+            </optgroup>
+            <optgroup label="🎨 Vector & 3D">
+              <option value="shapes-typography">🎨 Vector & Typography</option>
+              <option value="particle-storm">🌌 Particle Storm</option>
+              <option value="scene-3d">🌌 3D Scene</option>
+              <option value="constraints-rigging">🦾 Constraints & Rigging</option>
+              <option value="audio-reactive">🎵 Audio Reactive</option>
+              <option value="design-system">🎨 Design Tokens</option>
+            </optgroup>
+            <optgroup label="📦 Export & Tools">
+              <option value="export-hub">📦 Export Hub</option>
+              <option value="marketplace">⚡ Marketplace</option>
+              <option value="batch-processor">🧩 Batch Processor</option>
+              <option value="motion-clipboard">📋 Motion Clipboard</option>
+              <option value="reverse-engineering">🧠 Explain & Rebuild</option>
+              <option value="responsive-lab">🎯 Responsive Lab</option>
+              <option value="review-ab">👥 A/B Review</option>
+            </optgroup>
+          </select>
+
+          {/* Quick-Access Pills */}
+          <div style={{ display: 'flex', background: '#090e1a', padding: '2px', borderRadius: 8, border: '1px solid #1e293b', gap: 2, overflowX: 'auto', flex: 1 }}>
+            {[
+              { id: 'social-reframe', label: '📱 Social Reframe' },
+              { id: 'speech-captions', label: '🎙️ Speech Captions' },
+              { id: 'editor', label: '🎬 Motion Graph' },
+              { id: 'universal-timeline', label: '🎞️ Timeline' },
+              { id: 'particle-storm', label: '🌌 Particles' },
+              { id: 'vfx-studio', label: '✨ VFX Shaders' },
+              { id: 'color-grading', label: '🎨 Color & LUTs' },
+              { id: 'broll-engine', label: '🎬 B-Roll' },
+              { id: 'infographics', label: '📊 Infographics' },
+              { id: 'export-hub', label: '📦 Export Hub' },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setSuiteView(tab.id as any)}
+                style={{
+                  padding: '3px 7px',
+                  borderRadius: 5,
+                  fontSize: 9,
+                  fontWeight: suiteView === tab.id ? 800 : 500,
+                  background: suiteView === tab.id ? 'linear-gradient(135deg, #1e3a8a, #1e40af)' : 'transparent',
+                  color: suiteView === tab.id ? '#38bdf8' : '#94a3b8',
+                  border: suiteView === tab.id ? '1px solid #38bdf8' : '1px solid transparent',
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Global Action Bar */}
