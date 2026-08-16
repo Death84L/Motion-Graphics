@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import {
   ExtendedSocialReframeEngine,
   SocialTargetFormat,
@@ -18,11 +18,19 @@ interface SocialReframeStudioViewProps {
   onBakeKeyframesToEditor?: (keyframes: KeyframePoint[], label: string) => void;
 }
 
+export type PhotoAnimationMode = 'ken-burns-zoom' | 'pan-across' | 'subtle-breathe' | 'static';
+
 export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialReframeStudioViewProps) {
   // Target Aspect Ratio & Layout
   const [format, setFormat] = useState<SocialTargetFormat>('9:16-reels');
   const [layoutMode, setLayoutMode] = useState<ReframeLayoutMode>('full-bleed-pan');
   const [platformOverlay, setPlatformOverlay] = useState<SafeZonePlatform>('tiktok');
+
+  // Media Ingestion (Video or Photo)
+  const [mediaSrc, setMediaSrc] = useState<string | null>(null);
+  const [mediaType, setMediaType] = useState<'video' | 'photo' | null>(null);
+  const [mediaName, setMediaName] = useState<string | null>(null);
+  const [photoAnimMode, setPhotoAnimMode] = useState<PhotoAnimationMode>('ken-burns-zoom');
 
   // Multi-Speaker Profiles (Host & Guest)
   const [speakerA_X, setSpeakerA_X] = useState<number>(140);
@@ -43,6 +51,26 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
   const [isBaked, setIsBaked] = useState<boolean>(false);
   const [autoPipelineResult, setAutoPipelineResult] = useState<AutoPipelineOutput | null>(null);
   const [isAutoProcessing, setIsAutoProcessing] = useState<boolean>(false);
+
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  // Handle Media File Upload (Videos & Photos)
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const isVideo = file.type.startsWith('video/');
+    const isImage = file.type.startsWith('image/');
+
+    const url = URL.createObjectURL(file);
+    setMediaSrc(url);
+    setMediaType(isVideo ? 'video' : isImage ? 'photo' : 'video');
+    setMediaName(file.name);
+
+    // Run auto-reframe pipeline automatically on upload!
+    handleRunFullAutoPipeline();
+  };
 
   // ⚡ 1-Click Zero-Manual-Work Auto-Reframe Handler
   const handleRunFullAutoPipeline = () => {
@@ -65,7 +93,7 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
 
       // Automatically bake keyframes to the editor!
       if (onBakeKeyframesToEditor) {
-        onBakeKeyframesToEditor(output.panKeyframes, `Auto-Reframe (Zero Manual Work) • ${format.toUpperCase()}`);
+        onBakeKeyframesToEditor(output.panKeyframes, `Auto-Reframe (${mediaType === 'photo' ? 'Photo Motion' : 'Video'}) • ${format.toUpperCase()}`);
       }
       setIsBaked(true);
       setTimeout(() => setIsBaked(false), 3000);
@@ -125,14 +153,14 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
     <div
       style={{
         display: 'grid',
-        gridTemplateColumns: '300px 1fr 310px',
+        gridTemplateColumns: '310px 1fr 310px',
         height: '100%',
         background: '#040711',
         overflow: 'hidden',
         color: '#f8fafc',
       }}
     >
-      {/* 1. LEFT COLUMN: LAYOUT PRESETS, RATIOS & MULTI-SPEAKER */}
+      {/* 1. LEFT COLUMN: UPLOAD, LAYOUT PRESETS, RATIOS & PHOTO MOTION */}
       <div
         style={{
           background: '#090e1a',
@@ -149,6 +177,37 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
           <span style={{ fontSize: 13, fontWeight: 800, color: '#f8fafc' }}>
             Instant Social Reframe Studio
           </span>
+        </div>
+
+        {/* 📁 UPLOAD VIDEO OR PHOTO BUTTON */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileUpload}
+            accept="video/mp4,video/quicktime,video/webm,image/png,image/jpeg,image/webp"
+            style={{ display: 'none' }}
+          />
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            style={{
+              background: mediaSrc ? 'rgba(56, 189, 248, 0.15)' : '#1e293b',
+              border: `1px dashed ${mediaSrc ? '#38bdf8' : '#64748b'}`,
+              borderRadius: 8,
+              color: '#38bdf8',
+              padding: '10px',
+              fontSize: 10,
+              fontWeight: 800,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 6,
+              boxShadow: mediaSrc ? '0 0 12px rgba(56, 189, 248, 0.2)' : 'none',
+            }}
+          >
+            📁 {mediaName ? `Loaded ${mediaType?.toUpperCase()}: ${mediaName}` : 'Upload 16:9 Video or Photo (MP4/PNG/JPG)'}
+          </button>
         </div>
 
         {/* ⚡ 1-Click Auto-Reframe Magic Button */}
@@ -172,6 +231,40 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
         >
           {isAutoProcessing ? '⏳ Auto-Processing 12 Stages...' : '⚡ 1-Click Auto-Reframe (Zero Manual Work)'}
         </button>
+
+        {/* Photo Animation Mode (When Image is Uploaded) */}
+        {mediaType === 'photo' && (
+          <div style={{ background: '#11182c', border: '1px solid #1e293b', borderRadius: 8, padding: 10, display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <span style={{ fontSize: 9, color: '#f59e0b', textTransform: 'uppercase', fontWeight: 800 }}>
+              📸 PHOTO 2.5D MOTION MODE:
+            </span>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
+              {[
+                { id: 'ken-burns-zoom', label: '🔍 Ken Burns Zoom' },
+                { id: 'pan-across', label: '↔️ Pan Across' },
+                { id: 'subtle-breathe', label: '💨 2.5D Breathe' },
+                { id: 'static', label: '⏹️ Static Center' },
+              ].map((pm) => (
+                <button
+                  key={pm.id}
+                  onClick={() => setPhotoAnimMode(pm.id as PhotoAnimationMode)}
+                  style={{
+                    background: photoAnimMode === pm.id ? '#f59e0b' : '#1e293b',
+                    color: photoAnimMode === pm.id ? '#040711' : '#94a3b8',
+                    border: 'none',
+                    borderRadius: 4,
+                    padding: '5px',
+                    fontSize: 8,
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                  }}
+                >
+                  {pm.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* 1-Click Layout Modes */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -312,22 +405,6 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
             />
           </div>
         </div>
-
-        {/* Deadband Pan Smoothing */}
-        <div style={{ background: '#11182c', border: '1px solid #1e293b', borderRadius: 8, padding: 10, display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 9 }}>
-            <span style={{ color: '#94a3b8' }}>Deadband Tolerance:</span>
-            <span style={{ color: '#10b981', fontWeight: 800 }}>±{deadbandRadius}px</span>
-          </div>
-          <input
-            type="range"
-            min="10"
-            max="100"
-            value={deadbandRadius}
-            onChange={(e) => setDeadbandRadius(parseInt(e.target.value))}
-            style={{ width: '100%', accentColor: '#10b981' }}
-          />
-        </div>
       </div>
 
       {/* 2. CENTER COLUMN: 60FPS VIEWPORT & SAFE-ZONE OVERLAY */}
@@ -447,8 +524,41 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
               {hookCard.text}
             </div>
 
-            {/* Layout Rendering (Full Bleed vs Split Duplex vs Blurred Mirror) */}
-            {layoutMode === 'split-duplex' ? (
+            {/* Media Rendering (Uploaded Video / Photo vs Placeholder) */}
+            {mediaSrc ? (
+              <div style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}>
+                {mediaType === 'video' ? (
+                  <video
+                    ref={videoRef}
+                    src={mediaSrc}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    style={{
+                      width: 'auto',
+                      height: '100%',
+                      position: 'absolute',
+                      left: `-${reframeResult.primaryCrop.x * 0.4}px`,
+                      top: 0,
+                      objectFit: 'cover',
+                    }}
+                  />
+                ) : (
+                  <img
+                    src={mediaSrc}
+                    alt="Reframed Subject"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      transform: photoAnimMode === 'ken-burns-zoom' ? 'scale(1.15)' : 'none',
+                      transition: 'transform 3s ease-in-out',
+                    }}
+                  />
+                )}
+              </div>
+            ) : layoutMode === 'split-duplex' ? (
               <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                 {/* Top Half: Speaker A */}
                 <div style={{ flex: 1, background: '#1e293b', position: 'relative', overflow: 'hidden', borderBottom: '2px solid #38bdf8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
