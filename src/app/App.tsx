@@ -1740,7 +1740,7 @@ export default function App() {
         <SocialReframeStudioView
           onBakeKeyframesToEditor={(bakedKeys, label) => {
             handleKeyframesChange(bakedKeys);
-            setSuiteView('editor');
+            // Keep user on social-reframe studio without forcing tab switch
           }}
         />
       )}
