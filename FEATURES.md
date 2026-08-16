@@ -92,8 +92,8 @@ flowchart TD
 | **11. ✂️ NLE Editing & Multi-Cam** | Multi-track timeline, SMPTE timecode, Ripple/Slip/Slide/Roll tools, non-linear Bézier speed ramps, multi-cam waveform sync. |
 | **12. 🎬 B-Roll & Beat Sequencer** | Media browser (4K/HD/GIFs), Ken Burns dynamic pan/zoom framing, 128 BPM music beat-synced montage sequencer, keyframe baker. |
 | **13. 📊 Data-Driven Infographics** | Racing bar charts with real-time rank swapping, procedural line/area graphs, rolling odometer counters from CSV/JSON datasets. |
-| **14. 📱 Viral Social Auto-Reframe** | 16:9 $\to$ 9:16 vertical crop window with talking-head subject centering for TikTok/Reels/Shorts, top 3-second retention hook cards. |
-| **15. 🖱️ UI Design Systems & Mockups** | Dynamic Island squircle, skeleton loading shimmer, elastic toggle switch, 3D card flip, device mockup frames, 8px grid tokens. |
+| **14. 📱 Viral Social & Speech Reframe** | 100% Zero-Cutoff bidirectional conversion (16:9 $\leftrightarrow$ 9:16), Voice Activity Detection (VAD) with 200ms lookahead & 500ms hold-time, 4 kinetic caption presets (Hormozi, MrBeast, Ali Clean, Cyber Neon), filler-word auto-cleaner, 2.5D depth parallax, top retention hook cards. |
+| **15. 🖱️ UI Design Systems & Mockups** | Dynamic Island squircle, skeleton loading shimmer, elastic toggle switch, 3D card flip, glassmorphic smartphone / macOS browser mockup frames. |
 | **16. 🧠 Procedural Node Graphs** | 46+ visual math, trig, vector, 2nd-order spring, Perlin noise, and conditional nodes with 1-click keyframe baking. |
 | **17. 🔀 Transitions & Light Leaks** | Directional wipe, radial clock, iris circle, whip pan, zoom push, glitch displace, amber film burn light leak, ink bleed. |
 | **18. 🎭 Masking, Mattes & Compositing** | Per-vertex feathering, alpha/luma track mattes (Multiply, Screen, Overlay, Color Dodge), green-screen despill, light wrap. |
@@ -109,3 +109,4 @@ flowchart TD
 ```
 
 All 500+ capabilities operate **100% locally with zero cloud subscriptions, zero third-party API fees**, and complete cross-application interchangeability.
+
