@@ -2,6 +2,7 @@ import React, { useState, useMemo, useRef, useEffect } from 'react';
 import {
   ExtendedSocialReframeEngine,
   SocialTargetFormat,
+  MediaFitMode,
   ReframeLayoutMode,
   SafeZonePlatform,
   ProceduralBackdropStyle,
@@ -22,19 +23,13 @@ import { BatchReframeProcessor, BatchReframeBatchResult } from '../../../core/so
 import { AnimationQAEvaluator, AnimationQAScorecard, MotionTrajectoryPoint } from '../../../core/social/animationQAEvaluator';
 import { ZeroCutoffEngine, DeviceMockupType } from '../../../core/social/zeroCutoffEngine';
 import { PanoramicSweepEngine } from '../../../core/social/panoramicSweepEngine';
+import { PRO_STUDIO_PRESETS, ProStudioPreset } from '../../../core/social/proStudioPresets';
+import { KineticCaptionEngine, KineticCaptionPhrase } from '../../../core/social/kineticCaptionEngine';
 import { KeyframePoint } from '../../graph-editor/types';
 
 interface SocialReframeStudioViewProps {
   onBakeKeyframesToEditor?: (keyframes: KeyframePoint[], label: string) => void;
 }
-
-export type MediaFitMode =
-  | 'smart-ambient-fit'
-  | 'depth-parallax-25d'
-  | 'ken-burns-scan'
-  | 'stacked-duplex'
-  | 'elevated-card'
-  | 'full-bleed-crop';
 
 export type PhotoAnimationMode = 'ken-burns-zoom' | 'pan-across' | 'subtle-breathe' | 'static';
 
@@ -49,7 +44,9 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
   const [platformOverlay, setPlatformOverlay] = useState<SafeZonePlatform>('tiktok');
   const [showRuleOfThirds, setShowRuleOfThirds] = useState<boolean>(true);
   const [showMotionTrail, setShowMotionTrail] = useState<boolean>(false);
-  const [exportedCode, setExportedCode] = useState<{ type: string; content: string } | null>(null);
+  const [showBeforeAfterSplit, setShowBeforeAfterSplit] = useState<boolean>(false);
+  const [splitPositionPercent, setSplitPositionPercent] = useState<number>(50);
+  const [exportedCode, setExportedCode] = useState<{ type: string; content: string; filename: string } | null>(null);
   const [batchResult, setBatchResult] = useState<BatchReframeBatchResult | null>(null);
 
   // Animation Playback & Test Scrubber State
@@ -72,7 +69,6 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
   const [speakerA_X, setSpeakerA_X] = useState<number>(140);
   const [speakerB_X, setSpeakerB_X] = useState<number>(340);
   const [activeSpeakerId, setActiveSpeakerId] = useState<string>('speaker-a');
-  const [deadbandRadius, setDeadbandRadius] = useState<number>(45);
 
   // Retention Hook & Pacing Enhancers
   const [hookCard, setHookCard] = useState<RetentionHookCard>({
@@ -144,6 +140,12 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
     return ViralRetentionEngine.getRetentionHookTheme(hookCard.style as RetentionHookStyle);
   }, [hookCard.style]);
 
+  // Kinetic Karaoke Captions
+  const kineticPhrases = useMemo(() => KineticCaptionEngine.getSampleKineticPhrases(), []);
+  const activeCaption = useMemo(() => {
+    return KineticCaptionEngine.getActiveWord(kineticPhrases, currentTimeSec);
+  }, [kineticPhrases, currentTimeSec]);
+
   // Compute Speakers State
   const speakers: SpeakerProfile[] = useMemo(() => [
     { id: 'speaker-a', name: 'Host (Speaker A)', x: speakerA_X, y: 135, isActive: activeSpeakerId === 'speaker-a' },
@@ -194,25 +196,48 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
     );
   }, [reframeResult]);
 
-  // Calculate Real-Time Camera Pan & Scale Position along playhead
-  const animatedPanX = useMemo(() => {
-    const progress = currentTimeSec / durationSec;
-    if (fitMode === 'ken-burns-scan') {
-      return -25 + progress * 50; // Sweeps from -25% to +25%
-    }
-    return 0;
-  }, [currentTimeSec, fitMode]);
-
   const animatedScale = useMemo(() => {
     const progress = currentTimeSec / durationSec;
     if (currentTimeSec < 3.0 && hookCard.zoomPunchIn) {
-      return 1.0 + (1.0 - currentTimeSec / 3.0) * 0.08; // Opening punch-in
+      return 1.0 + (1.0 - currentTimeSec / 3.0) * 0.08;
     }
     if (photoAnimMode === 'ken-burns-zoom') {
       return 1.0 + progress * 0.18;
     }
     return 1.0;
   }, [currentTimeSec, hookCard.zoomPunchIn, photoAnimMode]);
+
+  // Apply Pro Studio Preset
+  const handleApplyPreset = (preset: ProStudioPreset) => {
+    setFormat(preset.targetFormat);
+    setFitMode(preset.fitMode);
+    setDeviceMockup(preset.deviceMockup);
+    setBackdropStyle(preset.backdropStyle);
+    setHookCard((h) => ({
+      ...h,
+      style: preset.hookStyle,
+      text: preset.hookHeadline,
+      progressBarColor: preset.progressBarColor,
+      zoomPunchIn: preset.zoomPunchIn,
+    }));
+    setDepthIntensity(preset.depthIntensity);
+    handleRunFullAutoPipeline();
+  };
+
+  // Helper: Trigger Real File Download in Browser
+  const triggerBrowserDownload = (content: string, filename: string, mimeType = 'text/plain') => {
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    setIsBaked(true);
+    setTimeout(() => setIsBaked(false), 2500);
+  };
 
   // Calculate Aspect Ratio Name Helper
   const getAspectRatioName = (w: number, h: number): string => {
@@ -293,7 +318,7 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
       }
       setIsBaked(true);
       setTimeout(() => setIsBaked(false), 3000);
-    }, 400);
+    }, 350);
   };
 
   // ⚡ 1-Click Batch Generate All 4 Formats
@@ -332,7 +357,8 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
       scaleKeyframes: scaleKeys,
     });
 
-    setExportedCode({ type: 'After Effects (.jsx)', content: jsx });
+    setExportedCode({ type: 'After Effects (.jsx)', content: jsx, filename: `MotionStudio_Reframe_${format}.jsx` });
+    triggerBrowserDownload(jsx, `MotionStudio_Reframe_${format}.jsx`, 'application/javascript');
   };
 
   // Export to Premiere Pro UXP Sequence JSON
@@ -357,7 +383,14 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
       scaleKeyframes: scaleKeys,
     });
 
-    setExportedCode({ type: 'Premiere Pro UXP (JSON)', content: seq });
+    setExportedCode({ type: 'Premiere Pro UXP (JSON)', content: seq, filename: `MotionStudio_Premiere_${format}.json` });
+    triggerBrowserDownload(seq, `MotionStudio_Premiere_${format}.json`, 'application/json');
+  };
+
+  // Export Subtitles (.srt)
+  const handleExportSrt = () => {
+    const srt = KineticCaptionEngine.exportToSrt(kineticPhrases);
+    triggerBrowserDownload(srt, `MotionStudio_Captions_${format}.srt`, 'text/plain');
   };
 
   return (
@@ -371,7 +404,7 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
         color: '#f8fafc',
       }}
     >
-      {/* 1. LEFT COLUMN: UPLOAD, ASPECT RATIOS, ZERO-CUTOFF & DEVICE FRAMES */}
+      {/* 1. LEFT COLUMN: UPLOAD, PRO PRESETS, ZERO-CUTOFF & DEVICE FRAMES */}
       <div
         style={{
           background: '#090e1a',
@@ -449,28 +482,40 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
           {isAutoProcessing ? '⏳ Auto-Processing 12 Stages...' : '⚡ 1-Click Auto-Reframe (Zero Manual Work)'}
         </button>
 
-        {/* ⚡ 1-Click Batch Generate All 4 Formats */}
-        <button
-          onClick={handleBatchGenerateAll}
-          style={{
-            background: '#1e293b',
-            border: '1px solid #38bdf8',
-            color: '#38bdf8',
-            borderRadius: 6,
-            padding: '6px',
-            fontSize: 9,
-            fontWeight: 800,
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 4,
-          }}
-        >
-          ⚡ Batch Generate All Ratios (9:16 + 1:1 + 4:5 + 16:9)
-        </button>
+        {/* 🎨 1-CLICK PRO CREATOR PRESETS */}
+        <div style={{ background: '#11182c', border: '1px solid #1e293b', borderRadius: 8, padding: 10, display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <span style={{ fontSize: 9, color: '#38bdf8', textTransform: 'uppercase', fontWeight: 800 }}>
+            🎨 1-CLICK PRO CREATOR PRESETS:
+          </span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            {PRO_STUDIO_PRESETS.map((p) => (
+              <button
+                key={p.id}
+                onClick={() => handleApplyPreset(p)}
+                style={{
+                  background: '#090e1a',
+                  border: '1px solid #1e293b',
+                  borderRadius: 6,
+                  padding: '6px 8px',
+                  color: '#f8fafc',
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 2,
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: 9, fontWeight: 800, color: p.badgeColor }}>{p.name}</span>
+                  <span style={{ fontSize: 7, background: 'rgba(255,255,255,0.08)', padding: '1px 4px', borderRadius: 2 }}>{p.creatorTag}</span>
+                </div>
+                <span style={{ fontSize: 7, color: '#94a3b8' }}>{p.description}</span>
+              </button>
+            ))}
+          </div>
+        </div>
 
-        {/* 🌟 SMART PHOTO/VIDEO FITTING MODE (NO CROPPING / ZERO CUT OFF) */}
+        {/* 🌟 ZERO-CUTOFF FITTING MODE */}
         <div style={{ background: '#11182c', border: '1px solid #38bdf8', borderRadius: 8, padding: 10, display: 'flex', flexDirection: 'column', gap: 6 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span style={{ fontSize: 9, color: '#38bdf8', textTransform: 'uppercase', fontWeight: 800 }}>
@@ -488,7 +533,6 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
               { id: 'ken-burns-scan', label: '🎬 Ken Burns Scan (Pans Across Full Width)', desc: 'Animates camera across wide photo so all details are shown' },
               { id: 'stacked-duplex', label: '👥 Stacked Duplex (Left & Right Split)', desc: 'Stacks left & right subjects vertically at full resolution' },
               { id: 'elevated-card', label: '🖼️ Glassmorphic Elevated Card', desc: 'Floating rounded frame with depth drop shadow' },
-              { id: 'full-bleed-crop', label: '✂️ Full-Bleed Crop (Auto-Centered)', desc: 'Traditional fill crop on active tracked speaker' },
             ].map((f) => (
               <button
                 key={f.id}
@@ -546,77 +590,9 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
             ))}
           </div>
         </div>
-
-        {/* Procedural Backdrop Style */}
-        <div style={{ background: '#11182c', border: '1px solid #1e293b', borderRadius: 8, padding: 10, display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <span style={{ fontSize: 9, color: '#94a3b8', textTransform: 'uppercase' }}>
-            PROCEDURAL BACKDROP FILL:
-          </span>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
-            {[
-              { id: 'ambient-color-glow', label: '🌈 Ambient Glow' },
-              { id: 'studio-dark-radial', label: '🎬 Studio Dark' },
-              { id: 'cyberpunk-gradient', label: '⚡ Cyber Neon' },
-              { id: 'clean-minimal-slate', label: '🌫️ Minimal Slate' },
-            ].map((bd) => (
-              <button
-                key={bd.id}
-                onClick={() => setBackdropStyle(bd.id as ProceduralBackdropStyle)}
-                style={{
-                  background: backdropStyle === bd.id ? '#38bdf8' : '#1e293b',
-                  color: backdropStyle === bd.id ? '#040711' : '#94a3b8',
-                  border: 'none',
-                  borderRadius: 4,
-                  padding: '5px',
-                  fontSize: 8,
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                }}
-              >
-                {bd.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Target Aspect Ratios (1:1, 4:5, 9:16, 16:9) */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <span style={{ fontSize: 9, color: '#94a3b8', textTransform: 'uppercase' }}>
-            TARGET ASPECT RATIO & COMPOSITION:
-          </span>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 4 }}>
-            {[
-              { id: '9:16-reels', label: '9:16 Reels/TikTok' },
-              { id: '1:1-square', label: '1:1 Square (Feed)' },
-              { id: '4:5-portrait', label: '4:5 Portrait (IG)' },
-              { id: '16:9-landscape', label: '16:9 Landscape' },
-            ].map((fmt) => (
-              <button
-                key={fmt.id}
-                onClick={() => {
-                  setFormat(fmt.id as SocialTargetFormat);
-                  setAutoPipelineResult(null);
-                }}
-                style={{
-                  background: format === fmt.id ? '#38bdf8' : '#11182c',
-                  border: `1px solid ${format === fmt.id ? '#38bdf8' : '#1e293b'}`,
-                  color: format === fmt.id ? '#040711' : '#94a3b8',
-                  borderRadius: 6,
-                  padding: '6px 8px',
-                  fontSize: 9,
-                  fontWeight: 800,
-                  cursor: 'pointer',
-                  textAlign: 'center',
-                }}
-              >
-                {fmt.label}
-              </button>
-            ))}
-          </div>
-        </div>
       </div>
 
-      {/* 2. CENTER COLUMN: 60FPS INTERACTIVE ANIMATION TEST VIEWPORT */}
+      {/* 2. CENTER COLUMN: 60FPS INTERACTIVE ANIMATION & KARAOKE VIEWPORT */}
       <div
         style={{
           display: 'flex',
@@ -646,7 +622,22 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
                 gap: 4,
               }}
             >
-              {isPlaying ? '⏸ Pause' : '▶ Play Animation (60 FPS)'}
+              {isPlaying ? '⏸ Pause' : '▶ Play (60 FPS)'}
+            </button>
+            <button
+              onClick={() => setShowBeforeAfterSplit((s) => !s)}
+              style={{
+                background: showBeforeAfterSplit ? '#f59e0b' : '#1e293b',
+                color: showBeforeAfterSplit ? '#040711' : '#94a3b8',
+                border: 'none',
+                padding: '4px 8px',
+                borderRadius: 4,
+                fontSize: 8,
+                fontWeight: 800,
+                cursor: 'pointer',
+              }}
+            >
+              ⚖️ Before/After Split
             </button>
             <button
               onClick={() => setShowRuleOfThirds((r) => !r)}
@@ -678,25 +669,6 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
             >
               📍 Trail
             </button>
-            {(['tiktok', 'instagram-reels', 'youtube-shorts', 'none'] as SafeZonePlatform[]).map((p) => (
-              <button
-                key={p}
-                onClick={() => setPlatformOverlay(p)}
-                style={{
-                  background: platformOverlay === p ? '#ec4899' : '#11182c',
-                  color: platformOverlay === p ? '#ffffff' : '#94a3b8',
-                  border: 'none',
-                  padding: '3px 6px',
-                  borderRadius: 4,
-                  fontSize: 8,
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  textTransform: 'capitalize',
-                }}
-              >
-                {p.replace('-', ' ')}
-              </button>
-            ))}
           </div>
 
           <div style={{ display: 'flex', gap: 6 }}>
@@ -713,7 +685,7 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
                 cursor: 'pointer',
               }}
             >
-              📥 AE Script (.jsx)
+              📥 Download AE (.jsx)
             </button>
             <button
               onClick={handleExportPremierePro}
@@ -728,7 +700,22 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
                 cursor: 'pointer',
               }}
             >
-              📥 Premiere UXP
+              📥 Download UXP
+            </button>
+            <button
+              onClick={handleExportSrt}
+              style={{
+                background: '#d97706',
+                color: '#ffffff',
+                border: 'none',
+                padding: '5px 10px',
+                borderRadius: 6,
+                fontSize: 9,
+                fontWeight: 800,
+                cursor: 'pointer',
+              }}
+            >
+              📥 Subtitles (.srt)
             </button>
           </div>
         </div>
@@ -844,10 +831,6 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
                       zIndex: 1,
                     }}
                   />
-                ) : backdropStyle === 'kinetic-text-wall' ? (
-                  <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', opacity: 0.18, zIndex: 1, fontSize: 13, fontWeight: 900, color: '#38bdf8', lineHeight: 1.4, padding: 8, transform: 'rotate(-12deg) scale(1.4)', userSelect: 'none', pointerEvents: 'none' }}>
-                    MOTION REFRAME • 60FPS PARALLAX • ZERO WORK • VIRAL TIKTOK • 9:16 REELS • 1080P PRO
-                  </div>
                 ) : null}
 
                 {/* 2. LAYER 2: FOREGROUND ZERO-CUTOFF UNCROPPED MEDIA */}
@@ -906,26 +889,45 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
               </div>
             )}
 
-            {/* Smart Safe-Zone Floating Caption */}
-            <div
-              style={{
-                position: 'absolute',
-                top: safeCaption.y,
-                left: 14,
-                right: 36,
-                background: 'rgba(0, 0, 0, 0.85)',
-                border: '1px solid #fde047',
-                borderRadius: 4,
-                padding: '3px 6px',
-                fontSize: 8,
-                fontWeight: 800,
-                color: '#fde047',
-                textAlign: 'center',
-                zIndex: 25,
-              }}
-            >
-              🔥 "And that's how we grew 10X!"
-            </div>
+            {/* LIVE KINETIC KARAOKE SUBTITLE OVERLAY */}
+            {activeCaption.activePhrase && (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: safeCaption.y,
+                  left: 10,
+                  right: 10,
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  justifyContent: 'center',
+                  gap: '3px 6px',
+                  background: 'rgba(0, 0, 0, 0.85)',
+                  border: '1px solid #38bdf8',
+                  borderRadius: 6,
+                  padding: '4px 8px',
+                  zIndex: 34,
+                }}
+              >
+                {activeCaption.activePhrase.words.map((w) => {
+                  const isActive = activeCaption.activeWord?.id === w.id;
+                  return (
+                    <span
+                      key={w.id}
+                      style={{
+                        fontSize: isActive ? 10 : 8,
+                        fontWeight: 900,
+                        color: isActive ? w.highlightColor : '#94a3b8',
+                        transform: isActive ? 'scale(1.2) translateY(-2px)' : 'none',
+                        transition: 'transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                        textShadow: isActive ? `0 0 10px ${w.highlightColor}` : 'none',
+                      }}
+                    >
+                      {w.word}
+                    </span>
+                  );
+                })}
+              </div>
+            )}
 
             {/* Platform Safe-Zone UI Mockup Overlay */}
             {platformOverlay === 'tiktok' && (
@@ -1014,7 +1016,7 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
               value={exportedCode.content}
               style={{
                 width: '100%',
-                height: 90,
+                height: 80,
                 background: '#040711',
                 border: '1px solid #1e293b',
                 borderRadius: 4,
@@ -1095,26 +1097,6 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
               <span style={{ color: '#f8fafc' }}>{stage.label}</span>
             </div>
           ))}
-        </div>
-
-        {/* Top 3-Second Hook Text */}
-        <div style={{ background: '#11182c', border: '1px solid #1e293b', borderRadius: 8, padding: 10, display: 'flex', flexDirection: 'column', gap: 6 }}>
-          <span style={{ fontSize: 9, color: '#94a3b8', textTransform: 'uppercase' }}>
-            TOP 3-SEC RETENTION HOOK:
-          </span>
-          <input
-            type="text"
-            value={hookCard.text}
-            onChange={(e) => setHookCard((h) => ({ ...h, text: e.target.value }))}
-            style={{
-              background: '#090e1a',
-              border: '1px solid #1e293b',
-              borderRadius: 4,
-              color: '#f8fafc',
-              padding: '6px',
-              fontSize: 10,
-            }}
-          />
         </div>
       </div>
     </div>

@@ -62,9 +62,17 @@ export interface SafeZoneBounds {
   leftMarginPx: number;
 }
 
+export type MediaFitMode =
+  | 'smart-ambient-fit'
+  | 'depth-parallax-25d'
+  | 'ken-burns-scan'
+  | 'stacked-duplex'
+  | 'elevated-card'
+  | 'full-bleed-crop';
+
 export interface RetentionHookCard {
   text: string;
-  style: 'viral-yellow' | 'cyberpunk-neon' | 'clean-white' | 'luxury-gold';
+  style: 'viral-yellow' | 'cyberpunk-neon' | 'clean-white' | 'clean-minimal-white' | 'luxury-gold';
   durationSec: number;
   showProgressBar: boolean;
   progressBarColor: string;
