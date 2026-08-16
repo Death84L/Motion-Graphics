@@ -370,6 +370,43 @@ export class ExtendedSocialReframeEngine {
   }
 
   /**
+   * Returns CSS styling and background fill for chosen procedural backdrop.
+   */
+  static getProceduralBackdropCSS(style: ProceduralBackdropStyle, mediaSrc?: string | null): {
+    background: string;
+    hasBlurLayer: boolean;
+  } {
+    switch (style) {
+      case 'studio-dark-radial':
+        return {
+          background: 'radial-gradient(ellipse at 50% 35%, #1e293b 0%, #090e1a 55%, #020617 100%)',
+          hasBlurLayer: false,
+        };
+      case 'cyberpunk-gradient':
+        return {
+          background: 'radial-gradient(circle at 85% 15%, rgba(236, 72, 153, 0.45) 0%, transparent 60%), radial-gradient(circle at 15% 85%, rgba(56, 189, 248, 0.45) 0%, transparent 60%), #030712',
+          hasBlurLayer: false,
+        };
+      case 'kinetic-text-wall':
+        return {
+          background: 'linear-gradient(135deg, #090e1a 0%, #1e1b4b 100%)',
+          hasBlurLayer: false,
+        };
+      case 'clean-minimal-slate':
+        return {
+          background: 'linear-gradient(180deg, #1e293b 0%, #0f172a 100%)',
+          hasBlurLayer: false,
+        };
+      case 'ambient-color-glow':
+      default:
+        return {
+          background: '#040711',
+          hasBlurLayer: Boolean(mediaSrc),
+        };
+    }
+  }
+
+  /**
    * Generates Complete After Effects ExtendScript (.jsx) Multi-Track Project.
    */
   static generateAfterEffectsProjectScript(config: SocialReframeProjectExportConfig): string {

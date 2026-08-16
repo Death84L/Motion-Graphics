@@ -593,13 +593,13 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
             style={{
               width: viewportDim.width,
               height: viewportDim.height,
-              background: backdropStyle === 'studio-dark-radial' ? 'radial-gradient(circle, #1e293b 0%, #020617 100%)' : backdropStyle === 'cyberpunk-gradient' ? 'linear-gradient(180deg, #090e1a 0%, #1e1b4b 50%, #030712 100%)' : '#090e1a',
+              background: ExtendedSocialReframeEngine.getProceduralBackdropCSS(backdropStyle, mediaSrc).background,
               border: '2px solid #38bdf8',
               borderRadius: format === '9:16-reels' ? 16 : 8,
               position: 'relative',
               overflow: 'hidden',
               boxShadow: '0 0 32px rgba(56, 189, 248, 0.25)',
-              transition: 'width 0.3s ease, height 0.3s ease',
+              transition: 'width 0.3s ease, height 0.3s ease, background 0.3s ease',
             }}
           >
             {/* Top Neon Progress Bar */}
@@ -652,8 +652,8 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
             {/* MEDIA RENDERING: SMART AMBIENT BLUR VS 2.5D PARALLAX VS KEN BURNS SCAN */}
             {mediaSrc ? (
               <div style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                {/* 1. LAYER 1: AMBIENT GAUSSIAN BLUR BACKGROUND */}
-                {(fitMode === 'smart-ambient-fit' || fitMode === 'depth-parallax-25d' || fitMode === 'elevated-card') && (
+                {/* 1. LAYER 1: AMBIENT GAUSSIAN BLUR BACKGROUND OR PROCEDURAL MESH */}
+                {backdropStyle === 'ambient-color-glow' ? (
                   <div
                     style={{
                       position: 'absolute',
@@ -667,7 +667,11 @@ export function SocialReframeStudioView({ onBakeKeyframesToEditor }: SocialRefra
                       zIndex: 1,
                     }}
                   />
-                )}
+                ) : backdropStyle === 'kinetic-text-wall' ? (
+                  <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', opacity: 0.18, zIndex: 1, fontSize: 13, fontWeight: 900, color: '#38bdf8', lineHeight: 1.4, padding: 8, transform: 'rotate(-12deg) scale(1.4)', userSelect: 'none', pointerEvents: 'none' }}>
+                    MOTION REFRAME • 60FPS PARALLAX • ZERO WORK • VIRAL TIKTOK • 9:16 REELS • 1080P PRO
+                  </div>
+                ) : null}
 
                 {/* 2. LAYER 2: FOREGROUND 2.5D DEPTH / UNCRIPPLED MEDIA */}
                 {fitMode === 'depth-parallax-25d' ? (

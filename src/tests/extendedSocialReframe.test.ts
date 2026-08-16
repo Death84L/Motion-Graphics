@@ -139,4 +139,16 @@ describe('Extended Social Reframe Engine Test Suite', () => {
     expect(parsed.sequenceSettings.height).toBe(1080);
     expect(parsed.tracks.length).toBe(4);
   });
+
+  it('generates procedural backdrop CSS for studio radial, cyberpunk, and ambient glow', () => {
+    const studio = ExtendedSocialReframeEngine.getProceduralBackdropCSS('studio-dark-radial');
+    expect(studio.background).toContain('radial-gradient');
+    expect(studio.hasBlurLayer).toBe(false);
+
+    const cyber = ExtendedSocialReframeEngine.getProceduralBackdropCSS('cyberpunk-gradient');
+    expect(cyber.background).toContain('rgba(236, 72, 153');
+
+    const ambient = ExtendedSocialReframeEngine.getProceduralBackdropCSS('ambient-color-glow', 'test.mp4');
+    expect(ambient.hasBlurLayer).toBe(true);
+  });
 });
